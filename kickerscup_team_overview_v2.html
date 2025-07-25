@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Team Übersicht V2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Same as before */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .view-btn {
+            background: none;
+            border: none;
+            color: #cccccc;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-btn.active {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+        }
+
+        .search-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            width: 250px;
+        }
+
+        .search-box::placeholder {
+            color: #888;
+        }
+
+        /* Team Overview Stats */
+        .team-overview {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .team-strength-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .strength-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .strength-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .strength-item {
+            text-align: center;
+        }
+
+        .strength-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #ff8c00, #ffd700, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            position: relative;
+        }
+
+        .strength-circle::before {
+            content: '';
+            width: 60px;
+            height: 60px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .strength-value {
+            position: relative;
+            z-index: 1;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff8c00;
+        }
+
+        .strength-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .overall-strength {
+            grid-column: 1 / -1;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .overall-circle {
+            width: 100px;
+            height: 100px;
+        }
+
+        .overall-circle::before {
+            width: 80px;
+            height: 80px;
+        }
+
+        .overall-value {
+            font-size: 1.5rem;
+        }
+
+        /* Squad Stats */
+        .squad-summary {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .summary-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .summary-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .summary-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #cccccc;
+        }
+
+        .summary-value {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .summary-value.warning {
+            color: #f39c12;
+        }
+
+        .summary-value.danger {
+            color: #e74c3c;
+        }
+
+        /* Position Filter Tabs */
+        .position-filter {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #cccccc;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            border-color: #ff8c00;
+        }
+
+        .filter-tab:hover {
+            border-color: #ff8c00;
+            color: #ff8c00;
+        }
+
+        /* Player Cards Grid */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .player-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.2);
+        }
+
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+        }
+
+        .player-meta {
+            display: flex;
+            gap: 1rem;
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .position-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            min-width: 45px;
+        }
+
+        .position-TW { background: #e74c3c; color: white; }
+        .position-LV, .position-RV, .position-IV { background: #3498db; color: white; }
+        .position-LM, .position-RM, .position-ZDM, .position-OFM { background: #2ecc71; color: white; }
+        .position-LS, .position-RS, .position-MS { background: #f39c12; color: white; }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-ok { background: #2ecc71; color: white; }
+        .status-injured { background: #e74c3c; color: white; }
+        .status-suspended { background: #f39c12; color: white; }
+
+        .player-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .stat-label {
+            color: #cccccc;
+            font-size: 0.85rem;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .einsatzwert {
+            grid-column: 1 / -1;
+            background: rgba(255, 140, 0, 0.1) !important;
+            border: 1px solid rgba(255, 140, 0, 0.3);
+        }
+
+        .einsatzwert .stat-value {
+            color: #ff8c00;
+            font-size: 1.1rem;
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-btn {
+            flex: 1;
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.4);
+            color: #ff8c00;
+            padding: 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 140, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Mobile Responsiveness */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ff8c00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .team-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .strength-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .position-filter {
+                justify-content: center;
+            }
+
+            .filter-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Toggle Button -->
+        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>KICKERSCUP</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">👥</span>
+                        Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏋️</span>
+                        Training
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏟️</span>
+                        Stadion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚽</span>
+                        Live Spiele
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">💰</span>
+                        Transfermarkt
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏆</span>
+                        Pokale
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Statistiken
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        Einstellungen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2>Team Übersicht - V2</h2>
+                    <p>FC Thunderbolts - Card-basierte Ansicht</p>
+                </div>
+                <div class="header-controls">
+                    <div class="view-toggle">
+                        <button class="view-btn">📋 Tabelle</button>
+                        <button class="view-btn active">🎴 Cards</button>
+                        <button class="view-btn">📊 Formation</button>
+                    </div>
+                    <input type="text" class="search-box" placeholder="Spieler suchen...">
+                </div>
+            </header>
+
+            <!-- Team Overview -->
+            <div class="team-overview">
+                <!-- Team Strength -->
+                <div class="team-strength-card">
+                    <h3 class="strength-title">Mannschaftsstärke</h3>
+                    <div class="strength-grid">
+                        <div class="strength-item">
+                            <div class="strength-circle">
+                                <div class="strength-value">7.2</div>
+                            </div>
+                            <div class="strength-label">Tor 🥅</div>
+                        </div>
+                        <div class="strength-item">
+                            <div class="strength-circle">
+                                <div class="strength-value">6.8</div>
+                            </div>
+                            <div class="strength-label">Abwehr 🛡️</div>
+                        </div>
+                        <div class="strength-item">
+                            <div class="strength-circle">
+                                <div class="strength-value">7.5</div>
+                            </div>
+                            <div class="strength-label">Mittelfeld ⚙️</div>
+                        </div>
+                        <div class="strength-item">
+                            <div class="strength-circle">
+                                <div class="strength-value">6.9</div>
+                            </div>
+                            <div class="strength-label">Sturm ⚡</div>
+                        </div>
+                        <div class="strength-item overall-strength">
+                            <div class="strength-circle overall-circle">
+                                <div class="strength-value overall-value">7.1</div>
+                            </div>
+                            <div class="strength-label"><strong>Gesamtstärke</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Squad Summary -->
+                <div class="squad-summary">
+                    <h3 class="summary-title">Kader-Übersicht</h3>
+                    <div class="summary-stats">
+                        <div class="summary-item">
+                            <div class="summary-label">👥 Gesamtgröße</div>
+                            <div class="summary-value">22</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">🥅 Torhüter</div>
+                            <div class="summary-value">2</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">🛡️ Verteidiger</div>
+                            <div class="summary-value">8</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">⚙️ Mittelfeld</div>
+                            <div class="summary-value">7</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">⚡ Stürmer</div>
+                            <div class="summary-value">5</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">🚑 Verletzt</div>
+                            <div class="summary-value danger">2</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">👴 Über 30</div>
+                            <div class="summary-value warning">4</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Position Filter -->
+            <div class="position-filter">
+                <div class="filter-tab active">Alle (22)</div>
+                <div class="filter-tab">🥅 Torwart (2)</div>
+                <div class="filter-tab">🛡️ Abwehr (8)</div>
+                <div class="filter-tab">⚙️ Mittelfeld (7)</div>
+                <div class="filter-tab">⚡ Sturm (5)</div>
+                <div class="filter-tab">🚑 Verletzt (2)</div>
+            </div>
+
+            <!-- Players Grid -->
+            <div class="players-grid">
+                <!-- Player Card 1 -->
+                <div class="player-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name">Manuel Neuer</div>
+                            <div class="player-meta">
+                                <span>28 Jahre</span>
+                                <span>15 Einsätze</span>
+                                <span>3 Saisons</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                            <span class="position-badge position-TW">TW</span>
+                            <span class="status-badge status-ok">OK</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">9.0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">85</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">24</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">92</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">11</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">8.7</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">✏️ Bearbeiten</button>
+                        <button class="action-btn">💰 Verkaufen</button>
+                        <button class="action-btn">📊 Details</button>
+                    </div>
+                </div>
+
+                <!-- Player Card 2 -->
+                <div class="player-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name">Kevin De Bruyne</div>
+                            <div class="player-meta">
+                                <span>30 Jahre</span>
+                                <span>19 Einsätze</span>
+                                <span>4 Saisons</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                            <span class="position-badge position-OFM">OFM</span>
+                            <span class="status-badge status-ok">OK</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">9.2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">89</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">28</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">91</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">12</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">9.0</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">✏️ Bearbeiten</button>
+                        <button class="action-btn">💰 Verkaufen</button>
+                        <button class="action-btn">📊 Details</button>
+                    </div>
+                </div>
+
+                <!-- Player Card 3 - Injured -->
+                <div class="player-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name">Virgil van Dijk</div>
+                            <div class="player-meta">
+                                <span>31 Jahre</span>
+                                <span>12 Einsätze</span>
+                                <span>1 Saison</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                            <span class="position-badge position-IV">IV</span>
+                            <span class="status-badge status-injured">Verletzt</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8.8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">75</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">22</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">78</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">10</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">7.9</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">✏️ Bearbeiten</button>
+                        <button class="action-btn">💰 Verkaufen</button>
+                        <button class="action-btn">📊 Details</button>
+                    </div>
+                </div>
+
+                <!-- Player Card 4 - Suspended -->
+                <div class="player-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name">Erling Haaland</div>
+                            <div class="player-meta">
+                                <span>23 Jahre</span>
+                                <span>16 Einsätze</span>
+                                <span>3 Saisons</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                            <span class="position-badge position-MS">MS</span>
+                            <span class="status-badge status-suspended">Gesperrt</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">9.5</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">95</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">29</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">96</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">12</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">9.3</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">✏️ Bearbeiten</button>
+                        <button class="action-btn">💰 Verkaufen</button>
+                        <button class="action-btn">📊 Details</button>
+                    </div>
+                </div>
+
+                <!-- Player Card 5 -->
+                <div class="player-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name">Joshua Kimmich</div>
+                            <div class="player-meta">
+                                <span>26 Jahre</span>
+                                <span>18 Einsätze</span>
+                                <span>2 Saisons</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                            <span class="position-badge position-RV">RV</span>
+                            <span class="status-badge status-ok">OK</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8.5</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">88</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">26</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">94</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">12</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">8.3</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">✏️ Bearbeiten</button>
+                        <button class="action-btn">💰 Verkaufen</button>
+                        <button class="action-btn">📊 Details</button>
+                    </div>
+                </div>
+
+                <!-- Player Card 6 -->
+                <div class="player-card">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <div class="player-name">Marcus Rashford</div>
+                            <div class="player-meta">
+                                <span>25 Jahre</span>
+                                <span>14 Einsätze</span>
+                                <span>2 Saisons</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                            <span class="position-badge position-LS">LS</span>
+                            <span class="status-badge status-ok">OK</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">7.8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">86</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">25</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">89</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">11</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">7.6</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">✏️ Bearbeiten</button>
+                        <button class="action-btn">💰 Verkaufen</button>
+                        <button class="action-btn">📊 Details</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleButton = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggleButton.contains(event.target)) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // View toggle handling
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Position filter handling
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter logic would go here
+                console.log('Filter activated:', this.textContent);
+            });
+        });
+
+        // Search functionality
+        document.querySelector('.search-box').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const playerCards = document.querySelectorAll('.player-card');
+            
+            playerCards.forEach(card => {
+                const playerName = card.querySelector('.player-name').textContent.toLowerCase();
+                if (playerName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Action button handlers
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const action = this.textContent.trim();
+                const playerName = this.closest('.player-card').querySelector('.player-name').textContent;
+                console.log(`${action} clicked for ${playerName}`);
+            });
+        });
+
+        // Card hover effects
+        document.querySelectorAll('.player-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.borderColor = 'rgba(255, 140, 0, 0.5)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            });
+        });
+    </script>
+</body>
+</html>
