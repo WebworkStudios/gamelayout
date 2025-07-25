@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Liga System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .view-btn {
+            background: none;
+            border: none;
+            color: #cccccc;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-btn.active {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+        }
+
+        .league-selector {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Liga Info Panel */
+        .liga-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        /* Main Content Area */
+        .content-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        /* League Table */
+        .league-table-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .league-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .league-table thead {
+            background: rgba(255, 140, 0, 0.2);
+        }
+
+        .league-table th {
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            color: #ff8c00;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-bottom: 2px solid rgba(255, 140, 0, 0.3);
+        }
+
+        .league-table td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .league-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .league-table tbody tr:hover {
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        .league-table tbody tr.own-team {
+            background: rgba(255, 140, 0, 0.15);
+            border-left: 3px solid #ff8c00;
+        }
+
+        .position {
+            font-weight: bold;
+            color: #ff8c00;
+            text-align: center;
+            width: 30px;
+        }
+
+        .team-name {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .team-number {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .stats {
+            text-align: center;
+            color: #cccccc;
+        }
+
+        .points {
+            font-weight: bold;
+            color: #2ecc71;
+        }
+
+        /* Fixtures Section */
+        .fixtures-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .matchday-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .matchday-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #cccccc;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .matchday-btn.active {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            border-color: #ff8c00;
+        }
+
+        .matchday-btn:hover {
+            border-color: #ff8c00;
+            color: #ff8c00;
+        }
+
+        .fixtures-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .fixture {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .fixture:hover {
+            border-color: rgba(255, 140, 0, 0.5);
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .fixture.live {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        .fixture.own-team {
+            border-color: #ff8c00;
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        .fixture-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .fixture-time {
+            background: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .fixture-status {
+            font-size: 0.8rem;
+            color: #cccccc;
+        }
+
+        .fixture-status.live {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .fixture-match {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fixture-teams {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .fixture-team {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .fixture-team.own {
+            color: #ff8c00;
+        }
+
+        .fixture-vs {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .fixture-score {
+            font-weight: bold;
+            color: #ff8c00;
+            font-size: 1.1rem;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* Liga System Info */
+        .system-info {
+            grid-column: 1 / -1;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .system-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .system-explanation {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .system-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .system-box h4 {
+            color: #ff8c00;
+            margin-bottom: 1rem;
+        }
+
+        .system-box p {
+            color: #cccccc;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsiveness */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ff8c00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .content-area {
+                grid-template-columns: 1fr;
+            }
+
+            .liga-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .league-table th,
+            .league-table td {
+                padding: 0.5rem 0.3rem;
+                font-size: 0.8rem;
+            }
+
+            .matchday-selector {
+                justify-content: center;
+            }
+
+            .matchday-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .fixture-teams {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .system-explanation {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Toggle Button -->
+        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>KICKERSCUP</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">👥</span>
+                        Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏋️</span>
+                        Training
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏟️</span>
+                        Stadion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚽</span>
+                        Live Spiele
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">💰</span>
+                        Transfermarkt
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏆</span>
+                        Pokale
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">📊</span>
+                        Liga
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        Einstellungen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2>Liga System</h2>
+                    <p>Dynamische Ligen mit fortlaufender Nummerierung</p>
+                </div>
+                <div class="header-controls">
+                    <div class="view-toggle">
+                        <button class="view-btn active">📊 Tabelle</button>
+                        <button class="view-btn">📅 Spielplan</button>
+                        <button class="view-btn">ℹ️ System</button>
+                    </div>
+                    <select class="league-selector" id="leagueSelector">
+                        <option value="3">Liga 3 (Teams 37-54)</option>
+                        <option value="2">Liga 2 (Teams 19-36)</option>
+                        <option value="1">Liga 1 (Teams 1-18)</option>
+                        <option value="4">Liga 4 (Teams 55-72)</option>
+                        <option value="5">Liga 5 (Teams 73-90)</option>
+                    </select>
+                </div>
+            </header>
+
+            <!-- Liga Info -->
+            <div class="liga-info">
+                <div class="info-card">
+                    <div class="info-value">Liga 3</div>
+                    <div class="info-label">Aktuelle Liga</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-value">7.</div>
+                    <div class="info-label">Tabellenplatz</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-value">18</div>
+                    <div class="info-label">Teams in Liga</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-value">12/34</div>
+                    <div class="info-label">Spieltag</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-value">28 Tage</div>
+                    <div class="info-label">Saison (01.-28.)</div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="content-area" id="contentArea">
+                <!-- League Table -->
+                <div class="league-table-section" id="tableSection">
+                    <div class="section-header">
+                        <h3 class="section-title">Liga 3 Tabelle</h3>
+                        <span style="color: #888; font-size: 0.9rem;">Teams 37-54</span>
+                    </div>
+                    
+                    <table class="league-table">
+                        <thead>
+                            <tr>
+                                <th>Pos</th>
+                                <th>Team</th>
+                                <th>Sp</th>
+                                <th>S</th>
+                                <th>U</th>
+                                <th>N</th>
+                                <th>Tore</th>
+                                <th>Diff</th>
+                                <th>Pkt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="position">1.</td>
+                                <td class="team-name">FC Voltage <span class="team-number">#41</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">8</td>
+                                <td class="stats">2</td>
+                                <td class="stats">1</td>
+                                <td class="stats">24:8</td>
+                                <td class="stats">+16</td>
+                                <td class="points">26</td>
+                            </tr>
+                            <tr>
+                                <td class="position">2.</td>
+                                <td class="team-name">Lions United <span class="team-number">#38</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">7</td>
+                                <td class="stats">3</td>
+                                <td class="stats">1</td>
+                                <td class="stats">21:11</td>
+                                <td class="stats">+10</td>
+                                <td class="points">24</td>
+                            </tr>
+                            <tr>
+                                <td class="position">3.</td>
+                                <td class="team-name">Storm Riders <span class="team-number">#44</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">7</td>
+                                <td class="stats">2</td>
+                                <td class="stats">2</td>
+                                <td class="stats">19:13</td>
+                                <td class="stats">+6</td>
+                                <td class="points">23</td>
+                            </tr>
+                            <tr>
+                                <td class="position">4.</td>
+                                <td class="team-name">Fire Eagles <span class="team-number">#39</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">6</td>
+                                <td class="stats">3</td>
+                                <td class="stats">2</td>
+                                <td class="stats">18:12</td>
+                                <td class="stats">+6</td>
+                                <td class="points">21</td>
+                            </tr>
+                            <tr>
+                                <td class="position">5.</td>
+                                <td class="team-name">Wild Wolves <span class="team-number">#45</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">6</td>
+                                <td class="stats">2</td>
+                                <td class="stats">3</td>
+                                <td class="stats">17:14</td>
+                                <td class="stats">+3</td>
+                                <td class="points">20</td>
+                            </tr>
+                            <tr>
+                                <td class="position">6.</td>
+                                <td class="team-name">Ice Sharks <span class="team-number">#51</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">5</td>
+                                <td class="stats">4</td>
+                                <td class="stats">2</td>
+                                <td class="stats">16:13</td>
+                                <td class="stats">+3</td>
+                                <td class="points">19</td>
+                            </tr>
+                            <tr class="own-team">
+                                <td class="position">7.</td>
+                                <td class="team-name">FC Thunderbolts <span class="team-number">#42</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">5</td>
+                                <td class="stats">3</td>
+                                <td class="stats">3</td>
+                                <td class="stats">15:14</td>
+                                <td class="stats">+1</td>
+                                <td class="points">18</td>
+                            </tr>
+                            <tr>
+                                <td class="position">8.</td>
+                                <td class="team-name">Golden Hawks <span class="team-number">#47</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">5</td>
+                                <td class="stats">2</td>
+                                <td class="stats">4</td>
+                                <td class="stats">14:15</td>
+                                <td class="stats">-1</td>
+                                <td class="points">17</td>
+                            </tr>
+                            <tr>
+                                <td class="position">9.</td>
+                                <td class="team-name">Blue Thunder <span class="team-number">#40</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">4</td>
+                                <td class="stats">4</td>
+                                <td class="stats">3</td>
+                                <td class="stats">13:13</td>
+                                <td class="stats">0</td>
+                                <td class="points">16</td>
+                            </tr>
+                            <tr>
+                                <td class="position">10.</td>
+                                <td class="team-name">Speed Demons <span class="team-number">#49</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">4</td>
+                                <td class="stats">3</td>
+                                <td class="stats">4</td>
+                                <td class="stats">12:14</td>
+                                <td class="stats">-2</td>
+                                <td class="points">15</td>
+                            </tr>
+                            <tr>
+                                <td class="position">11.</td>
+                                <td class="team-name">Night Stalkers <span class="team-number">#43</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">3</td>
+                                <td class="stats">5</td>
+                                <td class="stats">3</td>
+                                <td class="stats">11:13</td>
+                                <td class="stats">-2</td>
+                                <td class="points">14</td>
+                            </tr>
+                            <tr>
+                                <td class="position">12.</td>
+                                <td class="team-name">Steel Panthers <span class="team-number">#48</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">3</td>
+                                <td class="stats">4</td>
+                                <td class="stats">4</td>
+                                <td class="stats">10:14</td>
+                                <td class="stats">-4</td>
+                                <td class="points">13</td>
+                            </tr>
+                            <tr>
+                                <td class="position">13.</td>
+                                <td class="team-name">Crimson Force <span class="team-number">#46</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">3</td>
+                                <td class="stats">3</td>
+                                <td class="stats">5</td>
+                                <td class="stats">9:16</td>
+                                <td class="stats">-7</td>
+                                <td class="points">12</td>
+                            </tr>
+                            <tr>
+                                <td class="position">14.</td>
+                                <td class="team-name">Shadow Hunters <span class="team-number">#52</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">2</td>
+                                <td class="stats">5</td>
+                                <td class="stats">4</td>
+                                <td class="stats">8:15</td>
+                                <td class="stats">-7</td>
+                                <td class="points">11</td>
+                            </tr>
+                            <tr>
+                                <td class="position">15.</td>
+                                <td class="team-name">Electric Storm <span class="team-number">#50</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">2</td>
+                                <td class="stats">4</td>
+                                <td class="stats">5</td>
+                                <td class="stats">7:17</td>
+                                <td class="stats">-10</td>
+                                <td class="points">10</td>
+                            </tr>
+                            <tr>
+                                <td class="position">16.</td>
+                                <td class="team-name">Frost Giants <span class="team-number">#37</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">2</td>
+                                <td class="stats">3</td>
+                                <td class="stats">6</td>
+                                <td class="stats">6:18</td>
+                                <td class="stats">-12</td>
+                                <td class="points">9</td>
+                            </tr>
+                            <tr>
+                                <td class="position">17.</td>
+                                <td class="team-name">Desert Vipers <span class="team-number">#53</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">1</td>
+                                <td class="stats">4</td>
+                                <td class="stats">6</td>
+                                <td class="stats">5:19</td>
+                                <td class="stats">-14</td>
+                                <td class="points">7</td>
+                            </tr>
+                            <tr>
+                                <td class="position">18.</td>
+                                <td class="team-name">Ocean Warriors <span class="team-number">#54</span></td>
+                                <td class="stats">11</td>
+                                <td class="stats">1</td>
+                                <td class="stats">2</td>
+                                <td class="stats">8</td>
+                                <td class="stats">4:22</td>
+                                <td class="stats">-18</td>
+                                <td class="points">5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Fixtures Section -->
+                <div class="fixtures-section" id="fixturesSection">
+                    <div class="section-header">
+                        <h3 class="section-title">Spielplan Liga 3</h3>
+                        <span style="color: #888; font-size: 0.9rem;">Spieltag 12</span>
+                    </div>
+                    
+                    <div class="matchday-selector">
+                        <button class="matchday-btn">ST 10</button>
+                        <button class="matchday-btn">ST 11</button>
+                        <button class="matchday-btn active">ST 12</button>
+                        <button class="matchday-btn">ST 13</button>
+                        <button class="matchday-btn">ST 14</button>
+                    </div>
+                    
+                    <div class="fixtures-list">
+                        <div class="fixture own-team">
+                            <div class="fixture-header">
+                                <div class="fixture-time">Heute 18:15</div>
+                                <div class="fixture-status">Bereit</div>
+                            </div>
+                            <div class="fixture-match">
+                                <div class="fixture-teams">
+                                    <span class="fixture-team own">FC Thunderbolts</span>
+                                    <span class="fixture-vs">vs</span>
+                                    <span class="fixture-team">Ice Sharks</span>
+                                </div>
+                                <div class="fixture-score">- : -</div>
+                            </div>
+                        </div>
+                        
+                        <div class="fixture live">
+                            <div class="fixture-header">
+                                <div class="fixture-time">LIVE 18:15</div>
+                                <div class="fixture-status live">67' Läuft</div>
+                            </div>
+                            <div class="fixture-match">
+                                <div class="fixture-teams">
+                                    <span class="fixture-team">FC Voltage</span>
+                                    <span class="fixture-vs">vs</span>
+                                    <span class="fixture-team">Lions United</span>
+                                </div>
+                                <div class="fixture-score">1 : 2</div>
+                            </div>
+                        </div>
+                        
+                        <div class="fixture">
+                            <div class="fixture-header">
+                                <div class="fixture-time">Heute 20:00</div>
+                                <div class="fixture-status">Bereit</div>
+                            </div>
+                            <div class="fixture-match">
+                                <div class="fixture-teams">
+                                    <span class="fixture-team">Storm Riders</span>
+                                    <span class="fixture-vs">vs</span>
+                                    <span class="fixture-team">Fire Eagles</span>
+                                </div>
+                                <div class="fixture-score">- : -</div>
+                            </div>
+                        </div>
+                        
+                        <div class="fixture">
+                            <div class="fixture-header">
+                                <div class="fixture-time">Heute 20:00</div>
+                                <div class="fixture-status">Bereit</div>
+                            </div>
+                            <div class="fixture-match">
+                                <div class="fixture-teams">
+                                    <span class="fixture-team">Wild Wolves</span>
+                                    <span class="fixture-vs">vs</span>
+                                    <span class="fixture-team">Golden Hawks</span>
+                                </div>
+                                <div class="fixture-score">- : -</div>
+                            </div>
+                        </div>
+                        
+                        <div class="fixture">
+                            <div class="fixture-header">
+                                <div class="fixture-time">Morgen 18:15</div>
+                                <div class="fixture-status">Geplant</div>
+                            </div>
+                            <div class="fixture-match">
+                                <div class="fixture-teams">
+                                    <span class="fixture-team">Blue Thunder</span>
+                                    <span class="fixture-vs">vs</span>
+                                    <span class="fixture-team">Speed Demons</span>
+                                </div>
+                                <div class="fixture-score">- : -</div>
+                            </div>
+                        </div>
+                        
+                        <div class="fixture">
+                            <div class="fixture-header">
+                                <div class="fixture-time">Morgen 20:00</div>
+                                <div class="fixture-status">Geplant</div>
+                            </div>
+                            <div class="fixture-match">
+                                <div class="fixture-teams">
+                                    <span class="fixture-team">Night Stalkers</span>
+                                    <span class="fixture-vs">vs</span>
+                                    <span class="fixture-team">Steel Panthers</span>
+                                </div>
+                                <div class="fixture-score">- : -</div>
+                            </div>
+                        </div>
+                        
+                        <div class="fixture">
+                            <div class="fixture-header">
+                                <div class="fixture-time">Morgen 20:00</div>
+                                <div class="fixture-status">Geplant</div>
+                            </div>
+                            <div class="fixture-match">
+                                <div class="fixture-teams">
+                                    <span class="fixture-team">Crimson Force</span>
+                                    <span class="fixture-vs">vs</span>
+                                    <span class="fixture-team">Shadow Hunters</span>
+                                </div>
+                                <div class="fixture-score">- : -</div>
+                            </div>
+                        </div>
+                        
+                        <div class="fixture">
+                            <div class="fixture-header">
+                                <div class="fixture-time">Übermorgen 18:15</div>
+                                <div class="fixture-status">Geplant</div>
+                            </div>
+                            <div class="fixture-match">
+                                <div class="fixture-teams">
+                                    <span class="fixture-team">Electric Storm</span>
+                                    <span class="fixture-vs">vs</span>
+                                    <span class="fixture-team">Frost Giants</span>
+                                </div>
+                                <div class="fixture-score">- : -</div>
+                            </div>
+                        </div>
+                        
+                        <div class="fixture">
+                            <div class="fixture-header">
+                                <div class="fixture-time">Übermorgen 20:00</div>
+                                <div class="fixture-status">Geplant</div>
+                            </div>
+                            <div class="fixture-match">
+                                <div class="fixture-teams">
+                                    <span class="fixture-team">Desert Vipers</span>
+                                    <span class="fixture-vs">vs</span>
+                                    <span class="fixture-team">Ocean Warriors</span>
+                                </div>
+                                <div class="fixture-score">- : -</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liga System Info -->
+            <div class="system-info" id="systemInfo" style="display: none;">
+                <div class="system-title">🏆 Kickerscup Liga-System</div>
+                <div class="system-explanation">
+                    <div class="system-box">
+                        <h4>📊 Fortlaufende Nummerierung</h4>
+                        <p>Teams erhalten fortlaufende Nummern (1, 2, 3, ...). Die ersten 18 Teams bilden Liga 1, Teams 19-36 bilden Liga 2, und so weiter. Jede Liga hat exakt 18 Teams.</p>
+                    </div>
+                    
+                    <div class="system-box">
+                        <h4>⚖️ Dynamische Neuberechnung</h4>
+                        <p>Nach jeder Saison werden alle Teams nach Punkten, Torverhältnis und weiteren Kriterien neu sortiert. Die besten 18 Teams spielen in Liga 1, die nächsten 18 in Liga 2, etc.</p>
+                    </div>
+                    
+                    <div class="system-box">
+                        <h4>🔄 Gemischte Ligen</h4>
+                        <p>Dadurch entstehen immer ausgewogene Ligen mit Teams ähnlicher Stärke. Es gibt keine festen Auf- oder Abstiege, sondern eine komplette Neuverteilung basierend auf der Leistung.</p>
+                    </div>
+                    
+                    <div class="system-box">
+                        <h4>📅 Saison-Zyklus</h4>
+                        <p>Eine Saison dauert 28 Tage (01.-28. eines Monats). Nach jeder Saison erfolgt die Neuberechnung der Liga-Einteilung für den nächsten Monat.</p>
+                    </div>
+                    
+                    <div class="system-box">
+                        <h4>👥 Multi-Team Management</h4>
+                        <p>Manager können mehrere Teams in derselben Liga haben. Da es keinen direkten Spielerhandel zwischen Managern gibt, ist dies fair und ohne Manipulationsgefahr möglich.</p>
+                    </div>
+                    
+                    <div class="system-box">
+                        <h4>🎯 Vorteile des Systems</h4>
+                        <p>Immer spannende und ausgeglichene Spiele, da Teams ähnlicher Stärke aufeinandertreffen. Kein Frust durch zu starke oder zu schwache Gegner.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleButton = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggleButton.contains(event.target)) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // View toggle handling
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.textContent.trim();
+                const tableSection = document.getElementById('tableSection');
+                const fixturesSection = document.getElementById('fixturesSection');
+                const systemInfo = document.getElementById('systemInfo');
+                const contentArea = document.getElementById('contentArea');
+                
+                // Hide all sections
+                tableSection.style.display = 'none';
+                fixturesSection.style.display = 'none'; 
+                systemInfo.style.display = 'none';
+                
+                if (view.includes('Tabelle')) {
+                    contentArea.style.gridTemplateColumns = '1fr 1fr';
+                    tableSection.style.display = 'block';
+                    fixturesSection.style.display = 'block';
+                } else if (view.includes('Spielplan')) {
+                    contentArea.style.gridTemplateColumns = '1fr';
+                    fixturesSection.style.display = 'block';
+                } else if (view.includes('System')) {
+                    contentArea.style.gridTemplateColumns = '1fr';
+                    systemInfo.style.display = 'block';
+                }
+            });
+        });
+
+        // League selector handling
+        document.getElementById('leagueSelector').addEventListener('change', function() {
+            const selectedLiga = this.value;
+            const ligaNames = {
+                '1': 'Liga 1 (Teams 1-18)',
+                '2': 'Liga 2 (Teams 19-36)', 
+                '3': 'Liga 3 (Teams 37-54)',
+                '4': 'Liga 4 (Teams 55-72)',
+                '5': 'Liga 5 (Teams 73-90)'
+            };
+            
+            // Update header info
+            document.querySelector('.info-card .info-value').textContent = `Liga ${selectedLiga}`;
+            document.querySelector('.section-title').textContent = `Liga ${selectedLiga} Tabelle`;
+            document.querySelectorAll('.section-header span')[0].textContent = ligaNames[selectedLiga].split('(')[1].replace(')', '');
+            
+            // Simulate loading new data
+            console.log(`Loading Liga ${selectedLiga} data...`);
+            
+            // You would normally fetch new data here
+            // For demo purposes, we'll just show a loading state
+            const tableBody = document.querySelector('.league-table tbody');
+            tableBody.style.opacity = '0.5';
+            setTimeout(() => {
+                tableBody.style.opacity = '1';
+                alert(`Liga ${selectedLiga} Daten geladen! (Demo)`);
+            }, 500);
+        });
+
+        // Matchday selector handling
+        document.querySelectorAll('.matchday-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.matchday-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const matchday = this.textContent.trim();
+                console.log(`Loading ${matchday} fixtures...`);
+                
+                // Simulate fixture loading
+                const fixturesList = document.querySelector('.fixtures-list');
+                fixturesList.style.opacity = '0.5';
+                setTimeout(() => {
+                    fixturesList.style.opacity = '1';
+                    // In a real app, you'd load the actual fixtures for this matchday
+                }, 300);
+            });
+        });
+
+        // Fixture click handling
+        document.querySelectorAll('.fixture').forEach(fixture => {
+            fixture.addEventListener('click', function() {
+                const teams = this.querySelectorAll('.fixture-team');
+                const homeTeam = teams[0].textContent;
+                const awayTeam = teams[1].textContent;
+                const status = this.querySelector('.fixture-status').textContent;
+                
+                if (status === 'Läuft' || status.includes('Läuft')) {
+                    alert(`🔴 LIVE-Spiel:\n${homeTeam} vs ${awayTeam}\n\nZum Live-Ticker wechseln?`);
+                } else if (this.classList.contains('own-team')) {
+                    alert(`⚽ Dein nächstes Spiel:\n${homeTeam} vs ${awayTeam}\n\nAufstellung überprüfen?`);
+                } else {
+                    alert(`📊 Spiel-Details:\n${homeTeam} vs ${awayTeam}\n\nStatistiken anzeigen?`);
+                }
+            });
+        });
+
+        // Simulate live score updates
+        function updateLiveScores() {
+            const liveFixtures = document.querySelectorAll('.fixture.live');
+            liveFixtures.forEach(fixture => {
+                const scoreElement = fixture.querySelector('.fixture-score');
+                const currentScore = scoreElement.textContent.split(' : ');
+                
+                if (Math.random() < 0.1) { // 10% chance to update score
+                    let homeScore = parseInt(currentScore[0]);
+                    let awayScore = parseInt(currentScore[1]);
+                    
+                    if (Math.random() < 0.6) {
+                        homeScore++;
+                    } else {
+                        awayScore++;
+                    }
+                    
+                    scoreElement.textContent = `${homeScore} : ${awayScore}`;
+                    
+                    // Flash animation
+                    scoreElement.style.animation = 'none';
+                    setTimeout(() => {
+                        scoreElement.style.animation = 'pulse 0.5s ease-in-out';
+                    }, 10);
+                }
+            });
+        }
+
+        // Update live scores every 10 seconds
+        setInterval(updateLiveScores, 10000);
+
+        // Table row hover effects with team info
+        document.querySelectorAll('.league-table tbody tr').forEach(row => {
+            row.addEventListener('click', function() {
+                const teamName = this.querySelector('.team-name').textContent;
+                const position = this.querySelector('.position').textContent;
+                const points = this.querySelector('.points').textContent;
+                
+                if (this.classList.contains('own-team')) {
+                    alert(`⭐ Dein Team:\n${teamName}\n\nPlatz ${position} mit ${points} Punkten\n\nTeam-Details anzeigen?`);
+                } else {
+                    alert(`📋 Team-Info:\n${teamName}\n\nPlatz ${position} mit ${points} Punkten\n\nSpielplan anzeigen?`);
+                }
+            });
+        });
+
+        // Add CSS animation for score updates  
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); color: #ff8c00; }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

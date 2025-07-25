@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Live Spiel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Game Header */
+        .game-header {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #e74c3c;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.7; }
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .match-info {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+            text-align: center;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .team-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .team-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .team-formation {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .match-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ff8c00;
+            text-shadow: 0 0 20px rgba(255, 140, 0, 0.5);
+        }
+
+        .match-time {
+            font-size: 1.5rem;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .match-status {
+            color: #2ecc71;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .real-time-info {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Game Layout */
+        .game-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 2rem;
+            height: calc(100vh - 200px);
+        }
+
+        /* Formation Display */
+        .formation-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .formation-title {
+            color: #ff8c00;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .formation-field {
+            background: linear-gradient(to bottom, #2ecc71 0%, #27ae60 50%, #2ecc71 100%);
+            border-radius: 10px;
+            height: 400px;
+            position: relative;
+            margin-bottom: 1rem;
+            border: 3px solid #ffffff;
+        }
+
+        .field-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 7px;
+        }
+
+        .field-lines::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: white;
+            transform: translateY(-50%);
+        }
+
+        .field-lines::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60px;
+            height: 60px;
+            border: 2px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .player-position {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 140, 0, 0.9);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .player-position:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+
+        .player-position.goalkeeper {
+            background: #e74c3c;
+        }
+
+        .substitution-panel {
+            margin-top: 1rem;
+        }
+
+        .sub-button {
+            width: 100%;
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.4);
+            color: #ff8c00;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .sub-button:hover {
+            background: rgba(255, 140, 0, 0.3);
+        }
+
+        .sub-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Live Ticker */
+        .live-ticker {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ticker-header {
+            color: #ff8c00;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .ticker-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .ticker-event {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .ticker-event.new {
+            animation: slideIn 0.5s ease-out;
+            border-left-color: #ff8c00;
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .event-time {
+            background: #ff8c00;
+            color: #000;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .event-icon {
+            font-size: 1.2rem;
+            margin-top: 0.1rem;
+        }
+
+        .event-description {
+            flex: 1;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        .event-player {
+            color: #ff8c00;
+            font-weight: bold;
+        }
+
+        /* Statistics Panel */
+        .stats-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .stats-title {
+            color: #ff8c00;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .stat-values {
+            display: flex;
+            gap: 2rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .stat-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+            transition: width 0.3s ease;
+        }
+
+        /* Mobile Responsiveness */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ff8c00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .match-info {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .team-logo {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .score {
+                font-size: 2rem;
+            }
+
+            .game-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                height: auto;
+            }
+
+            .formation-field {
+                height: 300px;
+            }
+
+            .player-position {
+                width: 25px;
+                height: 25px;
+                font-size: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Toggle Button -->
+        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>KICKERSCUP</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">👥</span>
+                        Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏋️</span>
+                        Training
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏟️</span>
+                        Stadion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">⚽</span>
+                        Live Spiele
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">💰</span>
+                        Transfermarkt
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏆</span>
+                        Pokale
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Statistiken
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        Einstellungen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Game Header -->
+            <div class="game-header">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    LIVE
+                </div>
+                
+                <div class="match-info">
+                    <div class="team">
+                        <div class="team-logo">FT</div>
+                        <div class="team-name">FC Thunderbolts</div>
+                        <div class="team-formation">4-3-3</div>
+                    </div>
+                    
+                    <div class="match-center">
+                        <div class="score">2 : 1</div>
+                        <div class="match-time">67'</div>
+                        <div class="match-status">2. Halbzeit</div>
+                        <div class="real-time-info">Echte Zeit: 22:37 (noch 8 Min.)</div>
+                    </div>
+                    
+                    <div class="team">
+                        <div class="team-logo">SE</div>
+                        <div class="team-name">SC Eagles</div>
+                        <div class="team-formation">4-4-2</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Layout -->
+            <div class="game-layout">
+                <!-- Left Formation -->
+                <div class="formation-panel">
+                    <div class="formation-title">FC Thunderbolts (4-3-3)</div>
+                    <div class="formation-field">
+                        <div class="field-lines"></div>
+                        
+                        <!-- Goalkeeper -->
+                        <div class="player-position goalkeeper" style="bottom: 10px; left: 50%; transform: translateX(-50%);" title="Manuel Neuer">1</div>
+                        
+                        <!-- Defense -->
+                        <div class="player-position" style="bottom: 80px; left: 15%;" title="David Alaba">27</div>
+                        <div class="player-position" style="bottom: 80px; left: 35%;" title="Virgil van Dijk">4</div>
+                        <div class="player-position" style="bottom: 80px; left: 65%;" title="Antonio Rüdiger">2</div>
+                        <div class="player-position" style="bottom: 80px; right: 15%;" title="Joshua Kimmich">6</div>
+                        
+                        <!-- Midfield -->
+                        <div class="player-position" style="bottom: 180px; left: 25%;" title="Leon Goretzka">8</div>
+                        <div class="player-position" style="bottom: 180px; left: 50%; transform: translateX(-50%);" title="Kevin De Bruyne">17</div>
+                        <div class="player-position" style="bottom: 180px; right: 25%;" title="Jamal Musiala">42</div>
+                        
+                        <!-- Attack -->
+                        <div class="player-position" style="bottom: 280px; left: 20%;" title="Kingsley Coman">11</div>
+                        <div class="player-position" style="bottom: 280px; left: 50%; transform: translateX(-50%);" title="Erling Haaland">9</div>
+                        <div class="player-position" style="bottom: 280px; right: 20%;" title="Leroy Sané">10</div>
+                    </div>
+                    
+                    <div class="substitution-panel">
+                        <button class="sub-button" onclick="makeSubstitution()">🔄 Wechsel durchführen</button>
+                        <button class="sub-button" onclick="changeTactics()">⚙️ Taktik ändern</button>
+                        <button class="sub-button" id="pauseBtn" onclick="requestPause()">⏸️ Pause beantragen</button>
+                    </div>
+                </div>
+
+                <!-- Live Ticker -->
+                <div class="live-ticker">
+                    <div class="ticker-header">
+                        ⚡ Live-Ticker
+                    </div>
+                    <div class="ticker-content" id="tickerContent">
+                        <div class="ticker-event">
+                            <div class="event-time">67'</div>
+                            <div class="event-icon">🟨</div>
+                            <div class="event-description">
+                                Gelbe Karte für <span class="event-player">Leon Goretzka</span> (FC Thunderbolts) wegen Foulspiels
+                            </div>
+                        </div>
+                        
+                        <div class="ticker-event">
+                            <div class="event-time">63'</div>
+                            <div class="event-icon">⚽</div>
+                            <div class="event-description">
+                                <strong>TOR!</strong> <span class="event-player">Erling Haaland</span> bringt FC Thunderbolts mit 2:1 in Führung! Traumpass von De Bruyne!
+                            </div>
+                        </div>
+                        
+                        <div class="ticker-event">
+                            <div class="event-time">58'</div>
+                            <div class="event-icon">🔄</div>
+                            <div class="event-description">
+                                Wechsel bei SC Eagles: <span class="event-player">Martinez</span> kommt für <span class="event-player">Rodriguez</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ticker-event">
+                            <div class="event-time">52'</div>
+                            <div class="event-icon">⚽</div>
+                            <div class="event-description">
+                                <strong>TOR!</strong> Ausgleich durch <span class="event-player">Johnson</span> (SC Eagles) - 1:1! Kopfball nach Ecke
+                            </div>
+                        </div>
+                        
+                        <div class="ticker-event">
+                            <div class="event-time">46'</div>
+                            <div class="event-icon">⚽</div>
+                            <div class="event-description">
+                                Anpfiff zur 2. Halbzeit
+                            </div>
+                        </div>
+                        
+                        <div class="ticker-event">
+                            <div class="event-time">23'</div>
+                            <div class="event-icon">⚽</div>
+                            <div class="event-description">
+                                <strong>TOR!</strong> <span class="event-player">Kingsley Coman</span> bringt FC Thunderbolts mit 1:0 in Führung! Schöner Schlenzer ins lange Eck
+                            </div>
+                        </div>
+                        
+                        <div class="ticker-event">
+                            <div class="event-time">1'</div>
+                            <div class="event-icon">⚽</div>
+                            <div class="event-description">
+                                Anpfiff! Das Spiel läuft
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-panel">
+                    <div class="stats-title">Spielstatistiken</div>
+                    
+                    <div class="stat-row">
+                        <div class="stat-values">
+                            <span>58%</span>
+                        </div>
+                        <div class="stat-label">Ballbesitz</div>
+                        <div class="stat-values">
+                            <span>42%</span>
+                        </div>
+                    </div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 58%;"></div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <div class="stat-values">
+                            <span>12</span>
+                        </div>
+                        <div class="stat-label">Torschüsse</div>
+                        <div class="stat-values">
+                            <span>8</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <div class="stat-values">
+                            <span>7</span>
+                        </div>
+                        <div class="stat-label">Schüsse aufs Tor</div>
+                        <div class="stat-values">
+                            <span>4</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <div class="stat-values">
+                            <span>3</span>
+                        </div>
+                        <div class="stat-label">Ecken</div>
+                        <div class="stat-values">
+                            <span>6</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <div class="stat-values">
+                            <span>8</span>
+                        </div>
+                        <div class="stat-label">Fouls</div>
+                        <div class="stat-values">
+                            <span>11</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <div class="stat-values">
+                            <span>1</span>
+                        </div>
+                        <div class="stat-label">Gelbe Karten</div>
+                        <div class="stat-values">
+                            <span>2</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <div class="stat-values">
+                            <span>89%</span>
+                        </div>
+                        <div class="stat-label">Passgenauigkeit</div>
+                        <div class="stat-values">
+                            <span>81%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let gameTime = 67; // Current game minute
+        let realTimeStart = new Date();
+        realTimeStart.setMinutes(realTimeStart.getMinutes() - 22); // Game started 22 real minutes ago
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleButton = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggleButton.contains(event.target)) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Update game time and real time display
+        function updateGameTime() {
+            const now = new Date();
+            const elapsedRealMinutes = (now - realTimeStart) / (1000 * 60);
+            const elapsedGameMinutes = Math.floor(elapsedRealMinutes * 3); // 1:3 ratio
+            const remainingRealMinutes = Math.max(0, 30 - elapsedRealMinutes);
+            
+            gameTime = Math.min(90, elapsedGameMinutes);
+            
+            // Update display
+            document.querySelector('.match-time').textContent = gameTime + "'";
+            
+            const realTimeInfo = document.querySelector('.real-time-info');
+            const currentTime = now.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'});
+            realTimeInfo.textContent = `Echte Zeit: ${currentTime} (noch ${Math.ceil(remainingRealMinutes)} Min.)`;
+            
+            // Update match status
+            const statusElement = document.querySelector('.match-status');
+            if (gameTime <= 45) {
+                statusElement.textContent = '1. Halbzeit';
+            } else if (gameTime <= 90) {
+                statusElement.textContent = '2. Halbzeit';
+            } else {
+                statusElement.textContent = 'Abpfiff';
+            }
+            
+            // End game after 30 real minutes
+            if (remainingRealMinutes <= 0) {
+                endGame();
+            }
+        }
+
+        // Simulate random game events
+        function simulateGameEvent() {
+            const events = [
+                {icon: '⚽', type: 'goal', text: 'TOR! {player} erzielt ein wunderschönes Tor!'},
+                {icon: '🟨', type: 'card', text: 'Gelbe Karte für {player} wegen Foulspiels'},
+                {icon: '🔄', type: 'substitution', text: 'Wechsel: {player} kommt für {player2}'},
+                {icon: '⚠️', type: 'chance', text: 'Große Chance für {player}! Knapp vorbei!'},
+                {icon: '🥅', type: 'save', text: 'Glänzende Parade! {player} verhindert das Tor'},
+                {icon: '⚽', type: 'corner', text: 'Ecke für {team}. Gefährliche Situation!'},
+                {icon: '🚑', type: 'injury', text: '{player} liegt am Boden. Behandlung erforderlich'}
+            ];
+            
+            const players = ['Haaland', 'De Bruyne', 'Neuer', 'Kimmich', 'Coman', 'Musiala', 'Goretzka'];
+            const teams = ['FC Thunderbolts', 'SC Eagles'];
+            
+            // Random event every 15-45 seconds
+            if (Math.random() < 0.3) {
+                const event = events[Math.floor(Math.random() * events.length)];
+                const player = players[Math.floor(Math.random() * players.length)];
+                const player2 = players[Math.floor(Math.random() * players.length)];
+                const team = teams[Math.floor(Math.random() * teams.length)];
+                
+                let description = event.text
+                    .replace('{player}', `<span class="event-player">${player}</span>`)
+                    .replace('{player2}', `<span class="event-player">${player2}</span>`)
+                    .replace('{team}', team);
+                
+                addTickerEvent(gameTime, event.icon, description);
+                
+                // Update score occasionally on goals
+                if (event.type === 'goal' && Math.random() < 0.7) {
+                    updateScore();
+                }
+            }
+        }
+
+        // Add new ticker event
+        function addTickerEvent(minute, icon, description) {
+            const tickerContent = document.getElementById('tickerContent');
+            const newEvent = document.createElement('div');
+            newEvent.className = 'ticker-event new';
+            newEvent.innerHTML = `
+                <div class="event-time">${minute}'</div>
+                <div class="event-icon">${icon}</div>
+                <div class="event-description">${description}</div>
+            `;
+            
+            tickerContent.insertBefore(newEvent, tickerContent.firstChild);
+            
+            // Remove 'new' class after animation
+            setTimeout(() => {
+                newEvent.classList.remove('new');
+            }, 500);
+            
+            // Keep only last 10 events
+            const events = tickerContent.querySelectorAll('.ticker-event');
+            if (events.length > 10) {
+                tickerContent.removeChild(events[events.length - 1]);
+            }
+        }
+
+        // Update score randomly
+        function updateScore() {
+            const scoreElement = document.querySelector('.score');
+            const currentScore = scoreElement.textContent.split(' : ');
+            let homeScore = parseInt(currentScore[0]);
+            let awayScore = parseInt(currentScore[1]);
+            
+            if (Math.random() < 0.6) {
+                homeScore++;
+            } else {
+                awayScore++;
+            }
+            
+            scoreElement.textContent = `${homeScore} : ${awayScore}`;
+        }
+
+        // Update statistics randomly
+        function updateStatistics() {
+            const statFills = document.querySelectorAll('.stat-fill');
+            statFills.forEach(fill => {
+                const currentWidth = parseInt(fill.style.width) || 50;
+                const change = (Math.random() - 0.5) * 10;
+                const newWidth = Math.max(20, Math.min(80, currentWidth + change));
+                fill.style.width = newWidth + '%';
+            });
+            
+            // Update stat values
+            const statValues = document.querySelectorAll('.stat-values span');
+            statValues.forEach(value => {
+                if (!isNaN(parseInt(value.textContent))) {
+                    const current = parseInt(value.textContent);
+                    const change = Math.floor((Math.random() - 0.5) * 3);
+                    value.textContent = Math.max(0, current + change);
+                }
+            });
+        }
+
+        // Game interaction functions
+        function makeSubstitution() {
+            const players = ['Müller', 'Gnabry', 'Süle', 'Wirtz', 'Bellingham'];
+            const outPlayer = ['Coman', 'Musiala', 'Goretzka'][Math.floor(Math.random() * 3)];
+            const inPlayer = players[Math.floor(Math.random() * players.length)];
+            
+            addTickerEvent(gameTime, '🔄', `Wechsel bei FC Thunderbolts: <span class="event-player">${inPlayer}</span> kommt für <span class="event-player">${outPlayer}</span>`);
+            
+            alert(`Wechsel durchgeführt!\n${inPlayer} kommt für ${outPlayer}`);
+        }
+
+        function changeTactics() {
+            const tactics = ['4-4-2', '3-5-2', '4-2-3-1', '5-3-2', '4-3-3'];
+            const newTactic = tactics[Math.floor(Math.random() * tactics.length)];
+            
+            document.querySelector('.formation-title').textContent = `FC Thunderbolts (${newTactic})`;
+            document.querySelector('.team-formation').textContent = newTactic;
+            
+            addTickerEvent(gameTime, '⚙️', `Taktikwechsel bei FC Thunderbolts: Umstellung auf ${newTactic}`);
+            
+            alert(`Taktik geändert zu: ${newTactic}`);
+        }
+
+        function requestPause() {
+            const pauseBtn = document.getElementById('pauseBtn');
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = '⏸️ Pause beantragt';
+            pauseBtn.style.opacity = '0.5';
+            
+            addTickerEvent(gameTime, '⏸️', 'FC Thunderbolts beantragt eine Pause');
+            
+            setTimeout(() => {
+                pauseBtn.disabled = false;
+                pauseBtn.textContent = '⏸️ Pause beantragen';
+                pauseBtn.style.opacity = '1';
+            }, 10000);
+        }
+
+        function endGame() {
+            document.querySelector('.live-indicator').innerHTML = '<div class="live-dot" style="background: #95a5a6;"></div>BEENDET';
+            document.querySelector('.live-indicator').style.background = '#95a5a6';
+            document.querySelector('.match-status').textContent = 'Spielende';
+            document.querySelector('.real-time-info').textContent = 'Spiel beendet';
+            
+            addTickerEvent(90, '🏁', '<strong>ABPFIFF!</strong> Das Spiel ist beendet.');
+            
+            // Disable interaction buttons
+            document.querySelectorAll('.sub-button').forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+            });
+            
+            // Stop all intervals
+            clearInterval(gameInterval);
+            clearInterval(eventInterval);
+            clearInterval(statsInterval);
+        }
+
+        // Player position hover effects
+        document.querySelectorAll('.player-position').forEach(player => {
+            player.addEventListener('click', function() {
+                const playerName = this.getAttribute('title');
+                const playerStats = `
+                    ${playerName} - Aktuelle Form:
+                    
+                    ⚽ Tore: ${Math.floor(Math.random() * 10)}
+                    🎯 Schüsse: ${Math.floor(Math.random() * 20)}
+                    ⭐ Bewertung: ${(Math.random() * 3 + 7).toFixed(1)}
+                    💪 Kondition: ${Math.floor(Math.random() * 30 + 70)}%
+                `;
+                alert(playerStats);
+            });
+        });
+
+        // Start game simulation
+        const gameInterval = setInterval(updateGameTime, 1000);
+        const eventInterval = setInterval(simulateGameEvent, 3000);
+        const statsInterval = setInterval(updateStatistics, 5000);
+
+        // Initial setup
+        updateGameTime();
+
+        // Add some initial events
+        setTimeout(() => {
+            addTickerEvent(gameTime - 1, '⚽', 'Schuss von <span class="event-player">Haaland</span> - knapp über das Tor!');
+        }, 2000);
+
+        setTimeout(() => {
+            addTickerEvent(gameTime - 2, '🥅', 'Tolle Parade von <span class="event-player">Neuer</span>! Hält den Kasten sauber');
+        }, 4000);
+    </script>
+</body>
+</html>

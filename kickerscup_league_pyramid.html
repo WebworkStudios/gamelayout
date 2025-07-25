@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Liga Pyramide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .pyramid-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .pyramid-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .pyramid-title {
+            color: #ff8c00;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .pyramid-subtitle {
+            color: #cccccc;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .pyramid-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff8c00;
+            display: block;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Pyramid Structure */
+        .pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .pyramid-level {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            position: relative;
+        }
+
+        .liga-box {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-width: 200px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liga-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .liga-box:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(255, 140, 0, 0.6);
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+        }
+
+        .liga-box:hover::before {
+            opacity: 1;
+        }
+
+        .liga-box.own-team {
+            border-color: #ff8c00;
+            background: rgba(255, 140, 0, 0.1);
+            animation: glow 2s infinite alternate;
+        }
+
+        .liga-box.own-team::before {
+            opacity: 1;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 5px 20px rgba(255, 140, 0, 0.3); }
+            to { box-shadow: 0 5px 30px rgba(255, 140, 0, 0.6); }
+        }
+
+        .liga-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .liga-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.8rem;
+        }
+
+        .liga-teams {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .liga-leader {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .leader-name {
+            color: #2ecc71;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .leader-points {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .own-team-indicator {
+            background: #ff8c00;
+            color: #000;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        /* Navigation Arrows */
+        .pyramid-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid rgba(255, 140, 0, 0.6);
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -30px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Liga Detail Panel */
+        .liga-detail {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .liga-detail.open {
+            right: 0;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-title {
+            color: #ff8c00;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-btn:hover {
+            color: #ff8c00;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h4 {
+            color: #ff8c00;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .team-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .team-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            margin-bottom: 0.3rem;
+            transition: background 0.2s ease;
+        }
+
+        .team-item:hover {
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        .team-item.own {
+            background: rgba(255, 140, 0, 0.2);
+            border-left: 3px solid #ff8c00;
+        }
+
+        .team-name-small {
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .team-points-small {
+            color: #2ecc71;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .quick-btn {
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.4);
+            color: #ff8c00;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .quick-btn:hover {
+            background: rgba(255, 140, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .pyramid-stats {
+                gap: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .pyramid {
+                gap: 1.5rem;
+            }
+
+            .liga-box {
+                min-width: 150px;
+                padding: 1rem;
+            }
+
+            .liga-number {
+                font-size: 1.5rem;
+            }
+
+            .liga-name {
+                font-size: 1rem;
+            }
+
+            .liga-detail {
+                width: 100%;
+                right: -100%;
+            }
+
+            .pyramid-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pyramid-level {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .liga-box {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pyramid-container">
+        <!-- Header -->
+        <div class="pyramid-header">
+            <h1 class="pyramid-title">🏆 Liga-Pyramide</h1>
+            <p class="pyramid-subtitle">Interaktive Übersicht aller Kickerscup Ligen</p>
+            
+            <div class="pyramid-stats">
+                <div class="stat-item">
+                    <span class="stat-value">127</span>
+                    <span class="stat-label">Ligen aktiv</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">2,286</span>
+                    <span class="stat-label">Teams total</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">3</span>
+                    <span class="stat-label">Deine Teams</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="quick-btn" onclick="jumpToOwnTeam()">🎯 Zu meinen Teams</button>
+            <button class="quick-btn" onclick="showTopLigas()">👑 Top-Ligen</button>
+            <button class="quick-btn" onclick="searchTeam()">🔍 Team suchen</button>
+        </div>
+
+        <!-- Pyramid Structure -->
+        <div class="pyramid">
+            <!-- Liga 1 (Spitze) -->
+            <div class="pyramid-level">
+                <div class="liga-box" onclick="openLigaDetail(1)">
+                    <div class="liga-number">1</div>
+                    <div class="liga-name">Elite Liga</div>
+                    <div class="liga-teams">Teams 1-18</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">⚡ Thunder Kings</div>
+                        <div class="leader-points">67 Punkte</div>
+                    </div>
+                    <div class="pyramid-arrow"></div>
+                </div>
+            </div>
+
+            <!-- Liga 2-3 -->
+            <div class="pyramid-level">
+                <div class="liga-box" onclick="openLigaDetail(2)">
+                    <div class="liga-number">2</div>
+                    <div class="liga-name">Champion Liga</div>
+                    <div class="liga-teams">Teams 19-36</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">🔥 Fire Dragons</div>
+                        <div class="leader-points">61 Punkte</div>
+                    </div>
+                </div>
+                
+                <div class="liga-box own-team" onclick="openLigaDetail(3)">
+                    <div class="liga-number">3</div>
+                    <div class="liga-name">Master Liga</div>
+                    <div class="liga-teams">Teams 37-54</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">⚡ FC Voltage</div>
+                        <div class="leader-points">26 Punkte</div>
+                    </div>
+                    <div class="own-team-indicator">Dein Team: 7. Platz</div>
+                </div>
+            </div>
+
+            <!-- Liga 4-6 -->
+            <div class="pyramid-level">
+                <div class="liga-box" onclick="openLigaDetail(4)">
+                    <div class="liga-number">4</div>
+                    <div class="liga-name">Expert Liga</div>
+                    <div class="liga-teams">Teams 55-72</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">🏹 Arrow Hunters</div>
+                        <div class="leader-points">58 Punkte</div>
+                    </div>
+                </div>
+                
+                <div class="liga-box" onclick="openLigaDetail(5)">
+                    <div class="liga-number">5</div>
+                    <div class="liga-name">Pro Liga</div>
+                    <div class="liga-teams">Teams 73-90</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">🌟 Star Fighters</div>
+                        <div class="leader-points">55 Punkte</div>
+                    </div>
+                </div>
+                
+                <div class="liga-box" onclick="openLigaDetail(6)">
+                    <div class="liga-number">6</div>
+                    <div class="liga-name">Advanced Liga</div>
+                    <div class="liga-teams">Teams 91-108</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">⚔️ Battle Axe</div>
+                        <div class="leader-points">52 Punkte</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liga 7-10 -->
+            <div class="pyramid-level">
+                <div class="liga-box" onclick="openLigaDetail(7)">
+                    <div class="liga-number">7</div>
+                    <div class="liga-name">Semi-Pro Liga</div>
+                    <div class="liga-teams">Teams 109-126</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">🎯 Target Masters</div>
+                        <div class="leader-points">49 Punkte</div>
+                    </div>
+                </div>
+                
+                <div class="liga-box" onclick="openLigaDetail(8)">
+                    <div class="liga-number">8</div>
+                    <div class="liga-name">Challenger Liga</div>
+                    <div class="liga-teams">Teams 127-144</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">🌊 Wave Riders</div>
+                        <div class="leader-points">47 Punkte</div>
+                    </div>
+                </div>
+                
+                <div class="liga-box own-team" onclick="openLigaDetail(9)">
+                    <div class="liga-number">9</div>
+                    <div class="liga-name">Rising Liga</div>
+                    <div class="liga-teams">Teams 145-162</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">🚀 Rocket Boost</div>
+                        <div class="leader-points">44 Punkte</div>
+                    </div>
+                    <div class="own-team-indicator">Dein Team: 3. Platz</div>
+                </div>
+                
+                <div class="liga-box" onclick="openLigaDetail(10)">
+                    <div class="liga-number">10</div>
+                    <div class="liga-name">Talent Liga</div>
+                    <div class="liga-teams">Teams 163-180</div>
+                    <div class="liga-leader">
+                        <div class="leader-name">💫 Cosmic Force</div>
+                        <div class="leader-points">42 Punkte</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weitere Ligen Indikator -->
+            <div class="pyramid-level" style="margin-top: 3rem;">
+                <div class="liga-box" style="opacity: 0.7; border-style: dashed;" onclick="showMoreLigas()">
+                    <div class="liga-number">...</div>
+                    <div class="liga-name">117 weitere Ligen</div>
+                    <div class="liga-teams">bis Team #2286</div>
+                    <div style="color: #888; font-size: 0.9rem; margin-top: 1rem;">
+                        Klicken für vollständige Liste
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liga Detail Panel -->
+    <div class="liga-detail" id="ligaDetail">
+        <div class="detail-header">
+            <h3 class="detail-title" id="detailTitle">Liga 3 Details</h3>
+            <button class="close-btn" onclick="closeLigaDetail()">×</button>
+        </div>
+        
+        <div class="detail-section">
+            <h4>📊 Liga Statistiken</h4>
+            <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Spieltag:</span> <span>12/34</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Durchschn. Punkte:</span> <span>15.3</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Tore/Spiel:</span> <span>2.8</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Zuschauerschnitt:</span> <span>12,450</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-section">
+            <h4>🏆 Aktuelle Tabelle (Top 5)</h4>
+            <ul class="team-list">
+                <li class="team-item">
+                    <span class="team-name-small">1. FC Voltage</span>
+                    <span class="team-points-small">26 Pkt</span>
+                </li>
+                <li class="team-item">
+                    <span class="team-name-small">2. Lions United</span>
+                    <span class="team-points-small">24 Pkt</span>
+                </li>
+                <li class="team-item">
+                    <span class="team-name-small">3. Storm Riders</span>
+                    <span class="team-points-small">23 Pkt</span>
+                </li>
+                <li class="team-item">
+                    <span class="team-name-small">4. Fire Eagles</span>
+                    <span class="team-points-small">21 Pkt</span>
+                </li>
+                <li class="team-item own">
+                    <span class="team-name-small">7. FC Thunderbolts</span>
+                    <span class="team-points-small">18 Pkt</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="detail-section">
+            <h4>⚽ Nächste Spiele</h4>
+            <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                <div style="margin-bottom: 0.8rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <div style="color: #ff8c00; font-weight: bold;">FC Thunderbolts vs Ice Sharks</div>
+                    <div style="color: #888; font-size: 0.8rem;">Heute 18:15</div>
+                </div>
+                <div style="margin-bottom: 0.8rem;">
+                    <div style="color: #fff;">FC Voltage vs Lions United</div>
+                    <div style="color: #888; font-size: 0.8rem;">Heute 18:15 - LIVE</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-section">
+            <button style="width: 100%; background: linear-gradient(45deg, #ff8c00, #ffd700); color: #000; border: none; padding: 1rem; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                📊 Vollständige Liga anzeigen
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function openLigaDetail(ligaNumber) {
+            const detailPanel = document.getElementById('ligaDetail');
+            const detailTitle = document.getElementById('detailTitle');
+            
+            detailTitle.textContent = `Liga ${ligaNumber} Details`;
+            detailPanel.classList.add('open');
+            
+            // Simulate loading different liga data
+            console.log(`Loading Liga ${ligaNumber} details...`);
+        }
+
+        function closeLigaDetail() {
+            const detailPanel = document.getElementById('ligaDetail');
+            detailPanel.classList.remove('open');
+        }
+
+        function jumpToOwnTeam() {
+            // Scroll to first own team and highlight it
+            const ownTeamBox = document.querySelector('.liga-box.own-team');
+            ownTeamBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Add extra glow effect
+            ownTeamBox.style.animation = 'glow 0.5s ease-in-out 3';
+            
+            setTimeout(() => {
+                alert('🎯 Deine Teams:\n\n• Liga 3: FC Thunderbolts (7. Platz)\n• Liga 9: Rising Stars (3. Platz)\n• Liga 15: Future Legends (12. Platz)');
+            }, 1000);
+        }
+
+        function showTopLigas() {
+            alert('👑 Top-Ligen Übersicht:\n\n🥇 Liga 1: Elite Liga (Ø 67 Punkte)\n🥈 Liga 2: Champion Liga (Ø 61 Punkte)\n🥉 Liga 3: Master Liga (Ø 58 Punkte)\n\nDie stärksten Teams kämpfen hier um den Gesamtsieg!');
+        }
+
+        function searchTeam() {
+            const teamName = prompt('🔍 Team suchen:\n\nGib den Namen oder die Teamnummer ein:');
+            if (teamName) {
+                alert(`Suche nach "${teamName}"...\n\n🎯 Gefunden in Liga 7:\n${teamName} - Platz 4 mit 23 Punkten\n\nZur Liga wechseln?`);
+            }
+        }
+
+        function showMoreLigas() {
+            alert('📊 Weitere Ligen:\n\nLiga 11-50: Aktive Ligen mit je 18 Teams\nLiga 51-100: Aufstrebende Ligen\nLiga 101-127: Neue Teams & Einsteiger\n\nInsgesamt 2,286 Teams in 127 Ligen!\n\nVollständige Liste anzeigen?');
+        }
+
+        // Add hover effects to liga boxes
+        document.querySelectorAll('.liga-box').forEach(box => {
+            box.addEventListener('mouseenter', function() {
+                // Highlight connected boxes (same level)
+                const level = this.parentElement;
+                level.querySelectorAll('.liga-box').forEach(siblingBox => {
+                    if (siblingBox !== this) {
+                        siblingBox.style.opacity = '0.7';
+                    }
+                });
+            });
+            
+            box.addEventListener('mouseleave', function() {
+                // Reset opacity
+                const level = this.parentElement;
+                level.querySelectorAll('.liga-box').forEach(siblingBox => {
+                    siblingBox.style.opacity = '1';
+                });
+            });
+        });
+
+        // Close detail panel when clicking outside
+        document.addEventListener('click', function(event) {
+            const detailPanel = document.getElementById('ligaDetail');
+            const isClickInsidePanel = detailPanel.contains(event.target);
+            const isClickOnLigaBox = event.target.closest('.liga-box');
+            
+            if (!isClickInsidePanel && !isClickOnLigaBox && detailPanel.classList.contains('open')) {
+                closeLigaDetail();
+            }
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeLigaDetail();
+            }
+        });
+
+        // Simulate live updates
+        setInterval(() => {
+            // Update leader points occasionally
+            const leaders = document.querySelectorAll('.leader-points');
+            leaders.forEach(leader => {
+                if (Math.random() < 0.05) { // 5% chance
+                    const currentPoints = parseInt(leader.textContent);
+                    if (currentPoints < 70) {
+                        leader.textContent = (currentPoints + 1) + ' Punkte';
+                        leader.style.animation = 'pulse 0.5s ease-in-out';
+                    }
+                }
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

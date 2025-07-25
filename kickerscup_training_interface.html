@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Training</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .training-budget {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Training Overview Cards */
+        .training-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .overview-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .overview-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .overview-title {
+            color: #ff8c00;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .overview-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overview-subtitle {
+            color: #cccccc;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        /* Main Training Sections */
+        .training-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .training-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-badge {
+            background: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Training Slots */
+        .training-slots {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .training-slot {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .training-slot:hover {
+            border-color: rgba(255, 140, 0, 0.5);
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .slot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .slot-number {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .slot-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .status-empty {
+            background: rgba(255, 255, 255, 0.1);
+            color: #cccccc;
+        }
+
+        .training-select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ffffff;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+
+        .training-select option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .training-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #cccccc;
+        }
+
+        .training-effect {
+            color: #2ecc71;
+            font-weight: 600;
+        }
+
+        /* Individual Training */
+        .individual-training {
+            grid-column: 1 / -1;
+        }
+
+        .individual-slots {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .individual-slot {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .player-selection {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .player-select {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ffffff;
+            padding: 0.6rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .player-select option {
+            background: #1a1a1a;
+        }
+
+        /* Training Camp Section */
+        .training-camp {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .camp-header {
+            margin-bottom: 2rem;
+        }
+
+        .camp-title {
+            color: #ff8c00;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .camp-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .camp-stat {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .camp-stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ff8c00;
+            margin-bottom: 0.3rem;
+        }
+
+        .camp-stat-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .camp-button {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .camp-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .camp-button:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .action-btn {
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.4);
+            color: #ff8c00;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 140, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            border-color: #ff8c00;
+        }
+
+        /* Mobile Responsiveness */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ff8c00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .training-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .training-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .individual-slots {
+                grid-template-columns: 1fr;
+            }
+
+            .camp-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Toggle Button -->
+        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>KICKERSCUP</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">👥</span>
+                        Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">🏋️</span>
+                        Training
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏟️</span>
+                        Stadion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚽</span>
+                        Live Spiele
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">💰</span>
+                        Transfermarkt
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏆</span>
+                        Pokale
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Statistiken
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        Einstellungen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2>Training Center</h2>
+                    <p>Verbessere deine Mannschaft durch gezieltes Training</p>
+                </div>
+                <div class="training-budget">
+                    💰 Budget: 15.450.000 T
+                </div>
+            </header>
+
+            <!-- Training Overview -->
+            <div class="training-overview">
+                <div class="overview-card">
+                    <div class="overview-icon">🏃‍♂️</div>
+                    <div class="overview-title">Mannschaftstraining</div>
+                    <div class="overview-value">3/4</div>
+                    <div class="overview-subtitle">Slots belegt</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">👤</div>
+                    <div class="overview-title">Einzeltraining</div>
+                    <div class="overview-value">2/4</div>
+                    <div class="overview-subtitle">Spieler im Training</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">🏕️</div>
+                    <div class="overview-title">Trainingslager</div>
+                    <div class="overview-value">3/5</div>
+                    <div class="overview-subtitle">Diese Saison genutzt</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">⏰</div>
+                    <div class="overview-title">Nächste Ausführung</div>
+                    <div class="overview-value">12:30</div>
+                    <div class="overview-subtitle">Täglich automatisch</div>
+                </div>
+            </div>
+
+            <!-- Training Sections -->
+            <div class="training-sections">
+                <!-- Team Training -->
+                <div class="training-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            🏃‍♂️ Mannschaftstraining
+                        </h3>
+                        <span class="section-badge">4 Slots</span>
+                    </div>
+                    
+                    <div class="training-slots">
+                        <!-- Slot 1 -->
+                        <div class="training-slot">
+                            <div class="slot-header">
+                                <span class="slot-number">1</span>
+                                <span class="slot-status status-active">Aktiv</span>
+                            </div>
+                            <select class="training-select">
+                                <option value="kondition">Konditionstraining</option>
+                                <option value="kraft">Krafttraining</option>
+                                <option value="schnelligkeit">Schnelligkeitstraining</option>
+                                <option value="technik">Techniktraining</option>
+                                <option value="taktik">Taktiktraining</option>
+                                <option value="torwart">Torwarttraining</option>
+                                <option value="abwehr">Abwehrtraining</option>
+                                <option value="mittelfeld">Mittelfeldtraining</option>
+                                <option value="sturm">Sturmtraining</option>
+                                <option value="flanken">Flankentraining</option>
+                                <option value="ecken">Eckballtraining</option>
+                                <option value="freistoesse">Freistoßtraining</option>
+                                <option value="elfmeter">Elfmetertraining</option>
+                                <option value="spielaufbau">Spielaufbau</option>
+                                <option value="pressing">Pressing</option>
+                            </select>
+                        </div>
+
+                        <!-- Slot 2 -->
+                        <div class="training-slot">
+                            <div class="slot-header">
+                                <span class="slot-number">2</span>
+                                <span class="slot-status status-active">Aktiv</span>
+                            </div>
+                            <select class="training-select">
+                                <option value="taktik">Taktiktraining</option>
+                                <option value="kondition">Konditionstraining</option>
+                                <option value="kraft">Krafttraining</option>
+                                <option value="schnelligkeit">Schnelligkeitstraining</option>
+                                <option value="technik">Techniktraining</option>
+                                <option value="torwart">Torwarttraining</option>
+                                <option value="abwehr">Abwehrtraining</option>
+                                <option value="mittelfeld">Mittelfeldtraining</option>
+                                <option value="sturm">Sturmtraining</option>
+                                <option value="flanken">Flankentraining</option>
+                                <option value="ecken">Eckballtraining</option>
+                                <option value="freistoesse">Freistoßtraining</option>
+                                <option value="elfmeter">Elfmetertraining</option>
+                                <option value="spielaufbau">Spielaufbau</option>
+                                <option value="pressing">Pressing</option>
+                            </select>
+                        </div>
+
+                        <!-- Slot 3 -->
+                        <div class="training-slot">
+                            <div class="slot-header">
+                                <span class="slot-number">3</span>
+                                <span class="slot-status status-active">Aktiv</span>
+                            </div>
+                            <select class="training-select">
+                                <option value="sturm">Sturmtraining</option>
+                                <option value="kondition">Konditionstraining</option>
+                                <option value="kraft">Krafttraining</option>
+                                <option value="schnelligkeit">Schnelligkeitstraining</option>
+                                <option value="technik">Techniktraining</option>
+                                <option value="taktik">Taktiktraining</option>
+                                <option value="torwart">Torwarttraining</option>
+                                <option value="abwehr">Abwehrtraining</option>
+                                <option value="mittelfeld">Mittelfeldtraining</option>
+                                <option value="flanken">Flankentraining</option>
+                                <option value="ecken">Eckballtraining</option>
+                                <option value="freistoesse">Freistoßtraining</option>
+                                <option value="elfmeter">Elfmetertraining</option>
+                                <option value="spielaufbau">Spielaufbau</option>
+                                <option value="pressing">Pressing</option>
+                            </select>
+                        </div>
+
+                        <!-- Slot 4 -->
+                        <div class="training-slot">
+                            <div class="slot-header">
+                                <span class="slot-number">4</span>
+                                <span class="slot-status status-empty">Frei</span>
+                            </div>
+                            <select class="training-select">
+                                <option value="">-- Training wählen --</option>
+                                <option value="kondition">Konditionstraining</option>
+                                <option value="kraft">Krafttraining</option>
+                                <option value="schnelligkeit">Schnelligkeitstraining</option>
+                                <option value="technik">Techniktraining</option>
+                                <option value="taktik">Taktiktraining</option>
+                                <option value="torwart">Torwarttraining</option>
+                                <option value="abwehr">Abwehrtraining</option>
+                                <option value="mittelfeld">Mittelfeldtraining</option>
+                                <option value="sturm">Sturmtraining</option>
+                                <option value="flanken">Flankentraining</option>
+                                <option value="ecken">Eckballtraining</option>
+                                <option value="freistoesse">Freistoßtraining</option>
+                                <option value="elfmeter">Elfmetertraining</option>
+                                <option value="spielaufbau">Spielaufbau</option>
+                                <option value="pressing">Pressing</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Individual Training -->
+                <div class="training-section individual-training">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            👤 Einzeltraining
+                        </h3>
+                        <span class="section-badge">4 Slots</span>
+                    </div>
+                    
+                    <div class="individual-slots">
+                        <!-- Individual Slot 1 -->
+                        <div class="individual-slot">
+                            <div class="slot-header">
+                                <span class="slot-number">1</span>
+                                <span class="slot-status status-active">Aktiv</span>
+                            </div>
+                            <div class="player-selection">
+                                <select class="player-select">
+                                    <option value="neuer">Manuel Neuer (TW)</option>
+                                    <option value="kimmich">Joshua Kimmich (RV)</option>
+                                    <option value="vandijk">Virgil van Dijk (IV)</option>
+                                    <option value="debruyne">Kevin De Bruyne (OFM)</option>
+                                    <option value="haaland">Erling Haaland (MS)</option>
+                                    <option value="rashford">Marcus Rashford (LS)</option>
+                                </select>
+                            </div>
+                            <select class="training-select">
+                                <option value="reflexe">Reflextraining</option>
+                                <option value="kondition_ind">Kondition (Individual)</option>
+                                <option value="kraft_ind">Kraft (Individual)</option>
+                                <option value="schnelligkeit_ind">Schnelligkeit (Individual)</option>
+                                <option value="technik_ind">Technik (Individual)</option>
+                                <option value="kopfball">Kopfballtraining</option>
+                                <option value="schusspower">Schusspower</option>
+                                <option value="schussgenauigkeit">Schussgenauigkeit</option>
+                                <option value="dribbling">Dribbling</option>
+                                <option value="passen">Passspiel</option>
+                                <option value="antritt">Antritt</option>
+                                <option value="ausdauer">Ausdauer</option>
+                                <option value="konzentration">Konzentration</option>
+                                <option value="spieluebersicht">Spielübersicht</option>
+                                <option value="mental">Mentaltraining</option>
+                            </select>
+                        </div>
+
+                        <!-- Individual Slot 3 -->
+                        <div class="individual-slot">
+                            <div class="slot-header">
+                                <span class="slot-number">3</span>
+                                <span class="slot-status status-empty">Frei</span>
+                            </div>
+                            <div class="player-selection">
+                                <select class="player-select">
+                                    <option value="">-- Spieler wählen --</option>
+                                    <option value="neuer">Manuel Neuer (TW)</option>
+                                    <option value="kimmich">Joshua Kimmich (RV)</option>
+                                    <option value="vandijk">Virgil van Dijk (IV)</option>
+                                    <option value="debruyne">Kevin De Bruyne (OFM)</option>
+                                    <option value="haaland">Erling Haaland (MS)</option>
+                                    <option value="rashford">Marcus Rashford (LS)</option>
+                                </select>
+                            </div>
+                            <select class="training-select">
+                                <option value="">-- Training wählen --</option>
+                                <option value="kondition_ind">Kondition (Individual)</option>
+                                <option value="kraft_ind">Kraft (Individual)</option>
+                                <option value="schnelligkeit_ind">Schnelligkeit (Individual)</option>
+                                <option value="technik_ind">Technik (Individual)</option>
+                                <option value="reflexe">Reflextraining</option>
+                                <option value="kopfball">Kopfballtraining</option>
+                                <option value="schusspower">Schusspower</option>
+                                <option value="schussgenauigkeit">Schussgenauigkeit</option>
+                                <option value="dribbling">Dribbling</option>
+                                <option value="passen">Passspiel</option>
+                                <option value="zweikampf">Zweikampfverhalten</option>
+                                <option value="antritt">Antritt</option>
+                                <option value="ausdauer">Ausdauer</option>
+                                <option value="konzentration">Konzentration</option>
+                                <option value="spieluebersicht">Spielübersicht</option>
+                                <option value="mental">Mentaltraining</option>
+                            </select>
+                            <div class="training-info">
+                                <span style="color: #888;">Kein Spieler/Training ausgewählt</span>
+                            </div>
+                        </div>
+
+                        <!-- Individual Slot 4 -->
+                        <div class="individual-slot">
+                            <div class="slot-header">
+                                <span class="slot-number">4</span>
+                                <span class="slot-status status-empty">Frei</span>
+                            </div>
+                            <div class="player-selection">
+                                <select class="player-select">
+                                    <option value="">-- Spieler wählen --</option>
+                                    <option value="neuer">Manuel Neuer (TW)</option>
+                                    <option value="kimmich">Joshua Kimmich (RV)</option>
+                                    <option value="vandijk">Virgil van Dijk (IV)</option>
+                                    <option value="debruyne">Kevin De Bruyne (OFM)</option>
+                                    <option value="haaland">Erling Haaland (MS)</option>
+                                    <option value="rashford">Marcus Rashford (LS)</option>
+                                </select>
+                            </div>
+                            <select class="training-select">
+                                <option value="">-- Training wählen --</option>
+                                <option value="kondition_ind">Kondition (Individual)</option>
+                                <option value="kraft_ind">Kraft (Individual)</option>
+                                <option value="schnelligkeit_ind">Schnelligkeit (Individual)</option>
+                                <option value="technik_ind">Technik (Individual)</option>
+                                <option value="reflexe">Reflextraining</option>
+                                <option value="kopfball">Kopfballtraining</option>
+                                <option value="schusspower">Schusspower</option>
+                                <option value="schussgenauigkeit">Schussgenauigkeit</option>
+                                <option value="dribbling">Dribbling</option>
+                                <option value="passen">Passspiel</option>
+                                <option value="zweikampf">Zweikampfverhalten</option>
+                                <option value="antritt">Antritt</option>
+                                <option value="ausdauer">Ausdauer</option>
+                                <option value="konzentration">Konzentration</option>
+                                <option value="spieluebersicht">Spielübersicht</option>
+                                <option value="mental">Mentaltraining</option>
+                            </select>
+                            <div class="training-info">
+                                <span style="color: #888;">Kein Spieler/Training ausgewählt</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Camp Section -->
+            <div class="training-camp">
+                <div class="camp-header">
+                    <h3 class="camp-title">🏕️ Trainingslager</h3>
+                    <p style="color: #cccccc; margin-bottom: 1rem;">
+                        Intensive Trainingswoche für die gesamte Mannschaft
+                    </p>
+                </div>
+
+                <div class="camp-stats">
+                    <div class="camp-stat">
+                        <div class="camp-stat-value">3.000.000 T</div>
+                        <div class="camp-stat-label">Kosten pro Lager</div>
+                    </div>
+                    <div class="camp-stat">
+                        <div class="camp-stat-value">3/5</div>
+                        <div class="camp-stat-label">Diese Saison genutzt</div>
+                    </div>
+                    <div class="camp-stat">
+                        <div class="camp-stat-value">+3.5</div>
+                        <div class="camp-stat-label">Durchschn. Verbesserung</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 140, 0, 0.1); border: 1px solid rgba(255, 140, 0, 0.3); border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h4 style="color: #ff8c00; margin-bottom: 1rem; text-align: center;">Trainingslager-Effekte:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; font-size: 0.95rem; color: #cccccc;">
+                        <div style="background: rgba(0,0,0,0.2); padding: 0.8rem; border-radius: 8px;">
+                            <div style="color: #ff8c00; font-weight: bold; margin-bottom: 0.3rem;">💪 Kondition</div>
+                            <div>+2 bis +4 Punkte für alle Spieler</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); padding: 0.8rem; border-radius: 8px;">
+                            <div style="color: #ff8c00; font-weight: bold; margin-bottom: 0.3rem;">⚡ Form</div>
+                            <div>+1 bis +2 Punkte für alle Spieler</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); padding: 0.8rem; border-radius: 8px;">
+                            <div style="color: #ff8c00; font-weight: bold; margin-bottom: 0.3rem;">🔋 Frische</div>
+                            <div>+1 bis +3 Punkte für alle Spieler</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); padding: 0.8rem; border-radius: 8px;">
+                            <div style="color: #ff8c00; font-weight: bold; margin-bottom: 0.3rem;">🧠 Motivation</div>
+                            <div>+3 bis +5 Punkte für alle Spieler</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; color: #888;">
+                        Zusätzlich: Verbesserte Mannschaftschemie & reduzierte Verletzungsanfälligkeit
+                    </div>
+                </div>
+
+                <button class="camp-button" onclick="startTrainingCamp()">
+                    🏕️ Trainingslager starten (3.000.000 T)
+                </button>
+                
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: #888;">
+                    Verbleibendes Budget: 15.450.000 T | Noch 2 Lager möglich diese Saison
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn">🔄 Alle Trainings zurücksetzen</button>
+                <button class="action-btn">📊 Trainingshistorie</button>
+                <button class="action-btn">💡 Trainingsvorschläge</button>
+                <button class="action-btn primary">💾 Trainings speichern</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleButton = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggleButton.contains(event.target)) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Training selection handling
+        document.querySelectorAll('.training-select').forEach(select => {
+            select.addEventListener('change', function() {
+                const slot = this.closest('.training-slot, .individual-slot');
+                const statusBadge = slot.querySelector('.slot-status');
+                const trainingInfo = slot.querySelector('.training-info');
+                
+                if (this.value) {
+                    statusBadge.textContent = 'Aktiv';
+                    statusBadge.className = 'slot-status status-active';
+                    trainingInfo.innerHTML = '<span style="color: #cccccc;">Wird täglich um 12:30 Uhr ausgeführt</span>';
+                } else {
+                    statusBadge.textContent = 'Frei';
+                    statusBadge.className = 'slot-status status-empty';
+                    trainingInfo.innerHTML = '<span style="color: #888;">Kein Training ausgewählt</span>';
+                }
+            });
+        });
+
+        // Player selection for individual training
+        document.querySelectorAll('.player-select').forEach(select => {
+            select.addEventListener('change', function() {
+                const slot = this.closest('.individual-slot');
+                const statusBadge = slot.querySelector('.slot-status');
+                const trainingSelect = slot.querySelector('.training-select');
+                const trainingInfo = slot.querySelector('.training-info');
+                
+                if (this.value && trainingSelect.value) {
+                    statusBadge.textContent = 'Aktiv';
+                    statusBadge.className = 'slot-status status-active';
+                    trainingInfo.innerHTML = '<span style="color: #cccccc;">Wird täglich um 12:30 Uhr ausgeführt</span>';
+                } else if (this.value || trainingSelect.value) {
+                    statusBadge.textContent = 'Unvollständig';
+                    statusBadge.className = 'slot-status status-empty';
+                    trainingInfo.innerHTML = '<span style="color: #f39c12;">Spieler und Training wählen</span>';
+                } else {
+                    statusBadge.textContent = 'Frei';
+                    statusBadge.className = 'slot-status status-empty';
+                    trainingInfo.innerHTML = '<span style="color: #888;">Kein Spieler/Training ausgewählt</span>';
+                }
+            });
+        });
+
+        // Training camp function
+        function startTrainingCamp() {
+            if (confirm('Möchtest du wirklich ein Trainingslager für 3.000.000 T starten?\n\nDies wird alle Spieler für eine Woche in ein intensives Training schicken.')) {
+                // Simulate training camp start
+                const button = document.querySelector('.camp-button');
+                button.textContent = '⏳ Trainingslager läuft... (6 Tage verbleibend)';
+                button.disabled = true;
+                
+                // Update stats
+                const usedCount = document.querySelector('.camp-stat-value');
+                usedCount.textContent = '4/5';
+                
+                // Show success message
+                setTimeout(() => {
+                    alert('🏕️ Trainingslager erfolgreich gestartet!\n\nDeine Spieler werden für die nächsten 7 Tage intensiv trainieren.');
+                }, 500);
+            }
+        }
+
+        // Action button handlers
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.textContent.trim();
+                
+                if (action.includes('speichern')) {
+                    // Save training settings
+                    const activeTrainings = document.querySelectorAll('.status-active').length;
+                    alert(`✅ Trainingseinstellungen gespeichert!\n\n${activeTrainings} aktive Trainings wurden übernommen.`);
+                } else if (action.includes('zurücksetzen')) {
+                    if (confirm('Möchtest du wirklich alle Trainings zurücksetzen?')) {
+                        // Reset all trainings
+                        document.querySelectorAll('.training-select, .player-select').forEach(select => {
+                            select.selectedIndex = 0;
+                            select.dispatchEvent(new Event('change'));
+                        });
+                        alert('🔄 Alle Trainings wurden zurückgesetzt.');
+                    }
+                } else if (action.includes('historie')) {
+                    alert('📊 Trainingshistorie wird geladen...\n\n(Feature in Entwicklung)');
+                } else if (action.includes('vorschläge')) {
+                    alert('💡 KI-Trainingsvorschläge:\n\n• Konditionstraining für bessere Ausdauer\n• Taktiktraining vor wichtigen Spielen\n• Einzeltraining für Schlüsselspieler\n\n(Detaillierte Vorschläge folgen)');
+                }
+            });
+        });
+
+        // Hover effects for training slots
+        document.querySelectorAll('.training-slot, .individual-slot').forEach(slot => {
+            slot.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 5px 15px rgba(255, 140, 0, 0.2)';
+            });
+            
+            slot.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>>
+                                <option value="antritt">Antritt</option>
+                                <option value="ausdauer">Ausdauer</option>
+                                <option value="konzentration">Konzentration</option>
+                                <option value="spieluebersicht">Spielübersicht</option>
+                                <option value="mental">Mentaltraining</option>
+                            </select>
+                            <div class="training-info">
+                                <span style="color: #cccccc;">Wird täglich um 12:30 Uhr ausgeführt</span>
+                            </div>
+                        </div>
+
+                        <!-- Individual Slot 2 -->
+                        <div class="individual-slot">
+                            <div class="slot-header">
+                                <span class="slot-number">2</span>
+                                <span class="slot-status status-active">Aktiv</span>
+                            </div>
+                            <div class="player-selection">
+                                <select class="player-select">
+                                    <option value="haaland">Erling Haaland (MS)</option>
+                                    <option value="neuer">Manuel Neuer (TW)</option>
+                                    <option value="kimmich">Joshua Kimmich (RV)</option>
+                                    <option value="vandijk">Virgil van Dijk (IV)</option>
+                                    <option value="debruyne">Kevin De Bruyne (OFM)</option>
+                                    <option value="rashford">Marcus Rashford (LS)</option>
+                                </select>
+                            </div>
+                            <select class="training-select">
+                                <option value="schusspower">Schusspower</option>
+                                <option value="kondition_ind">Kondition (Individual)</option>
+                                <option value="kraft_ind">Kraft (Individual)</option>
+                                <option value="schnelligkeit_ind">Schnelligkeit (Individual)</option>
+                                <option value="technik_ind">Technik (Individual)</option>
+                                <option value="reflexe">Reflextraining</option>
+                                <option value="kopfball">Kopfballtraining</option>
+                                <option value="schussgenauigkeit">Schussgenauigkeit</option>
+                                <option value="dribbling">Dribbling</option>
+                                <option value="passen">Passspiel</option>
+                                <option value="zweikampf">Zweikampfverhalten</option
