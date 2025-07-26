@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Einstellungen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .account-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .user-info {
+            color: #cccccc;
+        }
+
+        .username {
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+
+        /* Settings Sections */
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .settings-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .security-badge {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: #cccccc;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ff8c00;
+            box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: #888;
+        }
+
+        .form-input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-hint {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            line-height: 1.3;
+        }
+
+        .form-hint.warning {
+            color: #f39c12;
+        }
+
+        .form-hint.error {
+            color: #e74c3c;
+        }
+
+        .form-hint.success {
+            color: #2ecc71;
+        }
+
+        /* Avatar Upload */
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .current-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .avatar-controls {
+            flex: 1;
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-upload input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .upload-btn {
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.4);
+            color: #ff8c00;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .upload-btn:hover {
+            background: rgba(255, 140, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 0.5rem;
+        }
+
+        .strength-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 0.3rem;
+        }
+
+        .strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak {
+            width: 25%;
+            background: #e74c3c;
+        }
+
+        .strength-medium {
+            width: 60%;
+            background: #f39c12;
+        }
+
+        .strength-strong {
+            width: 100%;
+            background: #2ecc71;
+        }
+
+        .strength-text {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .strength-weak-text { color: #e74c3c; }
+        .strength-medium-text { color: #f39c12; }
+        .strength-strong-text { color: #2ecc71; }
+
+        /* Action Buttons */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.4);
+            color: #ff8c00;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-danger {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: rgba(231, 76, 60, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Account Info Section */
+        .account-section {
+            grid-column: 1 / -1;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .account-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff8c00;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Privacy Settings */
+        .privacy-section {
+            grid-column: 1 / -1;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-group:hover {
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .custom-checkbox {
+            position: relative;
+            width: 20px;
+            height: 20px;
+        }
+
+        .custom-checkbox input {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .custom-checkbox input:checked + .checkmark {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            border-color: #ff8c00;
+        }
+
+        .checkmark::after {
+            content: '';
+            position: absolute;
+            display: none;
+            left: 6px;
+            top: 2px;
+            width: 6px;
+            height: 10px;
+            border: solid #000;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-checkbox input:checked + .checkmark::after {
+            display: block;
+        }
+
+        .checkbox-label {
+            flex: 1;
+            color: #ffffff;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .checkbox-description {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+
+        /* Mobile Responsiveness */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ff8c00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .avatar-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .account-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Toggle Button -->
+        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>KICKERSCUP</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">👥</span>
+                        Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏋️</span>
+                        Training
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏟️</span>
+                        Stadion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚽</span>
+                        Live Spiele
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">💰</span>
+                        Transfermarkt
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏆</span>
+                        Pokale
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Liga
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">⚙️</span>
+                        Einstellungen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2>Account Einstellungen</h2>
+                    <p>Verwalte deine Kontodaten und Sicherheitseinstellungen</p>
+                </div>
+                <div class="account-info">
+                    <div class="user-avatar" id="headerAvatar">
+                        TM
+                    </div>
+                    <div class="user-info">
+                        <div class="username">ThunderManager</div>
+                        <div>Mitglied seit März 2023</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Settings Layout -->
+            <div class="settings-layout">
+                <!-- Profile Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            👤 Profil Einstellungen
+                        </h3>
+                    </div>
+                    
+                    <!-- Avatar Upload -->
+                    <div class="form-group">
+                        <label class="form-label">Profilbild</label>
+                        <div class="avatar-section">
+                            <div class="current-avatar" id="currentAvatar">
+                                TM
+                            </div>
+                            <div class="avatar-controls">
+                                <div class="file-upload">
+                                    <input type="file" id="avatarInput" accept="image/*" onchange="handleAvatarUpload(event)">
+                                    <label for="avatarInput" class="upload-btn">
+                                        📷 Bild hochladen
+                                    </label>
+                                </div>
+                                <div class="form-hint">
+                                    Erlaubte Formate: JPG, PNG, GIF<br>
+                                    Maximale Dateigröße: 2MB
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Username Change -->
+                    <div class="form-group">
+                        <label class="form-label" for="newUsername">Benutzername</label>
+                        <input type="text" id="newUsername" class="form-input" value="ThunderManager" placeholder="Neuer Benutzername">
+                        <div class="form-hint warning" id="usernameHint">
+                            ⚠️ Letzter Wechsel: 15.05.2025 (Nächster möglich: 13.08.2025)
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label class="form-label" for="email">E-Mail Adresse</label>
+                        <input type="email" id="email" class="form-input" value="thunder@manager.de" placeholder="E-Mail Adresse">
+                        <div class="form-hint">
+                            Wird für wichtige Account-Benachrichtigungen verwendet
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="resetProfile()">Zurücksetzen</button>
+                        <button class="btn btn-primary" onclick="saveProfile()">Profil speichern</button>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            🔒 Sicherheit
+                        </h3>
+                        <span class="security-badge">Sicher</span>
+                    </div>
+                    
+                    <!-- Current Password -->
+                    <div class="form-group">
+                        <label class="form-label" for="currentPassword">Aktuelles Passwort</label>
+                        <input type="password" id="currentPassword" class="form-input" placeholder="Aktuelles Passwort eingeben">
+                    </div>
+
+                    <!-- New Password -->
+                    <div class="form-group">
+                        <label class="form-label" for="newPassword">Neues Passwort</label>
+                        <input type="password" id="newPassword" class="form-input" placeholder="Neues Passwort eingeben" oninput="checkPasswordStrength()">
+                        <div class="password-strength" id="passwordStrength" style="display: none;">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText"></div>
+                        </div>
+                        <div class="form-hint">
+                            Mindestens 8 Zeichen, inkl. Großbuchstaben, Zahlen und Sonderzeichen
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Passwort bestätigen</label>
+                        <input type="password" id="confirmPassword" class="form-input" placeholder="Neues Passwort wiederholen" oninput="checkPasswordMatch()">
+                        <div class="form-hint" id="passwordMatch"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-danger" onclick="showPasswordReset()">Passwort zurücksetzen</button>
+                        <button class="btn btn-primary" onclick="changePassword()" id="passwordSaveBtn" disabled>Passwort ändern</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="account-section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        📊 Account Informationen
+                    </h3>
+                </div>
+                
+                <div class="account-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-value">847</div>
+                        <div class="stat-label">Tage aktiv</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚽</div>
+                        <div class="stat-value">1,247</div>
+                        <div class="stat-label">Spiele gespielt</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">Pokale gewonnen</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value">Premium</div>
+                        <div class="stat-label">Account Status</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🛡️</div>
+                        <div class="stat-value">2FA</div>
+                        <div class="stat-label">Sicherheit</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🌐</div>
+                        <div class="stat-value">24.07.25</div>
+                        <div class="stat-label">Letzter Login</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Settings -->
+            <div class="privacy-section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        🔐 Datenschutz & Benachrichtigungen
+                    </h3>
+                </div>
+                
+                <div class="checkbox-group">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="emailNotifications" checked>
+                        <span class="checkmark"></span>
+                    </div>
+                    <div>
+                        <label for="emailNotifications" class="checkbox-label">E-Mail Benachrichtigungen</label>
+                        <div class="checkbox-description">Erhalte wichtige Updates per E-Mail</div>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="gameNotifications" checked>
+                        <span class="checkmark"></span>
+                    </div>
+                    <div>
+                        <label for="gameNotifications" class="checkbox-label">Spiel-Benachrichtigungen</label>
+                        <div class="checkbox-description">Benachrichtigungen über Spielergebnisse und Termine</div>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="marketingEmails">
+                        <span class="checkmark"></span>
+                    </div>
+                    <div>
+                        <label for="marketingEmails" class="checkbox-label">Marketing E-Mails</label>
+                        <div class="checkbox-description">Informationen über neue Features und Angebote</div>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="profileVisibility" checked>
+                        <span class="checkmark"></span>
+                    </div>
+                    <div>
+                        <label for="profileVisibility" class="checkbox-label">Öffentliches Profil</label>
+                        <div class="checkbox-description">Andere Spieler können dein Profil und deine Statistiken sehen</div>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="custom-checkbox">
+                        <input type="checkbox" id="dataCollection">
+                        <span class="checkmark"></span>
+                    </div>
+                    <div>
+                        <label for="dataCollection" class="checkbox-label">Anonyme Datensammlung</label>
+                        <div class="checkbox-description">Hilf uns, das Spiel zu verbessern (keine persönlichen Daten)</div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-danger" onclick="showAccountDeletion()">Account löschen</button>
+                    <button class="btn btn-secondary" onclick="exportData()">Daten exportieren</button>
+                    <button class="btn btn-primary" onclick="savePrivacySettings()">Einstellungen speichern</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let usernameLastChanged = new Date('2025-05-15');
+        let currentAvatarFile = null;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleButton = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggleButton.contains(event.target)) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Avatar upload handling
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('❌ Ungültiger Dateityp!\n\nErlaubte Formate: JPG, PNG, GIF');
+                return;
+            }
+
+            // Validate file size (2MB)
+            const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+            if (file.size > maxSize) {
+                alert('❌ Datei zu groß!\n\nMaximale Dateigröße: 2MB');
+                return;
+            }
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const avatarElements = document.querySelectorAll('#currentAvatar, #headerAvatar');
+                avatarElements.forEach(avatar => {
+                    avatar.innerHTML = `<img src="${e.target.result}" alt="Avatar" class="avatar-preview">`;
+                });
+                currentAvatarFile = file;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Username validation
+        function validateUsername() {
+            const username = document.getElementById('newUsername').value.trim();
+            const hint = document.getElementById('usernameHint');
+            
+            if (username.length < 3) {
+                hint.className = 'form-hint error';
+                hint.innerHTML = '❌ Benutzername muss mindestens 3 Zeichen lang sein';
+                return false;
+            }
+            
+            if (username.length > 20) {
+                hint.className = 'form-hint error';
+                hint.innerHTML = '❌ Benutzername darf maximal 20 Zeichen lang sein';
+                return false;
+            }
+            
+            if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+                hint.className = 'form-hint error';
+                hint.innerHTML = '❌ Nur Buchstaben, Zahlen, _ und - erlaubt';
+                return false;
+            }
+
+            // Check if username change is allowed (90 days)
+            const now = new Date();
+            const daysSinceLastChange = Math.floor((now - usernameLastChanged) / (1000 * 60 * 60 * 24));
+            
+            if (daysSinceLastChange < 90 && username !== 'ThunderManager') {
+                const nextChangeDate = new Date(usernameLastChanged);
+                nextChangeDate.setDate(nextChangeDate.getDate() + 90);
+                hint.className = 'form-hint warning';
+                hint.innerHTML = `⚠️ Nächster Wechsel möglich: ${nextChangeDate.toLocaleDateString('de-DE')}`;
+                return false;
+            }
+
+            hint.className = 'form-hint success';
+            hint.innerHTML = '✅ Benutzername verfügbar';
+            return true;
+        }
+
+        // Password strength checker
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const strengthContainer = document.getElementById('passwordStrength');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            if (password.length === 0) {
+                strengthContainer.style.display = 'none';
+                return;
+            }
+            
+            strengthContainer.style.display = 'block';
+            
+            let score = 0;
+            let feedback = [];
+            
+            // Length check
+            if (password.length >= 8) score += 1;
+            else feedback.push('mindestens 8 Zeichen');
+            
+            // Uppercase check
+            if (/[A-Z]/.test(password)) score += 1;
+            else feedback.push('Großbuchstaben');
+            
+            // Lowercase check
+            if (/[a-z]/.test(password)) score += 1;
+            else feedback.push('Kleinbuchstaben');
+            
+            // Number check
+            if (/\d/.test(password)) score += 1;
+            else feedback.push('Zahlen');
+            
+            // Special character check
+            if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score += 1;
+            else feedback.push('Sonderzeichen');
+            
+            // Update UI based on score
+            if (score < 3) {
+                strengthFill.className = 'strength-fill strength-weak';
+                strengthText.className = 'strength-text strength-weak-text';
+                strengthText.textContent = `Schwach - Benötigt: ${feedback.join(', ')}`;
+            } else if (score < 5) {
+                strengthFill.className = 'strength-fill strength-medium';
+                strengthText.className = 'strength-text strength-medium-text';
+                strengthText.textContent = `Mittel - Empfohlen: ${feedback.join(', ')}`;
+            } else {
+                strengthFill.className = 'strength-fill strength-strong';
+                strengthText.className = 'strength-text strength-strong-text';
+                strengthText.textContent = 'Stark - Sicheres Passwort';
+            }
+            
+            checkPasswordMatch();
+        }
+
+        // Password match checker
+        function checkPasswordMatch() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const matchHint = document.getElementById('passwordMatch');
+            const saveBtn = document.getElementById('passwordSaveBtn');
+            
+            if (confirmPassword.length === 0) {
+                matchHint.textContent = '';
+                saveBtn.disabled = true;
+                return;
+            }
+            
+            if (newPassword === confirmPassword) {
+                matchHint.className = 'form-hint success';
+                matchHint.textContent = '✅ Passwörter stimmen überein';
+                
+                // Enable save button if password is strong enough
+                const score = calculatePasswordScore(newPassword);
+                saveBtn.disabled = score < 3;
+            } else {
+                matchHint.className = 'form-hint error';
+                matchHint.textContent = '❌ Passwörter stimmen nicht überein';
+                saveBtn.disabled = true;
+            }
+        }
+
+        function calculatePasswordScore(password) {
+            let score = 0;
+            if (password.length >= 8) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[a-z]/.test(password)) score++;
+            if (/\d/.test(password)) score++;
+            if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score++;
+            return score;
+        }
+
+        // Username input validation
+        document.getElementById('newUsername').addEventListener('input', validateUsername);
+
+        // Profile functions
+        function saveProfile() {
+            const username = document.getElementById('newUsername').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!validateUsername()) {
+                alert('❌ Bitte korrigiere den Benutzernamen');
+                return;
+            }
+            
+            if (!email || !email.includes('@')) {
+                alert('❌ Bitte gib eine gültige E-Mail Adresse ein');
+                return;
+            }
+            
+            // Simulate saving
+            alert('✅ Profil erfolgreich gespeichert!\n\nÄnderungen:\n• Benutzername aktualisiert\n• E-Mail Adresse bestätigt' + 
+                  (currentAvatarFile ? '\n• Neues Profilbild hochgeladen' : ''));
+            
+            if (username !== 'ThunderManager') {
+                usernameLastChanged = new Date();
+                validateUsername(); // Update the hint
+            }
+        }
+
+        function resetProfile() {
+            if (confirm('🔄 Profil zurücksetzen?\n\nAlle ungespeicherten Änderungen gehen verloren.')) {
+                document.getElementById('newUsername').value = 'ThunderManager';
+                document.getElementById('email').value = 'thunder@manager.de';
+                
+                // Reset avatar
+                const avatarElements = document.querySelectorAll('#currentAvatar, #headerAvatar');
+                avatarElements.forEach(avatar => {
+                    avatar.innerHTML = 'TM';
+                });
+                currentAvatarFile = null;
+                
+                document.getElementById('avatarInput').value = '';
+                validateUsername();
+            }
+        }
+
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!currentPassword) {
+                alert('❌ Bitte gib dein aktuelles Passwort ein');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('❌ Die neuen Passwörter stimmen nicht überein');
+                return;
+            }
+            
+            if (calculatePasswordScore(newPassword) < 3) {
+                alert('❌ Das neue Passwort ist zu schwach');
+                return;
+            }
+            
+            // Simulate password change
+            if (confirm('🔒 Passwort ändern?\n\nDu wirst nach der Änderung erneut angemeldet.')) {
+                alert('✅ Passwort erfolgreich geändert!\n\nAlle Geräte werden abgemeldet.');
+                
+                // Clear form
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                document.getElementById('passwordStrength').style.display = 'none';
+                document.getElementById('passwordMatch').textContent = '';
+                document.getElementById('passwordSaveBtn').disabled = true;
+            }
+        }
+
+        function showPasswordReset() {
+            if (confirm('🔑 Passwort zurücksetzen?\n\nEin Reset-Link wird an deine E-Mail Adresse gesendet.\n\nMöchtest du fortfahren?')) {
+                alert('📧 Reset-Link gesendet!\n\nPrüfe dein E-Mail Postfach und folge den Anweisungen.');
+            }
+        }
+
+        function savePrivacySettings() {
+            const settings = {
+                emailNotifications: document.getElementById('emailNotifications').checked,
+                gameNotifications: document.getElementById('gameNotifications').checked,
+                marketingEmails: document.getElementById('marketingEmails').checked,
+                profileVisibility: document.getElementById('profileVisibility').checked,
+                dataCollection: document.getElementById('dataCollection').checked
+            };
+            
+            alert('✅ Datenschutz-Einstellungen gespeichert!\n\nÄnderungen werden sofort wirksam.');
+            console.log('Privacy settings saved:', settings);
+        }
+
+        function exportData() {
+            if (confirm('📄 Daten exportieren?\n\nEin Download mit allen deinen Kontodaten wird erstellt.')) {
+                alert('📦 Datenexport gestartet!\n\nDer Download beginnt in Kürze.');
+                
+                // Simulate data export
+                setTimeout(() => {
+                    const dataUrl = 'data:text/plain;charset=utf-8,Kickerscup Datenexport\n\nBenutzer: ThunderManager\nExport-Datum: ' + new Date().toLocaleDateString('de-DE');
+                    const link = document.createElement('a');
+                    link.href = dataUrl;
+                    link.download = 'kickerscup_datenexport.txt';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }, 1000);
+            }
+        }
+
+        function showAccountDeletion() {
+            if (confirm('⚠️ ACHTUNG: Account löschen?\n\nDiese Aktion kann NICHT rückgängig gemacht werden!\n\nAlle deine Teams, Fortschritte und Daten werden permanent gelöscht.')) {
+                const confirmation = prompt('Bitte tippe "ACCOUNT LÖSCHEN" um zu bestätigen:');
+                if (confirmation === 'ACCOUNT LÖSCHEN') {
+                    alert('❌ Account-Löschung eingeleitet\n\nDu erhältst eine Bestätigungs-E-Mail.\nBis zur finalen Bestätigung hast du noch 7 Tage Zeit, die Löschung zu widerrufen.');
+                } else {
+                    alert('✅ Account-Löschung abgebrochen');
+                }
+            }
+        }
+
+        // Form validation on input
+        document.getElementById('email').addEventListener('input', function() {
+            const email = this.value;
+            if (email && !email.includes('@')) {
+                this.style.borderColor = '#e74c3c';
+            } else {
+                this.style.borderColor = 'rgba(255, 140, 0, 0.3)';
+            }
+        });
+
+        // Initialize tooltips for stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const label = this.querySelector('.stat-label').textContent;
+                const value = this.querySelector('.stat-value').textContent;
+                
+                const messages = {
+                    'Tage aktiv': `📅 Du bist seit ${value} Tagen bei Kickerscup aktiv!\n\nErstanmeldung: 15. März 2023`,
+                    'Spiele gespielt': `⚽ Insgesamt ${value} Spiele absolviert\n\nDurchschnitt: 1.47 Spiele/Tag`,
+                    'Pokale gewonnen': `🏆 ${value} Pokale in deiner Sammlung\n\n• 15x Liga-Meister\n• 5x CC Champions Cup\n• 3x EC Europa Cup`,
+                    'Account Status': `💰 Premium Account aktiv\n\nVorteile:\n• Mehr Teams\n• Erweiterte Statistiken\n• Prioritäts-Support`,
+                    'Sicherheit': `🛡️ Zwei-Faktor-Authentifizierung aktiv\n\nLetzter Login: 24.07.2025 14:32`,
+                    'Letzter Login': `🌐 Letzter Login: ${value}\n\nIP: 192.168.1.100\nStandort: Münster, DE`
+                };
+                
+                alert(messages[label] || `${label}: ${value}`);
+            });
+        });
+    </script>
+</body>
+</html>
