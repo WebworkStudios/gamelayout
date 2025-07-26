@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Pokale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            color: #ff8c00;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-info {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.2rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-left p {
+            color: #888;
+            font-size: 1rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cup-toggle {
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .cup-btn {
+            background: none;
+            border: none;
+            color: #cccccc;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .cup-btn.active {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+        }
+
+        .phase-selector {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Content Area */
+        .content-container {
+            padding: 2rem;
+        }
+
+        /* Cup Overview */
+        .cup-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .overview-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            color: #ff8c00;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+        }
+
+        .card-subtitle {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Tournament Bracket */
+        .tournament-bracket {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .bracket-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .bracket-title {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .bracket-subtitle {
+            color: #888;
+            font-size: 1rem;
+        }
+
+        .bracket-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin: 40px auto;
+            max-width: 1400px;
+            overflow-x: auto;
+            padding: 20px;
+        }
+
+        .bracket-round {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 200px;
+        }
+
+        .round-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ff8c00;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(255, 140, 0, 0.1);
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .match {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .match:hover {
+            border-color: #ff8c00;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 140, 0, 0.3);
+        }
+
+        .match.own-team {
+            border-color: #00ff88;
+            background: linear-gradient(145deg, rgba(0,255,136,0.15), rgba(0,255,136,0.05));
+        }
+
+        .match.live {
+            border-color: #ff4444;
+            background: linear-gradient(145deg, rgba(255,68,68,0.15), rgba(255,68,68,0.05));
+            animation: pulse 2s infinite;
+        }
+
+        .match.finished {
+            border-color: #888888;
+            background: linear-gradient(145deg, rgba(136,136,136,0.15), rgba(136,136,136,0.05));
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .match-time {
+            color: #ff8c00;
+            font-weight: bold;
+        }
+
+        .match-round {
+            background: rgba(255, 140, 0, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .match-teams {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .team-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .team-line:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .team-name {
+            font-weight: bold;
+            flex-grow: 1;
+        }
+
+        .team-name.own {
+            color: #00ff88;
+        }
+
+        .team-name.winner {
+            color: #ff8c00;
+        }
+
+        .team-score {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-left: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .match-status {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .status-live {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        .status-finished {
+            background: rgba(136, 136, 136, 0.2);
+            color: #888888;
+        }
+
+        .status-upcoming {
+            background: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+        }
+
+        /* Connection lines */
+        .bracket-round:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            width: 60px;
+            height: 2px;
+            background: rgba(255, 140, 0, 0.3);
+            z-index: -1;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .color-own { background: #00ff88; }
+        .color-live { background: #ff4444; }
+        .color-finished { background: #888888; }
+        .color-upcoming { background: #ff8c00; }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .tournament-bracket {
+                gap: 40px;
+            }
+            
+            .main-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tournament-bracket {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+            
+            .bracket-round {
+                min-width: 280px;
+            }
+            
+            .main-title {
+                font-size: 1.8rem;
+            }
+            
+            .legend {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+        }
+
+        /* My Teams Panel */
+        .my-teams-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .panel-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .team-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            border-color: rgba(255, 140, 0, 0.5);
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .team-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .team-name-card {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .team-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            background: #3498db;
+            color: white;
+        }
+
+        .team-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .team-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: #888;
+        }
+
+        .empty-slot {
+            background: rgba(255,255,255,0.03);
+            border: 2px dashed rgba(255,255,255,0.2);
+            color: #666;
+            text-align: center;
+            padding: 40px 15px;
+            font-style: italic;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .bracket-container {
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .bracket-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+            
+            .bracket-round {
+                min-width: 280px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .cup-overview {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">⚽ Kickerscup</div>
+            <div class="user-info">Manager: ProfiKicker2023</div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🏠</span>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">👥</span>
+                    Team
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🏋️</span>
+                    Training
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🏟️</span>
+                    Stadion
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">⚽</span>
+                    Live Spiele
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">💰</span>
+                    Transfermarkt
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <span class="nav-icon">🏆</span>
+                    Pokale
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">📊</span>
+                    Liga
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">⚙️</span>
+                    Einstellungen
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h2>Pokalwettbewerbe</h2>
+                <p>CC Champions Cup & EC Europa Cup</p>
+            </div>
+            <div class="header-controls">
+                <div class="cup-toggle">
+                    <button class="cup-btn active" onclick="switchCup('cc')">🏆 CC Champions Cup</button>
+                    <button class="cup-btn" onclick="switchCup('ec')">🥉 EC Europa Cup</button>
+                </div>
+                <select class="phase-selector" id="phaseSelector" onchange="updatePhase()">
+                    <option value="groups">Gruppenphase</option>
+                    <option value="ko16" selected>Achtelfinale (KO)</option>
+                    <option value="ko8">Viertelfinale</option>
+                    <option value="ko4">Halbfinale</option>
+                    <option value="final">Finale</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Content Container -->
+        <div class="content-container">
+            <!-- Cup Overview -->
+            <div class="cup-overview">
+                <div class="overview-card">
+                    <div class="card-icon">🏆</div>
+                    <div class="card-title">Champions Cup</div>
+                    <div class="card-value">256</div>
+                    <div class="card-subtitle">Teams gestartet</div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">Aktuelle Phase</div>
+                    <div class="card-value">Achtelfinale</div>
+                    <div class="card-subtitle">16 Teams verbleibend</div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">⚽</div>
+                    <div class="card-title">Deine Teams</div>
+                    <div class="card-value">2</div>
+                    <div class="card-subtitle">Beide qualifiziert</div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-title">Nächstes Spiel</div>
+                    <div class="card-value">Heute</div>
+                    <div class="card-subtitle">18:15 Uhr</div>
+                </div>
+            </div>
+
+            <!-- My Teams Panel -->
+            <div class="my-teams-panel">
+                <h3 class="panel-title">🎯 Meine Teams im Achtelfinale</h3>
+                
+                <div class="team-card">
+                    <div class="team-card-header">
+                        <div class="team-name-card">FC Thunderbolts</div>
+                        <div class="team-status">Qualifiziert</div>
+                    </div>
+                    <div class="team-details">
+                        <div class="team-detail">
+                            <span class="detail-label">Gegner:</span>
+                            <span class="detail-value">Silver Sharks</span>
+                        </div>
+                        <div class="team-detail">
+                            <span class="detail-label">Spiel:</span>
+                            <span class="detail-value">Heute 18:15</span>
+                        </div>
+                        <div class="team-detail">
+                            <span class="detail-label">Gruppenphase:</span>
+                            <span class="detail-value">Gruppe A (1. Platz)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-card-header">
+                        <div class="team-name-card">Lightning Bolts</div>
+                        <div class="team-status">Qualifiziert</div>
+                    </div>
+                    <div class="team-details">
+                        <div class="team-detail">
+                            <span class="detail-label">Gegner:</span>
+                            <span class="detail-value">Thunder Storm</span>
+                        </div>
+                        <div class="team-detail">
+                            <span class="detail-label">Spiel:</span>
+                            <span class="detail-value">Morgen 20:00</span>
+                        </div>
+                        <div class="team-detail">
+                            <span class="detail-label">Gruppenphase:</span>
+                            <span class="detail-value">Gruppe C (1. Platz)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tournament Bracket -->
+            <div class="tournament-bracket">
+                <div class="bracket-header">
+                    <h3 class="bracket-title">CC Champions Cup - Achtelfinale</h3>
+                    <p class="bracket-subtitle">Turnierbaum der letzten 16 Teams</p>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color color-own"></div>
+                        <span>Deine Teams</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-live"></div>
+                        <span>Live</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-finished"></div>
+                        <span>Beendet</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-upcoming"></div>
+                        <span>Anstehend</span>
+                    </div>
+                </div>
+
+                <div class="bracket-container">
+        <!-- Achtelfinale -->
+        <div class="bracket-round">
+            <div class="round-title">Achtelfinale</div>
+            
+            <div class="match own-team">
+                <div class="match-header">
+                    <div class="match-time">Heute 18:15</div>
+                    <div class="match-round">1/8</div>
+                </div>
+                <div class="match-teams">
+                    <div class="team-line">
+                        <span class="team-name own">FC Thunderbolts</span>
+                        <span class="team-score">-</span>
+                    </div>
+                    <div class="team-line">
+                        <span class="team-name">Silver Sharks</span>
+                        <span class="team-score">-</span>
+                    </div>
+                </div>
+                <div class="match-status status-upcoming">Anstehend</div>
+            </div>
+
+            <div class="match live">
+                <div class="match-header">
+                    <div class="match-time">LIVE</div>
+                    <div class="match-round">1/8</div>
+                </div>
+                <div class="match-teams">
+                    <div class="team-line">
+                        <span class="team-name winner">Golden Hawks</span>
+                        <span class="team-score">2</span>
+                    </div>
+                    <div class="team-line">
+                        <span class="team-name">Storm Eagles</span>
+                        <span class="team-score">1</span>
+                    </div>
+                </div>
+                <div class="match-status status-live">85. Minute</div>
+            </div>
+
+            <div class="match own-team">
+                <div class="match-header">
+                    <div class="match-time">Morgen 20:00</div>
+                    <div class="match-round">1/8</div>
+                </div>
+                <div class="match-teams">
+                    <div class="team-line">
+                        <span class="team-name own">Lightning Bolts</span>
+                        <span class="team-score">-</span>
+                    </div>
+                    <div class="team-line">
+                        <span class="team-name">Thunder Storm</span>
+                        <span class="team-score">-</span>
+                    </div>
+                </div>
+                <div class="match-status status-upcoming">Anstehend</div>
+            </div>
+
+            <div class="match finished">
+                <div class="match-header">
+                    <div class="match-time">Gestern</div>
+                    <div class="match-round">1/8</div>
+                </div>
+                <div class="match-teams">
+                    <div class="team-line">
+                        <span class="team-name winner">Fire Dragons</span>
+                        <span class="team-score">3</span>
+                    </div>
+                    <div class="team-line">
+                        <span class="team-name">Ice Giants</span>
+                        <span class="team-score">1</span>
+                    </div>
+                </div>
+                <div class="match-status status-finished">Beendet</div>
+            </div>
+
+            <div class="match">
+                <div class="match-header">
+                    <div class="match-time">27.07. 19:30</div>
+                    <div class="match-round">1/8</div>
+                </div>
+                <div class="match-teams">
+                    <div class="team-line">
+                        <span class="team-name">Royal Lions</span>
+                        <span class="team-score">-</span>
+                    </div>
+                    <div class="team-line">
+                        <span class="team-name">Black Panthers</span>
+                        <span class="team-score">-</span>
+                    </div>
+                </div>
+                <div class="match-status status-upcoming">Anstehend</div>
+            </div>
+
+            <div class="match">
+                <div class="match-header">
+                    <div class="match-time">27.07. 20:45</div>
+                    <div class="match-round">1/8</div>
+                </div>
+                <div class="match-teams">
+                    <div class="team-line">
+                        <span class="team-name">Blue Wolves</span>
+                        <span class="team-score">-</span>
+                    </div>
+                    <div class="team-line">
+                        <span class="team-name">Red Foxes</span>
+                        <span class="team-score">-</span>
+                    </div>
+                </div>
+                <div class="match-status status-upcoming">Anstehend</div>
+            </div>
+
+            <div class="match">
+                <div class="match-header">
+                    <div class="match-time">28.07. 18:00</div>
+                    <div class="match-round">1/8</div>
+                </div>
+                <div class="match-teams">
+                    <div class="team-line">
+                        <span class="team-name">Sky Rockets</span>
+                        <span class="team-score">-</span>
+                    </div>
+                    <div class="team-line">
+                        <span class="team-name">Earth Titans</span>
+                        <span class="team-score">-</span>
+                    </div>
+                </div>
+                <div class="match-status status-upcoming">Anstehend</div>
+            </div>
+
+            <div class="match">
+                <div class="match-header">
+                    <div class="match-time">28.07. 19:15</div>
+                    <div class="match-round">1/8</div>
+                </div>
+                <div class="match-teams">
+                    <div class="team-line">
+                        <span class="team-name">Ocean Waves</span>
+                        <span class="team-score">-</span>
+                    </div>
+                    <div class="team-line">
+                        <span class="team-name">Mountain Bears</span>
+                        <span class="team-score">-</span>
+                    </div>
+                </div>
+                <div class="match-status status-upcoming">Anstehend</div>
+            </div>
+        </div>
+
+        <!-- Viertelfinale -->
+        <div class="bracket-round">
+            <div class="round-title">Viertelfinale</div>
+            
+            <div class="empty-slot">
+                <div>Sieger AF1<br>vs<br>Sieger AF2</div>
+            </div>
+
+            <div class="empty-slot">
+                <div>Sieger AF3<br>vs<br>Sieger AF4</div>
+            </div>
+
+            <div class="empty-slot">
+                <div>Sieger AF5<br>vs<br>Sieger AF6</div>
+            </div>
+
+            <div class="empty-slot">
+                <div>Sieger AF7<br>vs<br>Sieger AF8</div>
+            </div>
+        </div>
+
+        <!-- Halbfinale -->
+        <div class="bracket-round">
+            <div class="round-title">Halbfinale</div>
+            
+            <div class="empty-slot">
+                <div>Sieger VF1<br>vs<br>Sieger VF2</div>
+            </div>
+
+            <div class="empty-slot">
+                <div>Sieger VF3<br>vs<br>Sieger VF4</div>
+            </div>
+        </div>
+
+        <!-- Finale -->
+        <div class="bracket-round">
+            <div class="round-title">Finale</div>
+            
+            <div class="empty-slot">
+                <div>Sieger HF1<br>vs<br>Sieger HF2</div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentCup = 'cc';
+        let currentPhase = 'ko16';
+
+        function switchCup(cup) {
+            currentCup = cup;
+            
+            // Update button states
+            document.querySelectorAll('.cup-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update phase selector
+            updatePhaseSelector(cup);
+            updateContent();
+        }
+
+        function updatePhaseSelector(cup) {
+            const phaseSelector = document.getElementById('phaseSelector');
+            
+            if (cup === 'cc') {
+                phaseSelector.innerHTML = `
+                    <option value="groups">Gruppenphase</option>
+                    <option value="ko16" selected>Achtelfinale (KO)</option>
+                    <option value="ko8">Viertelfinale</option>
+                    <option value="ko4">Halbfinale</option>
+                    <option value="final">Finale</option>
+                `;
+            } else {
+                phaseSelector.innerHTML = `
+                    <option value="ko64">1. Runde (64 Teams)</option>
+                    <option value="ko32">2. Runde (32 Teams)</option>
+                    <option value="ko16" selected>Achtelfinale</option>
+                    <option value="ko8">Viertelfinale</option>
+                    <option value="ko4">Halbfinale</option>
+                    <option value="final">Finale</option>
+                `;
+            }
+        }
+
+        function updatePhase() {
+            currentPhase = document.getElementById('phaseSelector').value;
+            updateContent();
+        }
+
+        function updateContent() {
+            // Update overview cards
+            const overviewCards = document.querySelectorAll('.overview-card');
+            
+            if (currentCup === 'cc') {
+                overviewCards[0].innerHTML = `
+                    <div class="card-icon">🏆</div>
+                    <div class="card-title">Champions Cup</div>
+                    <div class="card-value">256</div>
+                    <div class="card-subtitle">Teams gestartet</div>
+                `;
+                overviewCards[1].innerHTML = `
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">Aktuelle Phase</div>
+                    <div class="card-value">${getPhaseDisplayName(currentPhase)}</div>
+                    <div class="card-subtitle">${getPhaseTeamCount(currentPhase)} Teams verbleibend</div>
+                `;
+            } else {
+                overviewCards[0].innerHTML = `
+                    <div class="card-icon">🥉</div>
+                    <div class="card-title">Europa Cup</div>
+                    <div class="card-value">192</div>
+                    <div class="card-subtitle">Teams (128 + 64 CC)</div>
+                `;
+                overviewCards[1].innerHTML = `
+                    <div class="card-icon">⚔️</div>
+                    <div class="card-title">Aktuelle Phase</div>
+                    <div class="card-value">${getPhaseDisplayName(currentPhase)}</div>
+                    <div class="card-subtitle">${getPhaseTeamCount(currentPhase)} Teams verbleibend</div>
+                `;
+            }
+
+            // Update bracket title
+            const bracketTitle = document.querySelector('.bracket-title');
+            bracketTitle.textContent = `${currentCup === 'cc' ? 'CC Champions Cup' : 'EC Europa Cup'} - ${getPhaseDisplayName(currentPhase)}`;
+        }
+
+        function getPhaseDisplayName(phase) {
+            const phaseNames = {
+                'groups': 'Gruppenphase',
+                'ko64': '1. Runde',
+                'ko32': '2. Runde',
+                'ko16': 'Achtelfinale',
+                'ko8': 'Viertelfinale',
+                'ko4': 'Halbfinale',
+                'final': 'Finale'
+            };
+            return phaseNames[phase] || 'KO-Phase';
+        }
+
+        function getPhaseTeamCount(phase) {
+            const teamCounts = {
+                'groups': '256',
+                'ko64': '64',
+                'ko32': '32',
+                'ko16': '16',
+                'ko8': '8',
+                'ko4': '4',
+                'final': '2'
+            };
+            return teamCounts[phase] || '16';
+        }
+
+        // Simulate live score updates
+        function updateLiveScores() {
+            const liveMatches = document.querySelectorAll('.match.live');
+            liveMatches.forEach(match => {
+                const scores = match.querySelectorAll('.team-score');
+                if (Math.random() > 0.9) { // 10% chance to update
+                    const currentScore1 = parseInt(scores[0].textContent) || 0;
+                    const currentScore2 = parseInt(scores[1].textContent) || 0;
+                    
+                    if (Math.random() > 0.5) {
+                        scores[0].textContent = currentScore1 + 1;
+                    } else {
+                        scores[1].textContent = currentScore2 + 1;
+                    }
+                }
+            });
+        }
+
+        // Add click handlers for matches
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.match:not(.empty-slot)').forEach(match => {
+                match.addEventListener('click', function() {
+                    const teams = this.querySelectorAll('.team-name');
+                    const teamNames = Array.from(teams).map(t => t.textContent).join(' vs ');
+                    const time = this.querySelector('.match-time').textContent;
+                    
+                    alert(`🏆 ${teamNames}\n⏰ ${time}\n\nKlicke auf ein Team-Namen für weitere Details!`);
+                });
+            });
+
+            // Add hover effects
+            document.querySelectorAll('.team-line').forEach(line => {
+                line.addEventListener('mouseenter', function() {
+                    this.style.background = 'rgba(255, 140, 0, 0.1)';
+                });
+                
+                line.addEventListener('mouseleave', function() {
+                    this.style.background = 'rgba(255,255,255,0.05)';
+                });
+            });
+        });
+
+        // Update live scores every 30 seconds
+        setInterval(updateLiveScores, 30000);
+
+        // Initialize with CC Achtelfinale
+        updateContent();
+    </script>.random() > 0.5) {
+                        scores[0].textContent = currentScore1 + 1;
+                    } else {
+                        scores[1].textContent = currentScore2 + 1;
+                    }
+                }
+            });
+        }
+
+        // Update live scores every 30 seconds
+        setInterval(updateLiveScores, 30000);
+
+        // Add click handlers for matches
+        document.querySelectorAll('.match:not(.empty-slot)').forEach(match => {
+            match.addEventListener('click', function() {
+                const teams = this.querySelectorAll('.team-name');
+                const teamNames = Array.from(teams).map(t => t.textContent).join(' vs ');
+                const time = this.querySelector('.match-time').textContent;
+                
+                alert(`🏆 ${teamNames}\n⏰ ${time}\n\nKlicke auf ein Team-Namen für weitere Details!`);
+            });
+        });
+
+        // Add hover effects
+        document.querySelectorAll('.team-line').forEach(line => {
+            line.addEventListener('mouseenter', function() {
+                this.style.background = 'rgba(255, 140, 0, 0.1)';
+            });
+            
+            line.addEventListener('mouseleave', function() {
+                this.style.background = 'rgba(255,255,255,0.05)';
+            });
+        });
+    </script>
+</body>
+</html>
