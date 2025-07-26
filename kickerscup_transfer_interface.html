@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Transfermarkt</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .transfer-budget {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-timer {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ff8c00;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Market Overview */
+        .market-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .overview-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Search and Filter */
+        .search-filter-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-header {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .filter-control {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ffffff;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .filter-control option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .search-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ffffff;
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .search-input::placeholder {
+            color: #888;
+        }
+
+        .price-range {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .price-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #ffffff;
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100px;
+            text-align: center;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .reset-btn {
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.4);
+            color: #ff8c00;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 140, 0, 0.3);
+        }
+
+        /* Players Grid */
+        .players-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .results-count {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 140, 0, 0.5);
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.2);
+        }
+
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+        }
+
+        .player-meta {
+            display: flex;
+            gap: 1rem;
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .position-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            min-width: 40px;
+        }
+
+        .position-TW { background: #e74c3c; color: white; }
+        .position-LV, .position-RV, .position-IV { background: #3498db; color: white; }
+        .position-LM, .position-RM, .position-ZDM, .position-OFM { background: #2ecc71; color: white; }
+        .position-LS, .position-RS, .position-MS { background: #f39c12; color: white; }
+
+        .player-price {
+            text-align: right;
+        }
+
+        .price-amount {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ff8c00;
+            margin-bottom: 0.3rem;
+        }
+
+        .price-label {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .player-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #ffffff;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.7rem;
+        }
+
+        .player-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-label {
+            color: #888;
+        }
+
+        .detail-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .buy-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .buy-btn {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .buy-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .details-btn {
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.4);
+            color: #ff8c00;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            min-width: 80px;
+        }
+
+        .details-btn:hover {
+            background: rgba(255, 140, 0, 0.3);
+        }
+
+        /* My Sales Section */
+        .my-sales-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .sales-header {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .sales-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .sale-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sale-info {
+            flex: 1;
+        }
+
+        .sale-player {
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .sale-price {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .sale-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .status-sold {
+            background: #f39c12;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: #e74c3c;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(231, 76, 60, 0.3);
+        }
+
+        /* Mobile Responsiveness */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ff8c00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .market-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                flex-direction: column;
+            }
+
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .player-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .buy-section {
+                flex-direction: column;
+            }
+
+            .sales-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Toggle Button -->
+        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>KICKERSCUP</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">👥</span>
+                        Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏋️</span>
+                        Training
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏟️</span>
+                        Stadion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚽</span>
+                        Live Spiele
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">💰</span>
+                        Transfermarkt
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏆</span>
+                        Pokale
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Liga
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        Einstellungen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2>Transfermarkt</h2>
+                    <p>Automatisch generierte Spieler - Keine Manager-Abwerbung</p>
+                </div>
+                <div class="header-controls">
+                    <div class="transfer-budget">
+                        💰 Budget: 18.750.000 T
+                    </div>
+                    <div class="refresh-timer">
+                        🔄 Nächste Auffüllung: 05:42:18
+                    </div>
+                </div>
+            </header>
+
+            <!-- Market Overview -->
+            <div class="market-overview">
+                <div class="overview-card">
+                    <div class="card-icon">👥</div>
+                    <div class="card-value">1,247</div>
+                    <div class="card-label">Verfügbare Spieler</div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">💰</div>
+                    <div class="card-value">2.1M T</div>
+                    <div class="card-label">Durchschnittspreis</div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">📈</div>
+                    <div class="card-value">127</div>
+                    <div class="card-label">Verkäufe heute</div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">⭐</div>
+                    <div class="card-value">83</div>
+                    <div class="card-label">Ø Spielerstärke</div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">🔥</div>
+                    <div class="card-value">23</div>
+                    <div class="card-label">Neu hinzugefügt</div>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-filter-section">
+                <h3 class="filter-header">🔍 Spieler suchen & filtern</h3>
+                
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Spielername</label>
+                        <input type="text" class="search-input" placeholder="Spieler suchen..." id="playerSearch">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Position</label>
+                        <select class="filter-control" id="positionFilter">
+                            <option value="">Alle Positionen</option>
+                            <option value="TW">Torwart</option>
+                            <option value="LV,RV,IV">Abwehr</option>
+                            <option value="LM,RM,ZDM,OFM">Mittelfeld</option>
+                            <option value="LS,RS,MS">Sturm</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Alter</label>
+                        <select class="filter-control" id="ageFilter">
+                            <option value="">Alle Altersgruppen</option>
+                            <option value="18-21">Talente (18-21)</option>
+                            <option value="22-27">Prime (22-27)</option>
+                            <option value="28-32">Erfahrene (28-32)</option>
+                            <option value="33+">Veteranen (33+)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Stärke</label>
+                        <select class="filter-control" id="strengthFilter">
+                            <option value="">Alle Stärken</option>
+                            <option value="90-100">Elite (90-100)</option>
+                            <option value="80-89">Sehr gut (80-89)</option>
+                            <option value="70-79">Gut (70-79)</option>
+                            <option value="60-69">Durchschnitt (60-69)</option>
+                            <option value="50-59">Schwach (50-59)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Preisspanne</label>
+                        <div class="price-range">
+                            <input type="text" class="price-input" placeholder="Von" id="priceMin">
+                            <span style="color: #888;">-</span>
+                            <input type="text" class="price-input" placeholder="Bis" id="priceMax">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Sortierung</label>
+                        <select class="filter-control" id="sortFilter">
+                            <option value="newest">Neueste zuerst</option>
+                            <option value="price-low">Preis aufsteigend</option>
+                            <option value="price-high">Preis absteigend</option>
+                            <option value="strength-high">Stärke absteigend</option>
+                            <option value="age-low">Jüngste zuerst</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-actions">
+                    <button class="filter-btn" onclick="applyFilters()">🔍 Filter anwenden</button>
+                    <button class="reset-btn" onclick="resetFilters()">🔄 Zurücksetzen</button>
+                </div>
+            </div>
+
+            <!-- Players Section -->
+            <div class="players-section">
+                <div class="section-header">
+                    <h3 class="section-title">💰 Verfügbare Spieler</h3>
+                    <div class="results-count">47 Ergebnisse gefunden</div>
+                </div>
+                
+                <div class="players-grid">
+                    <!-- Player Card 1 -->
+                    <div class="player-card">
+                        <div class="player-header">
+                            <div class="player-info">
+                                <div class="player-name">Marco Reus</div>
+                                <div class="player-meta">
+                                    <span>28 Jahre</span>
+                                    <span>Deutschland</span>
+                                    <span>Rechtsfuß</span>
+                                </div>
+                                <span class="position-badge position-OFM">OFM</span>
+                            </div>
+                            <div class="player-price">
+                                <div class="price-amount">4.2M T</div>
+                                <div class="price-label">Ablöse</div>
+                            </div>
+                        </div>
+                        
+                        <div class="player-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">87</div>
+                                <div class="stat-label">Stärke</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">89</div>
+                                <div class="stat-label">Kondition</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">25</div>
+                                <div class="stat-label">Form</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">92</div>
+                                <div class="stat-label">Frische</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">11</div>
+                                <div class="stat-label">Motivation</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">85</div>
+                                <div class="stat-label">Einsatzwert</div>
+                            </div>
+                        </div>
+                        
+                        <div class="player-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Vertrag:</span>
+                                <span class="detail-value">4 Jahre</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Gehalt:</span>
+                                <span class="detail-value">180k T/Monat</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Einsätze:</span>
+                                <span class="detail-value">152 Spiele</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value">Fit</span>
+                            </div>

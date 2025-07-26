@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Stadion Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stadium-budget {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Stadium Overview */
+        .stadium-overview {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Stadium Visual */
+        .stadium-visual {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stadium-visual::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+        }
+
+        .visual-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .stadium-field {
+            background: linear-gradient(to bottom, #2ecc71 0%, #27ae60 50%, #2ecc71 100%);
+            border-radius: 15px;
+            height: 300px;
+            position: relative;
+            margin: 2rem auto;
+            max-width: 500px;
+            border: 3px solid #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .field-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+        }
+
+        .field-lines::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: white;
+            transform: translateY(-50%);
+        }
+
+        .field-lines::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 80px;
+            border: 2px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .stadium-stands {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stadium-stands:hover {
+            background: rgba(255, 140, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        .stands-north {
+            top: -60px;
+            left: 10%;
+            right: 10%;
+            height: 50px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .stands-south {
+            bottom: -60px;
+            left: 10%;
+            right: 10%;
+            height: 50px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .stands-west {
+            top: 10%;
+            left: -80px;
+            bottom: 10%;
+            width: 70px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            writing-mode: vertical-rl;
+        }
+
+        .stands-east {
+            top: 10%;
+            right: -80px;
+            bottom: 10%;
+            width: 70px;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            writing-mode: vertical-rl;
+        }
+
+        .vip-boxes {
+            position: absolute;
+            top: -30px;
+            left: 30%;
+            right: 30%;
+            height: 20px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        /* Stadium Stats */
+        .stadium-stats {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .stats-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .capacity-overview {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .capacity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid transparent;
+        }
+
+        .capacity-item.stehplaetze {
+            border-left-color: #3498db;
+        }
+
+        .capacity-item.sitzplaetze {
+            border-left-color: #e74c3c;
+        }
+
+        .capacity-item.vip {
+            border-left-color: #9b59b6;
+        }
+
+        .capacity-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .capacity-value {
+            color: #ff8c00;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .total-capacity {
+            background: rgba(255, 140, 0, 0.1);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .total-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        /* Management Sections */
+        .management-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .management-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Expansion Controls */
+        .expansion-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .expansion-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .expansion-item:hover {
+            border-color: rgba(255, 140, 0, 0.5);
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .expansion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .expansion-name {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .expansion-current {
+            color: #ff8c00;
+            font-weight: bold;
+        }
+
+        .expansion-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: #888;
+        }
+
+        .detail-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .expansion-controls-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .qty-btn {
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.4);
+            color: #ff8c00;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .qty-btn:hover {
+            background: rgba(255, 140, 0, 0.3);
+        }
+
+        .qty-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .qty-input {
+            background: none;
+            border: none;
+            color: #ffffff;
+            text-align: center;
+            width: 60px;
+            font-weight: bold;
+        }
+
+        .expand-btn {
+            background: linear-gradient(45deg, #ff8c00, #ffd700);
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .expand-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .expand-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Pitch Management */
+        .pitch-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .pitch-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .pitch-british {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .pitch-normal {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .pitch-kuhkoppel {
+            background: linear-gradient(45deg, #8b4513, #654321);
+            color: white;
+        }
+
+        .pitch-info {
+            flex: 1;
+        }
+
+        .pitch-quality {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .pitch-description {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pitch-warning {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .pitch-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .pitch-btn {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.4);
+            color: #2ecc71;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .pitch-btn:hover {
+            background: rgba(46, 204, 113, 0.3);
+        }
+
+        .pitch-btn.emergency {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: rgba(231, 76, 60, 0.4);
+            color: #e74c3c;
+        }
+
+        .pitch-btn.emergency:hover {
+            background: rgba(231, 76, 60, 0.3);
+        }
+
+        /* Revenue Overview */
+        .revenue-section {
+            grid-column: 1 / -1;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .revenue-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .revenue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .revenue-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .revenue-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .revenue-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2ecc71;
+            margin-bottom: 0.5rem;
+        }
+
+        .revenue-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .revenue-details {
+            color: #cccccc;
+            font-size: 0.8rem;
+        }
+
+        /* Mobile Responsiveness */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ff8c00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stadium-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .management-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .expansion-details {
+                grid-template-columns: 1fr;
+            }
+
+            .expansion-controls-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .quantity-control {
+                justify-content: center;
+            }
+
+            .pitch-controls {
+                flex-direction: column;
+            }
+
+            .revenue-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Mobile Toggle Button -->
+        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>KICKERSCUP</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">👥</span>
+                        Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏋️</span>
+                        Training
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">🏟️</span>
+                        Stadion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚽</span>
+                        Live Spiele
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">💰</span>
+                        Transfermarkt
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏆</span>
+                        Pokale
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Liga
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        Einstellungen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2>Stadion Management</h2>
+                    <p>Thunderbolt Arena - Kapazität & Rasenpflege</p>
+                </div>
+                <div class="header-right">
+                    <div class="stadium-budget">
+                        💰 Budget: 25.750.000 T
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stadium Overview -->
+            <div class="stadium-overview">
+                <!-- Stadium Visual -->
+                <div class="stadium-visual">
+                    <h3 class="visual-title">🏟️ Thunderbolt Arena</h3>
+                    
+                    <div class="stadium-field">
+                        <div class="field-lines"></div>
+                        
+                        <!-- Stadium Stands -->
+                        <div class="stadium-stands stands-north" onclick="expandStand('north')" title="Nordkurve - Stehplätze">
+                            Stehplätze (Nord): 15,000
+                        </div>
+                        <div class="stadium-stands stands-south" onclick="expandStand('south')" title="Südkurve - Stehplätze">
+                            Stehplätze (Süd): 12,000
+                        </div>
+                        <div class="stadium-stands stands-west" onclick="expandStand('west')" title="Westtribüne - Sitzplätze">
+                            Sitzplätze: 8,500
+                        </div>
+                        <div class="stadium-stands stands-east" onclick="expandStand('east')" title="Osttribüne - Sitzplätze">
+                            Sitzplätze: 7,200
+                        </div>
+                        <div class="stadium-stands vip-boxes" onclick="expandStand('vip')" title="VIP-Logen">
+                            VIP: 850
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; color: #888; font-size: 0.9rem; margin-top: 1rem;">
+                        Klicke auf die Tribünen um sie zu erweitern
+                    </div>
+                </div>
+
+                <!-- Stadium Stats -->
+                <div class="stadium-stats">
+                    <h3 class="stats-title">📊 Stadion-Statistiken</h3>
+                    
+                    <div class="total-capacity">
+                        <div class="total-number">43,550</div>
+                        <div class="total-label">Gesamtkapazität</div>
+                    </div>
+                    
+                    <div class="capacity-overview">
+                        <div class="capacity-item stehplaetze">
+                            <div class="capacity-label">
+                                🟦 Stehplätze
+                            </div>
+                            <div class="capacity-value">27,000 / 60,000</div>
+                        </div>
+                        <div class="capacity-item sitzplaetze">
+                            <div class="capacity-label">
+                                🟥 Sitzplätze
+                            </div>
+                            <div class="capacity-value">15,700 / 35,000</div>
+                        </div>
+                        <div class="capacity-item vip">
+                            <div class="capacity-label">
+                                🟣 VIP-Logen
+                            </div>
+                            <div class="capacity-value">850 / 5,000</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: #888;">Auslastung ⌀:</span>
+                            <span style="color: #2ecc71; font-weight: bold;">87%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: #888;">Einnahmen/Spiel:</span>
+                            <span style="color: #2ecc71; font-weight: bold;">1.250.000 T</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #888;">Saisonertrag:</span>
+                            <span style="color: #2ecc71; font-weight: bold;">42.500.000 T</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Management Sections -->
+            <div class="management-sections">
+                <!-- Stadium Expansion -->
+                <div class="management-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            🏗️ Stadion-Erweiterung
+                        </h3>
+                    </div>
+                    
+                    <div class="expansion-controls">
+                        <!-- Stehplätze -->
+                        <div class="expansion-item">
+                            <div class="expansion-header">
+                                <div class="expansion-name">
+                                    🟦 Stehplätze
+                                </div>
+                                <div class="expansion-current">27,000 / 60,000</div>
+                            </div>
+                            <div class="expansion-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Kosten/Platz:</span>
+                                    <span class="detail-value">800 T</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Mindestausbau:</span>
+                                    <span class="detail-value">500 Plätze</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Bauzeit:</span>
+                                    <span class="detail-value">3 Tage</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Einnahme/Platz:</span>
+                                    <span class="detail-value">25 T</span>
+                                </div>
+                            </div>
+                            <div class="expansion-controls-row">
+                                <div class="quantity-control">
+                                    <button class="qty-btn" onclick="changeQuantity('steh', -500)">-</button>
+                                    <input type="text" class="qty-input" value="1000" id="stehQuantity" readonly>
+                                    <button class="qty-btn" onclick="changeQuantity('steh', 500)">+</button>
+                                </div>
+                                <button class="expand-btn" onclick="expandStadium('steh')">
+                                    Erweitern (800.000 T)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sitzplätze -->
+                        <div class="expansion-item">
+                            <div class="expansion-header">
+                                <div class="expansion-name">
+                                    🟥 Sitzplätze
+                                </div>
+                                <div class="expansion-current">15,700 / 35,000</div>
+                            </div>
+                            <div class="expansion-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Kosten/Platz:</span>
+                                    <span class="detail-value">1,500 T</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Mindestausbau:</span>
+                                    <span class="detail-value">200 Plätze</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Bauzeit:</span>
+                                    <span class="detail-value">5 Tage</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Einnahme/Platz:</span>
+                                    <span class="detail-value">45 T</span>
+                                </div>
+                            </div>
+                            <div class="expansion-controls-row">
+                                <div class="quantity-control">
+                                    <button class="qty-btn" onclick="changeQuantity('sitz', -200)">-</button>
+                                    <input type="text" class="qty-input" value="500" id="sitzQuantity" readonly>
+                                    <button class="qty-btn" onclick="changeQuantity('sitz', 200)">+</button>
+                                </div>
+                                <button class="expand-btn" onclick="expandStadium('sitz')">
+                                    Erweitern (750.000 T)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- VIP-Logen -->
+                        <div class="expansion-item">
+                            <div class="expansion-header">
+                                <div class="expansion-name">
+                                    🟣 VIP-Logen
+                                </div>
+                                <div class="expansion-current">850 / 5,000</div>
+                            </div>
+                            <div class="expansion-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Kosten/Platz:</span>
+                                    <span class="detail-value">3,000 T</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Mindestausbau:</span>
+                                    <span class="detail-value">50 Plätze</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Bauzeit:</span>
+                                    <span class="detail-value">7 Tage</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Einnahme/Platz:</span>
+                                    <span class="detail-value">120 T</span>
+                                </div>
+                            </div>
+                            <div class="expansion-controls-row">
+                                <div class="quantity-control">
+                                    <button class="qty-btn" onclick="changeQuantity('vip', -50)">-</button>
+                                    <input type="text" class="qty-input" value="100" id="vipQuantity" readonly>
+                                    <button class="qty-btn" onclick="changeQuantity('vip', 50)">+</button>
+                                </div>
+                                <button class="expand-btn" onclick="expandStadium('vip')">
+                                    Erweitern (300.000 T)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pitch Management -->
+                <div class="management-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            🌱 Rasenpflege
+                        </h3>
+                    </div>
+                    
+                    <div class="pitch-status">
+                        <div class="pitch-indicator pitch-normal">
+                            🌱
+                        </div>
+                        <div class="pitch-info">
+                            <div class="pitch-quality">Normal</div>
+                            <div class="pitch-description">Guter Spielzustand, leichte Abnutzung</div>
+                            <div style="color: #f39c12; font-size: 0.8rem;">
+                                ⚠️ Verschlechtert sich in 1 Tag zu "Kuhkoppel"
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pitch-controls">
+                        <button class="pitch-btn" onclick="maintainPitch()">
+                            🌱 Rasen pflegen (200.000 T)
+                        </button>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                        <h4 style="color: #ff8c00; margin-bottom: 1rem;">📋 Rasenpflege-System</h4>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="pitch-indicator pitch-british" style="width: 40px; height: 40px; font-size: 1rem;">🌿</div>
+                                <div style="flex: 1;">
+                                    <div style="color: #2ecc71; font-weight: bold;">British (Perfekt)</div>
+                                    <div style="color: #888; font-size: 0.8rem;">Optimaler Spielzustand</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="pitch-indicator pitch-normal" style="width: 40px; height: 40px; font-size: 1rem;">🌱</div>
+                                <div style="flex: 1;">
+                                    <div style="color: #f39c12; font-weight: bold;">Normal</div>
+                                    <div style="color: #888; font-size: 0.8rem;">Guter Spielzustand</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="pitch-indicator pitch-kuhkoppel" style="width: 40px; height: 40px; font-size: 1rem;">🥀</div>
+                                <div style="flex: 1;">
+                                    <div style="color: #e74c3c; font-weight: bold;">Kuhkoppel</div>
+                                    <div style="color: #888; font-size: 0.8rem;">Schlechter Zustand</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <div style="color: #888; font-size: 0.9rem; line-height: 1.4;">
+                                ⏰ <strong>Automatische Verschlechterung:</strong> Alle 2 Tage um eine Stufe<br>
+                                💰 <strong>Rasenpflege:</strong> 200.000 T (jederzeit möglich)<br>
+                                🚨 <strong>Rasenzwang:</strong> 500.000 T (bei Kuhkoppel + 1 Tag)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Overview -->
+            <div class="revenue-section">
+                <h3 class="revenue-title">💰 Stadion-Einnahmen Übersicht</h3>
+                
+                <div class="revenue-grid">
+                    <div class="revenue-card">
+                        <div class="revenue-icon">🟦</div>
+                        <div class="revenue-amount">675.000 T</div>
+                        <div class="revenue-label">Stehplätze pro Spiel</div>
+                        <div class="revenue-details">27,000 Plätze × 25 T × 87% Auslastung</div>
+                    </div>
+                    
+                    <div class="revenue-card">
+                        <div class="revenue-icon">🟥</div>
+                        <div class="revenue-amount">615.150 T</div>
+                        <div class="revenue-label">Sitzplätze pro Spiel</div>
+                        <div class="revenue-details">15,700 Plätze × 45 T × 87% Auslastung</div>
+                    </div>
+                    
+                    <div class="revenue-card">
+                        <div class="revenue-icon">🟣</div>
+                        <div class="revenue-amount">88.740 T</div>
+                        <div class="revenue-label">VIP-Logen pro Spiel</div>
+                        <div class="revenue-details">850 Plätze × 120 T × 87% Auslastung</div>
+                    </div>
+                    
+                    <div class="revenue-card">
+                        <div class="revenue-icon">🎯</div>
+                        <div class="revenue-amount">1.378.890 T</div>
+                        <div class="revenue-label">Gesamt pro Spiel</div>
+                        <div class="revenue-details">Bei 87% Durchschnittsauslastung</div>
+                    </div>
+                    
+                    <div class="revenue-card">
+                        <div class="revenue-icon">📅</div>
+                        <div class="revenue-amount">46.882.260 T</div>
+                        <div class="revenue-label">Saison-Ertrag</div>
+                        <div class="revenue-details">34 Heimspiele (Liga + Pokale)</div>
+                    </div>
+                    
+                    <div class="revenue-card">
+                        <div class="revenue-icon">📈</div>
+                        <div class="revenue-amount">+15.2%</div>
+                        <div class="revenue-label">Potential bei Vollausbau</div>
+                        <div class="revenue-details">Alle Kapazitäten maximal erweitert</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let quantities = {
+            steh: 1000,
+            sitz: 500,
+            vip: 100
+        };
+
+        let currentCapacities = {
+            steh: 27000,
+            sitz: 15700,
+            vip: 850
+        };
+
+        let maxCapacities = {
+            steh: 60000,
+            sitz: 35000,
+            vip: 5000
+        };
+
+        let costs = {
+            steh: 800,
+            sitz: 1500,
+            vip: 3000
+        };
+
+        let pitchStatus = 'normal'; // british, normal, kuhkoppel
+        let pitchDaysLeft = 1;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleButton = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggleButton.contains(event.target)) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Quantity controls
+        function changeQuantity(type, change) {
+            const minAmounts = { steh: 500, sitz: 200, vip: 50 };
+            const newQuantity = quantities[type] + change;
+            const maxPossible = maxCapacities[type] - currentCapacities[type];
+            
+            if (newQuantity >= minAmounts[type] && newQuantity <= maxPossible) {
+                quantities[type] = newQuantity;
+                document.getElementById(type + 'Quantity').value = newQuantity;
+                updateExpandButton(type);
+            }
+        }
+
+        function updateExpandButton(type) {
+            const button = document.querySelector(`[onclick="expandStadium('${type}')"]`);
+            const totalCost = quantities[type] * costs[type];
+            button.textContent = `Erweitern (${totalCost.toLocaleString()} T)`;
+            
+            // Check if affordable
+            if (totalCost > 25750000) { // Current budget
+                button.disabled = true;
+                button.style.background = 'rgba(255, 255, 255, 0.1)';
+                button.style.color = '#666';
+            } else {
+                button.disabled = false;
+                button.style.background = 'linear-gradient(45deg, #ff8c00, #ffd700)';
+                button.style.color = '#000';
+            }
+        }
+
+        // Stadium expansion
+        function expandStadium(type) {
+            const typeNames = {
+                steh: 'Stehplätze',
+                sitz: 'Sitzplätze', 
+                vip: 'VIP-Logen'
+            };
+            
+            const totalCost = quantities[type] * costs[type];
+            const newCapacity = currentCapacities[type] + quantities[type];
+            
+            if (confirm(`${typeNames[type]} erweitern?\n\n+${quantities[type]} Plätze\nKosten: ${totalCost.toLocaleString()} T\nNeue Kapazität: ${newCapacity.toLocaleString()}\n\nBauzeit: 3-7 Tage`)) {
+                currentCapacities[type] = newCapacity;
+                updateStadiumDisplay();
+                updateCapacityDisplay();
+                updateRevenueCalculations();
+                
+                alert(`✅ Erweiterung gestartet!\n\n${quantities[type]} ${typeNames[type]} werden in 3-7 Tagen fertiggestellt.\n\nBudget: ${(25750000 - totalCost).toLocaleString()} T verbleibt`);
+            }
+        }
+
+        // Stadium stand interactions
+        function expandStand(stand) {
+            const standInfo = {
+                north: 'Nordkurve (Stehplätze)',
+                south: 'Südkurve (Stehplätze)',
+                west: 'Westtribüne (Sitzplätze)',
+                east: 'Osttribüne (Sitzplätze)',
+                vip: 'VIP-Logen'
+            };
+            
+            alert(`🏟️ ${standInfo[stand]}\n\nErweiterung möglich?\nZur Stadion-Erweiterung wechseln?`);
+        }
+
+        // Pitch management
+        function maintainPitch() {
+            if (confirm('Rasen pflegen für 200.000 T?\n\nDer Rasen wird auf "British" (perfekt) verbessert.\nWirkung: Bessere Spielerleistung')) {
+                pitchStatus = 'british';
+                pitchDaysLeft = 4; // British hält 4 Tage
+                updatePitchDisplay();
+                alert('🌿 Rasen erfolgreich gepflegt!\n\nZustand: British (Perfekt)\nHält für 4 Tage');
+            }
+        }
+
+        function updatePitchDisplay() {
+            const pitchIndicator = document.querySelector('.pitch-indicator');
+            const pitchQuality = document.querySelector('.pitch-quality');
+            const pitchDescription = document.querySelector('.pitch-description');
+            
+            const statusInfo = {
+                british: {
+                    class: 'pitch-british',
+                    icon: '🌿',
+                    name: 'British',
+                    desc: 'Perfekter Spielzustand, optimale Bedingungen'
+                },
+                normal: {
+                    class: 'pitch-normal', 
+                    icon: '🌱',
+                    name: 'Normal',
+                    desc: 'Guter Spielzustand, leichte Abnutzung'
+                },
+                kuhkoppel: {
+                    class: 'pitch-kuhkoppel',
+                    icon: '🥀', 
+                    name: 'Kuhkoppel',
+                    desc: 'Schlechter Zustand, beeinträchtigt Spielerleistung'
+                }
+            };
+            
+            const status = statusInfo[pitchStatus];
+            pitchIndicator.className = `pitch-indicator ${status.class}`;
+            pitchIndicator.textContent = status.icon;
+            pitchQuality.textContent = status.name;
+            pitchDescription.textContent = status.desc;
+        }
+
+        function updateStadiumDisplay() {
+            // Update stadium visual
+            document.querySelector('.stands-north').textContent = `Stehplätze (Nord): ${Math.floor(currentCapacities.steh * 0.55).toLocaleString()}`;
+            document.querySelector('.stands-south').textContent = `Stehplätze (Süd): ${Math.floor(currentCapacities.steh * 0.45).toLocaleString()}`;
+            document.querySelector('.stands-west').textContent = `Sitzplätze: ${Math.floor(currentCapacities.sitz * 0.54).toLocaleString()}`;
+            document.querySelector('.stands-east').textContent = `Sitzplätze: ${Math.floor(currentCapacities.sitz * 0.46).toLocaleString()}`;
+            document.querySelector('.vip-boxes').textContent = `VIP: ${currentCapacities.vip.toLocaleString()}`;
+        }
+
+        function updateCapacityDisplay() {
+            const totalCapacity = currentCapacities.steh + currentCapacities.sitz + currentCapacities.vip;
+            
+            // Update total capacity
+            document.querySelector('.total-number').textContent = totalCapacity.toLocaleString();
+            
+            // Update individual capacities
+            document.querySelectorAll('.capacity-value')[0].textContent = `${currentCapacities.steh.toLocaleString()} / ${maxCapacities.steh.toLocaleString()}`;
+            document.querySelectorAll('.capacity-value')[1].textContent = `${currentCapacities.sitz.toLocaleString()} / ${maxCapacities.sitz.toLocaleString()}`;
+            document.querySelectorAll('.capacity-value')[2].textContent = `${currentCapacities.vip.toLocaleString()} / ${maxCapacities.vip.toLocaleString()}`;
+            
+            // Update expansion displays
+            document.querySelectorAll('.expansion-current')[0].textContent = `${currentCapacities.steh.toLocaleString()} / ${maxCapacities.steh.toLocaleString()}`;
+            document.querySelectorAll('.expansion-current')[1].textContent = `${currentCapacities.sitz.toLocaleString()} / ${maxCapacities.sitz.toLocaleString()}`;
+            document.querySelectorAll('.expansion-current')[2].textContent = `${currentCapacities.vip.toLocaleString()} / ${maxCapacities.vip.toLocaleString()}`;
+        }
+
+        function updateRevenueCalculations() {
+            const occupancy = 0.87; // 87% average occupancy
+            
+            const stehRevenue = Math.floor(currentCapacities.steh * 25 * occupancy);
+            const sitzRevenue = Math.floor(currentCapacities.sitz * 45 * occupancy);
+            const vipRevenue = Math.floor(currentCapacities.vip * 120 * occupancy);
+            const totalRevenue = stehRevenue + sitzRevenue + vipRevenue;
+            const seasonRevenue = totalRevenue * 34; // 34 home games
+            
+            // Update revenue cards
+            const revenueAmounts = document.querySelectorAll('.revenue-amount');
+            revenueAmounts[0].textContent = `${stehRevenue.toLocaleString()} T`;
+            revenueAmounts[1].textContent = `${sitzRevenue.toLocaleString()} T`;
+            revenueAmounts[2].textContent = `${vipRevenue.toLocaleString()} T`;
+            revenueAmounts[3].textContent = `${totalRevenue.toLocaleString()} T`;
+            revenueAmounts[4].textContent = `${seasonRevenue.toLocaleString()} T`;
+        }
+
+        // Initialize all displays
+        updatePitchDisplay();
+        updateStadiumDisplay();
+        updateCapacityDisplay();
+        updateRevenueCalculations();
+
+        // Initialize expand buttons
+        Object.keys(quantities).forEach(type => {
+            updateExpandButton(type);
+        });
+
+        // Simulate pitch degradation
+        setInterval(() => {
+            if (pitchDaysLeft > 0) {
+                pitchDaysLeft--;
+                
+                if (pitchDaysLeft === 0) {
+                    if (pitchStatus === 'british') {
+                        pitchStatus = 'normal';
+                        pitchDaysLeft = 2;
+                    } else if (pitchStatus === 'normal') {
+                        pitchStatus = 'kuhkoppel'; 
+                        pitchDaysLeft = 1;
+                    } else if (pitchStatus === 'kuhkoppel') {
+                        // Force maintenance
+                        alert('🚨 RASENZWANG!\n\nDer Rasen ist zu schlecht geworden.\nAutomatische Pflege für 500.000 T durchgeführt.');
+                        pitchStatus = 'normal';
+                        pitchDaysLeft = 2;
+                    }
+                    updatePitchDisplay();
+                }
+            }
+        }, 5000); // Every 5 seconds for demo (would be daily in real game)
+    </script>
+</body>
+</html>
+                
