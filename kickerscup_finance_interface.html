@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Finanzmanagement</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .balance {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2ecc71;
+            margin-bottom: 0.5rem;
+        }
+
+        .balance.negative {
+            color: #e74c3c;
+        }
+
+        /* Finance Overview Cards */
+        .finance-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .finance-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .finance-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff8c00;
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .expenses .card-icon {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        .income .card-icon {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .card-content {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .finance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .finance-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ff8c00;
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(255, 140, 0, 0.2);
+        }
+
+        .item-name {
+            color: #cccccc;
+        }
+
+        .item-amount {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .expenses .item-amount {
+            color: #e74c3c;
+        }
+
+        .income .item-amount {
+            color: #2ecc71;
+        }
+
+        /* Control Buttons */
+        .control-panel {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: rgba(255, 140, 0, 0.8);
+            color: #ffffff;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: #ff8c00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+        }
+
+        .control-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #cccccc;
+        }
+
+        .control-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        /* Recent Transactions */
+        .recent-transactions {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: #ff8c00;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            margin-right: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .transaction-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .transaction-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .transaction-item.expense {
+            border-left-color: #e74c3c;
+        }
+
+        .transaction-item.income {
+            border-left-color: #2ecc71;
+        }
+
+        .transaction-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .transaction-type {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .transaction-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .transaction-amount {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .transaction-item.expense .transaction-amount {
+            color: #e74c3c;
+        }
+
+        .transaction-item.income .transaction-amount {
+            color: #2ecc71;
+        }
+
+        /* Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            color: #ff8c00;
+            font-size: 1.8rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #cccccc;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #ff8c00;
+        }
+
+        .detail-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .detail-label {
+            color: #cccccc;
+            font-weight: bold;
+        }
+
+        .detail-value {
+            color: #ffffff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .finance-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .control-panel {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 2rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .animate-in {
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        .pulse {
+            animation: pulse 0.6s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="logo">
+            <h1>💰 KICKERSCUP</h1>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🏠</span>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">⚽</span>
+                    Liga
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🏆</span>
+                    Pokale
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">👥</span>
+                    Team
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🔄</span>
+                    Transfer
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">💪</span>
+                    Training
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <span class="nav-icon">💰</span>
+                    Finanzen
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h2>Finanzmanagement</h2>
+                <p>Verwalte deine Vereinsfinanzen</p>
+            </div>
+            <div class="header-right">
+                <div class="balance" id="totalBalance">€2.450.000</div>
+                <p>Aktueller Kontostand</p>
+            </div>
+        </header>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <button class="control-btn" onclick="showDetailModal()">
+                📊 Detailierte Übersicht
+            </button>
+            <button class="control-btn secondary" onclick="showRecentTransactions()">
+                📋 Letzte 5 Einträge
+            </button>
+            <button class="control-btn secondary" onclick="exportFinances()">
+                📤 Export
+            </button>
+            <button class="control-btn secondary" onclick="showBudgetPlanner()">
+                📈 Budget-Planer
+            </button>
+        </div>
+
+        <!-- Finance Overview -->
+        <div class="finance-overview">
+            <!-- Expenses Card -->
+            <div class="finance-card expenses" onclick="showExpenseDetails()">
+                <div class="card-header">
+                    <div class="card-icon">📉</div>
+                    <div class="card-title">Ausgaben</div>
+                </div>
+                <div class="card-content">
+                    <div class="finance-item" onclick="showCategoryDetails('stadion', '🏟️ Stadionausbau')">
+                        <span class="item-name">🏟️ Stadionausbau</span>
+                        <span class="item-amount">-€450.000</span>
+                    </div>
+                    <div class="finance-item" onclick="showCategoryDetails('gehaelter', '👥 Spielergehälter')">
+                        <span class="item-name">👥 Spielergehälter</span>
+                        <span class="item-amount">-€280.000</span>
+                    </div>
+                    <div class="finance-item" onclick="showCategoryDetails('transfers', '🔄 Transferausgaben')">
+                        <span class="item-name">🔄 Transferausgaben</span>
+                        <span class="item-amount">-€150.000</span>
+                    </div>
+                    <div class="finance-item" onclick="showCategoryDetails('sonstige', '📋 Sonstige Ausgaben')">
+                        <span class="item-name">📋 Sonstige Ausgaben</span>
+                        <span class="item-amount">-€75.000</span>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: bold;">Gesamt Ausgaben:</span>
+                        <span style="font-size: 1.3rem; font-weight: bold; color: #e74c3c;">-€955.000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Income Card -->
+            <div class="finance-card income" onclick="showIncomeDetails()">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <div class="card-title">Einnahmen</div>
+                </div>
+                <div class="card-content">
+                    <div class="finance-item" onclick="showCategoryDetails('zuschauer', '🎫 Zuschauereinnahmen')">
+                        <span class="item-name">🎫 Zuschauereinnahmen</span>
+                        <span class="item-amount">+€320.000</span>
+                    </div>
+                    <div class="finance-item" onclick="showCategoryDetails('praemien', '🏆 Prämieneinnahmen')">
+                        <span class="item-name">🏆 Prämieneinnahmen</span>
+                        <span class="item-amount">+€180.000</span>
+                    </div>
+                    <div class="finance-item" onclick="showCategoryDetails('sponsoren', '🤝 Sponsoreneinnahmen')">
+                        <span class="item-name">🤝 Sponsoreneinnahmen</span>
+                        <span class="item-amount">+€250.000</span>
+                    </div>
+                    <div class="finance-item" onclick="showCategoryDetails('transferEin', '🔄 Transfereinnahmen')">
+                        <span class="item-name">🔄 Transfereinnahmen</span>
+                        <span class="item-amount">+€120.000</span>
+                    </div>
+                    <div class="finance-item" onclick="showCategoryDetails('sonstigeEin', '📋 Sonstige Einnahmen')">
+                        <span class="item-name">📋 Sonstige Einnahmen</span>
+                        <span class="item-amount">+€95.000</span>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: bold;">Gesamt Einnahmen:</span>
+                        <span style="font-size: 1.3rem; font-weight: bold; color: #2ecc71;">+€965.000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="recent-transactions">
+            <h3 class="section-title">
+                <span class="section-icon">📋</span>
+                Letzte Transaktionen
+            </h3>
+            <div class="transaction-list" id="transactionList">
+                <div class="transaction-item income" onclick="showTransactionDetail(this)">
+                    <div class="transaction-details">
+                        <div class="transaction-type">🏆 Sieg-Prämie Champions Cup</div>
+                        <div class="transaction-date">26. Juli 2025, 14:30</div>
+                    </div>
+                    <div class="transaction-amount">+€45.000</div>
+                </div>
+                
+                <div class="transaction-item expense" onclick="showTransactionDetail(this)">
+                    <div class="transaction-details">
+                        <div class="transaction-type">👥 Monatsgehälter Juli</div>
+                        <div class="transaction-date">25. Juli 2025, 09:00</div>
+                    </div>
+                    <div class="transaction-amount">-€280.000</div>
+                </div>
+                
+                <div class="transaction-item income" onclick="showTransactionDetail(this)">
+                    <div class="transaction-details">
+                        <div class="transaction-type">🎫 Heimspiel vs. FC Barcelona</div>
+                        <div class="transaction-date">23. Juli 2025, 20:45</div>
+                    </div>
+                    <div class="transaction-amount">+€85.000</div>
+                </div>
+                
+                <div class="transaction-item expense" onclick="showTransactionDetail(this)">
+                    <div class="transaction-details">
+                        <div class="transaction-type">🔄 Transfer: Lionel Messi</div>
+                        <div class="transaction-date">22. Juli 2025, 16:20</div>
+                    </div>
+                    <div class="transaction-amount">-€75.000</div>
+                </div>
+                
+                <div class="transaction-item income" onclick="showTransactionDetail(this)">
+                    <div class="transaction-details">
+                        <div class="transaction-type">🤝 Sponsoring Nike - Quartal Q3</div>
+                        <div class="transaction-date">20. Juli 2025, 11:15</div>
+                    </div>
+                    <div class="transaction-amount">+€125.000</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Detail Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Detailierte Finanzübersicht</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="detail-grid" id="detailContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced sample data with detailed transactions per category
+        let financeData = {
+            expenses: {
+                stadion: 450000,
+                gehaelter: 280000,
+                transfers: 150000,
+                sonstige: 75000
+            },
+            income: {
+                zuschauer: 320000,
+                praemien: 180000,
+                sponsoren: 250000,
+                transferEin: 120000,
+                sonstigeEin: 95000
+            },
+            transactions: [
+                { type: 'income', category: '🏆 Sieg-Prämie Champions Cup', amount: 45000, date: '2025-07-26 14:30', categoryType: 'praemien' },
+                { type: 'expense', category: '👥 Monatsgehälter Juli', amount: -280000, date: '2025-07-25 09:00', categoryType: 'gehaelter' },
+                { type: 'income', category: '🎫 Heimspiel vs. FC Barcelona', amount: 85000, date: '2025-07-23 20:45', categoryType: 'zuschauer' },
+                { type: 'expense', category: '🔄 Transfer: Lionel Messi', amount: -75000, date: '2025-07-22 16:20', categoryType: 'transfers' },
+                { type: 'income', category: '🤝 Sponsoring Nike - Quartal Q3', amount: 125000, date: '2025-07-20 11:15', categoryType: 'sponsoren' }
+            ],
+            // Detailed transactions per category
+            categoryTransactions: {
+                stadion: [
+                    { description: '🏗️ Neue VIP-Logen Bau', amount: -150000, date: '2025-07-15 10:30', reference: 'STAD-2025-001' },
+                    { description: '💡 LED-Beleuchtung Installation', amount: -85000, date: '2025-07-10 14:20', reference: 'STAD-2025-002' },
+                    { description: '🚿 Sanitäranlagen Modernisierung', amount: -120000, date: '2025-07-05 09:15', reference: 'STAD-2025-003' },
+                    { description: '🏟️ Rasenheizung Upgrade', amount: -95000, date: '2025-06-28 16:45', reference: 'STAD-2025-004' }
+                ],
+                gehaelter: [
+                    { description: '👑 Messi - Monatsgehalt', amount: -85000, date: '2025-07-25 09:00', reference: 'SAL-MESSI-07' },
+                    { description: '⚽ Ronaldo - Monatsgehalt', amount: -75000, date: '2025-07-25 09:00', reference: 'SAL-RON-07' },
+                    { description: '🥅 Neuer - Monatsgehalt', amount: -45000, date: '2025-07-25 09:00', reference: 'SAL-NEUER-07' },
+                    { description: '👨‍💼 Trainer-Team Gehälter', amount: -35000, date: '2025-07-25 09:00', reference: 'SAL-STAFF-07' },
+                    { description: '👥 Restliches Team', amount: -40000, date: '2025-07-25 09:00', reference: 'SAL-TEAM-07' }
+                ],
+                transfers: [
+                    { description: '🔄 Messi Transfer (Ablöse)', amount: -75000, date: '2025-07-22 16:20', reference: 'TRF-IN-001' },
+                    { description: '🔄 Ronaldo Transfer (Bonus)', amount: -35000, date: '2025-07-18 11:30', reference: 'TRF-IN-002' },
+                    { description: '⚽ Nachwuchstalent Verpflichtung', amount: -25000, date: '2025-07-12 14:15', reference: 'TRF-IN-003' },
+                    { description: '📋 Beratergebühren', amount: -15000, date: '2025-07-08 10:45', reference: 'TRF-FEE-001' }
+                ],
+                sonstige: [
+                    { description: '⚡ Stromrechnung Stadion', amount: -25000, date: '2025-07-20 12:00', reference: 'UTIL-001' },
+                    { description: '🚌 Mannschaftsbus Wartung', amount: -8000, date: '2025-07-18 15:30', reference: 'MAINT-001' },
+                    { description: '📺 Medienproduktion', amount: -22000, date: '2025-07-15 11:20', reference: 'MEDIA-001' },
+                    { description: '🏥 Medizinische Betreuung', amount: -12000, date: '2025-07-10 09:45', reference: 'MED-001' },
+                    { description: '📱 IT & Software Lizenzen', amount: -8000, date: '2025-07-05 14:00', reference: 'IT-001' }
+                ],
+                zuschauer: [
+                    { description: '🎫 Heimspiel vs. FC Barcelona', amount: 85000, date: '2025-07-23 20:45', reference: 'TICK-HOME-001' },
+                    { description: '🎫 Heimspiel vs. Real Madrid', amount: 95000, date: '2025-07-16 19:30', reference: 'TICK-HOME-002' },
+                    { description: '🎫 Heimspiel vs. Bayern München', amount: 78000, date: '2025-07-09 20:00', reference: 'TICK-HOME-003' },
+                    { description: '🍺 Catering & Merchandise', amount: 42000, date: '2025-07-23 22:00', reference: 'CATER-001' },
+                    { description: '🎫 Auswärtsspiel Anteil', amount: 20000, date: '2025-07-12 18:15', reference: 'TICK-AWAY-001' }
+                ],
+                praemien: [
+                    { description: '🏆 Champions Cup Sieg', amount: 45000, date: '2025-07-26 14:30', reference: 'PRIZE-CC-001' },
+                    { description: '🥇 Liga-Platz 1 Bonus', amount: 65000, date: '2025-07-20 16:00', reference: 'PRIZE-LIGA-001' },
+                    { description: '⚽ Torschützenkönig Prämie', amount: 25000, date: '2025-07-18 12:30', reference: 'PRIZE-GOAL-001' },
+                    { description: '🏆 Pokalfinale Einzug', amount: 35000, date: '2025-07-15 14:45', reference: 'PRIZE-CUP-001' },
+                    { description: '📺 TV-Übertragung Bonus', amount: 10000, date: '2025-07-10 10:20', reference: 'PRIZE-TV-001' }
+                ],
+                sponsoren: [
+                    { description: '🤝 Nike Hauptsponsor Q3', amount: 125000, date: '2025-07-20 11:15', reference: 'SPON-NIKE-Q3' },
+                    { description: '🚗 Mercedes Fahrzeugpartner', amount: 45000, date: '2025-07-15 09:30', reference: 'SPON-MERC-001' },
+                    { description: '💻 SAP Technologiepartner', amount: 35000, date: '2025-07-12 13:45', reference: 'SPON-SAP-001' },
+                    { description: '🥤 Coca-Cola Getränkepartner', amount: 25000, date: '2025-07-08 16:20', reference: 'SPON-COLA-001' },
+                    { description: '⌚ Rolex Zeitpartner', amount: 20000, date: '2025-07-05 11:00', reference: 'SPON-ROLEX-001' }
+                ],
+                transferEin: [
+                    { description: '🔄 Verkauf: Neymar Jr.', amount: 85000, date: '2025-07-20 15:45', reference: 'TRF-OUT-001' },
+                    { description: '🔄 Leihgebühr: Mbappé', amount: 25000, date: '2025-07-14 12:30', reference: 'TRF-LOAN-001' },
+                    { description: '⚽ Nachwuchs Verkauf', amount: 10000, date: '2025-07-08 14:20', reference: 'TRF-YOUTH-001' }
+                ],
+                sonstigeEin: [
+                    { description: '🏟️ Stadion-Vermietung Event', amount: 35000, date: '2025-07-22 19:00', reference: 'RENT-001' },
+                    { description: '📱 App & Digital Revenue', amount: 15000, date: '2025-07-18 10:30', reference: 'DIGIT-001' },
+                    { description: '🎓 Fußballschule Einnahmen', amount: 22000, date: '2025-07-15 16:45', reference: 'SCHOOL-001' },
+                    { description: '📺 Streaming & Media Rights', amount: 18000, date: '2025-07-10 13:20', reference: 'STREAM-001' },
+                    { description: '🏆 Museum & Fanshop', amount: 5000, date: '2025-07-05 11:15', reference: 'SHOP-001' }
+                ]
+            }
+        };
+
+        // Calculate total balance
+        function calculateBalance() {
+            const totalIncome = Object.values(financeData.income).reduce((sum, val) => sum + val, 0);
+            const totalExpenses = Object.values(financeData.expenses).reduce((sum, val) => sum + val, 0);
+            return totalIncome - totalExpenses;
+        }
+
+        // Update balance display
+        function updateBalance() {
+            const balance = calculateBalance();
+            const balanceElement = document.getElementById('totalBalance');
+            balanceElement.textContent = `€${balance.toLocaleString()}`;
+            balanceElement.className = balance >= 0 ? 'balance' : 'balance negative';
+        }
+
+        // Show detailed modal
+        function showDetailModal() {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+            
+            const totalIncome = Object.values(financeData.income).reduce((sum, val) => sum + val, 0);
+            const totalExpenses = Object.values(financeData.expenses).reduce((sum, val) => sum + val, 0);
+            const balance = totalIncome - totalExpenses;
+            
+            content.innerHTML = `
+                <div class="detail-item">
+                    <span class="detail-label">📈 Gesamteinnahmen</span>
+                    <span class="detail-value" style="color: #2ecc71;">€${totalIncome.toLocaleString()}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📉 Gesamtausgaben</span>
+                    <span class="detail-value" style="color: #e74c3c;">€${totalExpenses.toLocaleString()}</span>
+                </div>
+                <div class="detail-item" style="background: rgba(255, 140, 0, 0.1); border: 1px solid rgba(255, 140, 0, 0.3);">
+                    <span class="detail-label">💰 Netto-Bilanz</span>
+                    <span class="detail-value" style="color: ${balance >= 0 ? '#2ecc71' : '#e74c3c'}; font-size: 1.3rem;">€${balance.toLocaleString()}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🏟️ Stadionausbau</span>
+                    <span class="detail-value" style="color: #e74c3c;">€${financeData.expenses.stadion.toLocaleString()}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">👥 Spielergehälter</span>
+                    <span class="detail-value" style="color: #e74c3c;">€${financeData.expenses.gehaelter.toLocaleString()}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🎫 Zuschauereinnahmen</span>
+                    <span class="detail-value" style="color: #2ecc71;">€${financeData.income.zuschauer.toLocaleString()}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🤝 Sponsoreneinnahmen</span>
+                    <span class="detail-value" style="color: #2ecc71;">€${financeData.income.sponsoren.toLocaleString()}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📊 ROI Stadium</span>
+                    <span class="detail-value">+15.2%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📈 Wachstum (Monat)</span>
+                    <span class="detail-value" style="color: #2ecc71;">+8.5%</span>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // Show recent transactions
+        function showRecentTransactions() {
+            const transactionList = document.getElementById('transactionList');
+            transactionList.innerHTML = '';
+            
+            financeData.transactions.slice(0, 5).forEach(transaction => {
+                const item = document.createElement('div');
+                item.className = `transaction-item ${transaction.type}`;
+                item.onclick = () => showTransactionDetail(item);
+                
+                item.innerHTML = `
+                    <div class="transaction-details">
+                        <div class="transaction-type">${transaction.category}</div>
+                        <div class="transaction-date">${new Date(transaction.date).toLocaleString('de-DE')}</div>
+                    </div>
+                    <div class="transaction-amount">${transaction.amount >= 0 ? '+' : ''}€${Math.abs(transaction.amount).toLocaleString()}</div>
+                `;
+                
+                transactionList.appendChild(item);
+            });
+            
+            // Animate in
+            transactionList.style.animation = 'slideUp 0.5s ease forwards';
+        }
+
+        // Show transaction detail (updated version that works with category clicks)
+        function showTransactionDetail(elementOrRef, description, amount, date) {
+            // Handle both old format (element click) and new format (direct parameters)
+            if (typeof elementOrRef === 'string') {
+                // New format - direct parameters
+                const reference = elementOrRef;
+                showTransactionDetailNew(reference, description, amount, date);
+            } else {
+                // Old format - element click
+                const element = elementOrRef;
+                const category = element.querySelector('.transaction-type').textContent;
+                const amount = element.querySelector('.transaction-amount').textContent;
+                const date = element.querySelector('.transaction-date').textContent;
+                
+                alert(`💰 Transaktions-Details:\n\n${category}\n${amount}\n${date}\n\nWeitere Details anzeigen?`);
+            }
+        }
+
+        function showTransactionDetailNew(reference, description, amount, date) {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+            
+            const formattedDate = new Date(date).toLocaleString('de-DE');
+            const amountColor = amount >= 0 ? '#2ecc71' : '#e74c3c';
+            
+            content.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h4 style="color: #ff8c00;">💰 Transaktions-Details</h4>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 2rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <div style="font-size: 2.5rem; font-weight: bold; color: ${amountColor}; margin-bottom: 0.5rem;">
+                            ${amount >= 0 ? '+' : ''}€${Math.abs(amount).toLocaleString()}
+                        </div>
+                        <div style="font-size: 1.2rem; color: #ffffff; margin-bottom: 1rem;">
+                            ${description}
+                        </div>
+                        <div style="color: #888; font-size: 0.9rem;">
+                            Referenz: ${reference}
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; gap: 1rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <span style="color: #cccccc;">📅 Datum & Zeit:</span>
+                            <span style="color: #ffffff;">${formattedDate}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <span style="color: #cccccc;">📋 Typ:</span>
+                            <span style="color: ${amountColor};">${amount >= 0 ? 'Einnahme' : 'Ausgabe'}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <span style="color: #cccccc;">🔍 Status:</span>
+                            <span style="color: #2ecc71;">✅ Abgeschlossen</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <span style="color: #cccccc;">👤 Bearbeitet von:</span>
+                            <span style="color: #ffffff;">Finanz-Manager</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button onclick="alert('📝 Bearbeiten-Funktion würde hier implementiert')" 
+                            style="background: rgba(52, 152, 219, 0.8); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
+                            onmouseover="this.style.background='rgba(52, 152, 219, 1)'"
+                            onmouseout="this.style.background='rgba(52, 152, 219, 0.8)'">
+                        ✏️ Bearbeiten
+                    </button>
+                    <button onclick="alert('📄 PDF-Export würde hier gestartet')" 
+                            style="background: rgba(155, 89, 182, 0.8); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
+                            onmouseover="this.style.background='rgba(155, 89, 182, 1)'"
+                            onmouseout="this.style.background='rgba(155, 89, 182, 0.8)'">
+                        📄 PDF Export
+                    </button>
+                    <button onclick="alert('🗑️ Löschen-Bestätigung würde hier erscheinen')" 
+                            style="background: rgba(231, 76, 60, 0.8); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
+                            onmouseover="this.style.background='rgba(231, 76, 60, 1)'"
+                            onmouseout="this.style.background='rgba(231, 76, 60, 0.8)'">
+                        🗑️ Löschen
+                    </button>
+                </div>
+                
+                <div style="margin-top: 2rem; text-align: center;">
+                    <button onclick="history.back ? history.back() : closeModal()" 
+                            style="background: rgba(255, 140, 0, 0.8); color: white; border: none; padding: 0.8rem 2rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
+                            onmouseover="this.style.background='#ff8c00'"
+                            onmouseout="this.style.background='rgba(255, 140, 0, 0.8)'">
+                        ← Zurück zur Kategorie
+                    </button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // Export finances
+        function exportFinances() {
+            const data = {
+                balance: calculateBalance(),
+                income: financeData.income,
+                expenses: financeData.expenses,
+                transactions: financeData.transactions,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const url = URL.createObjectURL(dataBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kickerscup_finanzen_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Show success message
+            showNotification('💾 Finanzdaten erfolgreich exportiert!', 'success');
+        }
+
+        // Show budget planner
+        function showBudgetPlanner() {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+            
+            content.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h4 style="color: #ff8c00; margin-bottom: 1rem;">📈 Budget-Planer</h4>
+                    <p style="color: #cccccc;">Plane deine zukünftigen Ausgaben und Einnahmen</p>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">🎯 Monatliches Ziel</span>
+                    <span class="detail-value">€500.000</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📊 Aktueller Fortschritt</span>
+                    <span class="detail-value" style="color: #2ecc71;">€${calculateBalance().toLocaleString()} (102%)</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📈 Prognose nächster Monat</span>
+                    <span class="detail-value" style="color: #3498db;">€685.000</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🏟️ Geplante Stadion-Upgrades</span>
+                    <span class="detail-value" style="color: #e74c3c;">€300.000</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">👥 Neue Transfers (Budget)</span>
+                    <span class="detail-value" style="color: #e74c3c;">€200.000</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🤝 Erwartete Sponsoren-Deals</span>
+                    <span class="detail-value" style="color: #2ecc71;">€350.000</span>
+                </div>
+                <div class="detail-item" style="background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.3);">
+                    <span class="detail-label">💰 Prognose Netto-Ergebnis</span>
+                    <span class="detail-value" style="color: #2ecc71; font-size: 1.3rem;">+€535.000</span>
+                </div>
+                
+                <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(255, 140, 0, 0.1); border-radius: 10px; border: 1px solid rgba(255, 140, 0, 0.3);">
+                    <h5 style="color: #ff8c00; margin-bottom: 1rem;">💡 Empfehlungen:</h5>
+                    <ul style="color: #cccccc; line-height: 1.6;">
+                        <li>✅ Stadium-Upgrade durchführen - ROI in 3 Monaten</li>
+                        <li>✅ 2 neue Top-Spieler verpflichten</li>
+                        <li>⚠️ Sponsoren-Verhandlungen vor Saisonende abschließen</li>
+                        <li>📊 Marketing-Budget um 15% erhöhen</li>
+                    </ul>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // Show category details with all transactions
+        function showCategoryDetails(categoryKey, categoryTitle) {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+            const transactions = financeData.categoryTransactions[categoryKey] || [];
+            
+            // Calculate total for this category
+            const totalAmount = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+            const isIncome = totalAmount > 0;
+            
+            content.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h4 style="color: #ff8c00; margin-bottom: 1rem;">${categoryTitle}</h4>
+                    <div style="background: ${isIncome ? 'rgba(46, 204, 113, 0.1)' : 'rgba(231, 76, 60, 0.1)'}; 
+                                border: 1px solid ${isIncome ? 'rgba(46, 204, 113, 0.3)' : 'rgba(231, 76, 60, 0.3)'};
+                                padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                        <div style="font-size: 2rem; font-weight: bold; color: ${isIncome ? '#2ecc71' : '#e74c3c'};">
+                            ${totalAmount >= 0 ? '+' : ''}€${Math.abs(totalAmount).toLocaleString()}
+                        </div>
+                        <div style="color: #cccccc; margin-top: 0.5rem;">
+                            ${transactions.length} Transaktionen gefunden
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem;">
+                    ${transactions.map(transaction => `
+                        <div class="category-transaction-item" style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 1rem;
+                            margin-bottom: 0.8rem;
+                            background: rgba(255, 255, 255, 0.05);
+                            border-radius: 10px;
+                            border-left: 4px solid ${transaction.amount >= 0 ? '#2ecc71' : '#e74c3c'};
+                            transition: all 0.3s ease;
+                            cursor: pointer;
+                        " onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateX(5px)';"
+                           onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateX(0)';"
+                           onclick="showTransactionDetail('${transaction.reference}', '${transaction.description}', ${transaction.amount}, '${transaction.date}')">
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 0.3rem; color: #ffffff;">
+                                    ${transaction.description}
+                                </div>
+                                <div style="font-size: 0.85rem; color: #888;">
+                                    ${new Date(transaction.date).toLocaleString('de-DE')} • Ref: ${transaction.reference}
+                                </div>
+                            </div>
+                            <div style="font-size: 1.2rem; font-weight: bold; color: ${transaction.amount >= 0 ? '#2ecc71' : '#e74c3c'};">
+                                ${transaction.amount >= 0 ? '+' : ''}€${Math.abs(transaction.amount).toLocaleString()}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(255, 140, 0, 0.1); border-radius: 10px; border: 1px solid rgba(255, 140, 0, 0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span style="color: #ff8c00; font-weight: bold;">📊 Kategorie-Statistiken</span>
+                        <button onclick="exportCategoryData('${categoryKey}', '${categoryTitle}')" 
+                                style="background: rgba(255, 140, 0, 0.8); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">
+                            📤 Export
+                        </button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; color: #cccccc;">
+                        <div>
+                            <strong>Durchschnitt pro Transaktion:</strong><br>
+                            €${Math.abs(totalAmount / transactions.length).toLocaleString()}
+                        </div>
+                        <div>
+                            <strong>Größte Einzeltransaktion:</strong><br>
+                            €${Math.abs(Math.max(...transactions.map(t => Math.abs(t.amount)))).toLocaleString()}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+            
+            // Add click indicator
+            showNotification(`📋 ${categoryTitle} Details geladen (${transactions.length} Transaktionen)`, 'info');
+        }
+
+        // Show individual transaction detail
+        function showTransactionDetail(reference, description, amount, date) {
+            const formattedDate = new Date(date).toLocaleString('de-DE');
+            const amountColor = amount >= 0 ? '#2ecc71' : '#e74c3c';
+            
+            const detailHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h4 style="color: #ff8c00;">💰 Transaktions-Details</h4>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 2rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <div style="font-size: 2.5rem; font-weight: bold; color: ${amountColor}; margin-bottom: 0.5rem;">
+                            ${amount >= 0 ? '+' : ''}€${Math.abs(amount).toLocaleString()}
+                        </div>
+                        <div style="font-size: 1.2rem; color: #ffffff; margin-bottom: 1rem;">
+                            ${description}
+                        </div>
+                        <div style="color: #888; font-size: 0.9rem;">
+                            Referenz: ${reference}
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; gap: 1rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <span style="color: #cccccc;">📅 Datum & Zeit:</span>
+                            <span style="color: #ffffff;">${formattedDate}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <span style="color: #cccccc;">📋 Typ:</span>
+                            <span style="color: ${amountColor};">${amount >= 0 ? 'Einnahme' : 'Ausgabe'}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <span style="color: #cccccc;">🔍 Status:</span>
+                            <span style="color: #2ecc71;">✅ Abgeschlossen</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.8rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <span style="color: #cccccc;">👤 Bearbeitet von:</span>
+                            <span style="color: #ffffff;">Finanz-Manager</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button onclick="alert('📝 Bearbeiten-Funktion würde hier implementiert')" 
+                            style="background: rgba(52, 152, 219, 0.8); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                        ✏️ Bearbeiten
+                    </button>
+                    <button onclick="alert('📄 PDF-Export würde hier gestartet')" 
+                            style="background: rgba(155, 89, 182, 0.8); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                        📄 PDF Export
+                    </button>
+                    <button onclick="alert('🗑️ Löschen-Bestätigung würde hier erscheinen')" 
+                            style="background: rgba(231, 76, 60, 0.8); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                        🗑️ Löschen
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('detailContent').innerHTML = detailHTML;
+        }
+
+        // Export category data
+        function exportCategoryData(categoryKey, categoryTitle) {
+            const transactions = financeData.categoryTransactions[categoryKey] || [];
+            const totalAmount = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+            
+            const exportData = {
+                category: categoryTitle,
+                categoryKey: categoryKey,
+                totalAmount: totalAmount,
+                transactionCount: transactions.length,
+                transactions: transactions,
+                exportDate: new Date().toISOString(),
+                generatedBy: 'Kickerscup Finance Manager'
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const url = URL.createObjectURL(dataBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kickerscup_${categoryKey}_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification(`📤 ${categoryTitle} Daten exportiert!`, 'success');
+        }', 'info');
+            
+            // Animate the expenses card
+            const expenseCard = document.querySelector('.finance-card.expenses');
+            expenseCard.classList.add('pulse');
+            setTimeout(() => expenseCard.classList.remove('pulse'), 600);
+        }
+
+        // Show income details
+        function showIncomeDetails() {
+            showNotification('📈 Einnahmen-Details geladen', 'success');
+            
+            // Animate the income card
+            const incomeCard = document.querySelector('.finance-card.income');
+            incomeCard.classList.add('pulse');
+            setTimeout(() => incomeCard.classList.remove('pulse'), 600);
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            modal.style.display = 'none';
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                background: ${type === 'success' ? 'rgba(46, 204, 113, 0.9)' : 
+                           type === 'error' ? 'rgba(231, 76, 60, 0.9)' : 
+                           'rgba(255, 140, 0, 0.9)'};
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                backdrop-filter: blur(10px);
+                z-index: 3000;
+                font-weight: bold;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+
+        // Simulate real-time updates
+        function simulateFinanceUpdates() {
+            // Random small changes to values
+            if (Math.random() < 0.3) {
+                const categories = Object.keys(financeData.income);
+                const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                const change = Math.floor(Math.random() * 10000) - 5000;
+                
+                financeData.income[randomCategory] = Math.max(0, financeData.income[randomCategory] + change);
+                
+                // Update display
+                updateFinanceDisplay();
+                updateBalance();
+                
+                if (Math.abs(change) > 3000) {
+                    showNotification(`💰 ${change > 0 ? 'Einnahme' : 'Ausgabe'}: €${Math.abs(change).toLocaleString()}`, 
+                                   change > 0 ? 'success' : 'error');
+                }
+            }
+        }
+
+        // Update finance display
+        function updateFinanceDisplay() {
+            // Update expense amounts
+            const expenseItems = document.querySelectorAll('.expenses .finance-item .item-amount');
+            expenseItems[0].textContent = `-€${financeData.expenses.stadion.toLocaleString()}`;
+            expenseItems[1].textContent = `-€${financeData.expenses.gehaelter.toLocaleString()}`;
+            expenseItems[2].textContent = `-€${financeData.expenses.transfers.toLocaleString()}`;
+            expenseItems[3].textContent = `-€${financeData.expenses.sonstige.toLocaleString()}`;
+            
+            // Update income amounts
+            const incomeItems = document.querySelectorAll('.income .finance-item .item-amount');
+            incomeItems[0].textContent = `+€${financeData.income.zuschauer.toLocaleString()}`;
+            incomeItems[1].textContent = `+€${financeData.income.praemien.toLocaleString()}`;
+            incomeItems[2].textContent = `+€${financeData.income.sponsoren.toLocaleString()}`;
+            incomeItems[3].textContent = `+€${financeData.income.transferEin.toLocaleString()}`;
+            incomeItems[4].textContent = `+€${financeData.income.sonstigeEin.toLocaleString()}`;
+            
+            // Update totals
+            const totalExpenses = Object.values(financeData.expenses).reduce((sum, val) => sum + val, 0);
+            const totalIncome = Object.values(financeData.income).reduce((sum, val) => sum + val, 0);
+            
+            document.querySelector('.expenses .card-content + div span:last-child').textContent = `-€${totalExpenses.toLocaleString()}`;
+            document.querySelector('.income .card-content + div span:last-child').textContent = `+€${totalIncome.toLocaleString()}`;
+        }
+
+        // Add new transaction
+        function addTransaction(type, category, amount) {
+            const newTransaction = {
+                type: type,
+                category: category,
+                amount: amount,
+                date: new Date().toISOString()
+            };
+            
+            financeData.transactions.unshift(newTransaction);
+            financeData.transactions = financeData.transactions.slice(0, 10); // Keep only last 10
+            
+            showRecentTransactions();
+            updateBalance();
+        }
+
+        // Initialize hover effects for finance cards
+        function initializeCardEffects() {
+            document.querySelectorAll('.finance-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'd':
+                        e.preventDefault();
+                        showDetailModal();
+                        break;
+                    case 'e':
+                        e.preventDefault();
+                        exportFinances();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        showRecentTransactions();
+                        break;
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize everything on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBalance();
+            initializeCardEffects();
+            
+            // Start real-time updates
+            setInterval(simulateFinanceUpdates, 15000);
+            
+            // Add some initial animations
+            setTimeout(() => {
+                document.querySelectorAll('.finance-card').forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('animate-in');
+                    }, index * 200);
+                });
+            }, 500);
+            
+            // Simulate some activity after a delay
+            setTimeout(() => {
+                addTransaction('income', '🎫 Auswärtsspiel Einnahmen', 42000);
+                showNotification('💰 Neue Einnahme verbucht!', 'success');
+            }, 8000);
+            
+            setTimeout(() => {
+                addTransaction('expense', '⚡ Stromrechnung Stadion', -15000);
+                showNotification('📉 Neue Ausgabe verbucht', 'info');
+            }, 25000);
+        });
+
+        // Add CSS animations for notifications
+        const notificationStyles = document.createElement('style');
+        notificationStyles.textContent = `
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+            }
+        `;
+        document.head.appendChild(notificationStyles);
+    </script>
+</body>
+</html>
+            
