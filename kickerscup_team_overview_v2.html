@@ -316,6 +316,11 @@
             overflow: hidden;
         }
 
+        .player-card.starting-lineup {
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
         .player-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(255, 140, 0, 0.2);
@@ -383,6 +388,10 @@
             font-size: 1.2rem;
         }
 
+        .lineup-status {
+            display: none;
+        }
+
         .player-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -418,6 +427,16 @@
         .einsatzwert .stat-value {
             color: #ff8c00;
             font-size: 1.1rem;
+        }
+
+        .games-played {
+            grid-column: 1 / -1;
+            background: rgba(52, 152, 219, 0.1) !important;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .games-played .stat-value {
+            color: #3498db;
         }
 
         .player-actions {
@@ -659,7 +678,7 @@
             <!-- Players Grid -->
             <div class="players-grid">
                 <!-- Torhüter -->
-                <div class="player-card" data-position="TW" data-status="ok">
+                <div class="player-card starting-lineup" data-position="TW" data-status="ok">
                     <div class="player-header">
                         <div class="player-info">
                             <a href="/spieler/manuel-neuer" class="player-name">Manuel Neuer</a>
@@ -670,90 +689,6 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div class="position-badge position-TW">TW</div>
-                            <span class="status-icon">✅</span>
-                        </div>
-                    </div>
-  <div class="player-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Stärke</span>
-                            <span class="stat-value">8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Kondition</span>
-                            <span class="stat-value">100</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Form</span>
-                            <span class="stat-value">30</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Frische</span>
-                            <span class="stat-value">84</span>
-                        </div>
-                        <div class="stat-item einsatzwert">
-                            <span class="stat-label">Einsatzwert</span>
-                            <span class="stat-value">14,2</span>
-                        </div>
-                    </div>
-                    <div class="player-actions">
-                        <button class="action-btn">📊 Details</button>
-                        <button class="action-btn">📋 Vertrag</button>
-                    </div>
-                </div>
-
-                <div class="player-card" data-position="LV" data-status="injured">
-                    <div class="player-header">
-                        <div class="player-info">
-                            <a href="/spieler/alphonso-davies" class="player-name">Alphonso Davies</a>
-                            <div class="player-meta">
-                                <span>Alter: 23</span>
-                                <span>Vertrag: 3 Saisons</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <div class="position-badge position-LV">LV</div>
-                            <span class="status-icon">🏥</span>
-                        </div>
-                    </div>
-               <div class="player-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Stärke</span>
-                            <span class="stat-value">8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Kondition</span>
-                            <span class="stat-value">100</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Form</span>
-                            <span class="stat-value">30</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Frische</span>
-                            <span class="stat-value">84</span>
-                        </div>
-                        <div class="stat-item einsatzwert">
-                            <span class="stat-label">Einsatzwert</span>
-                            <span class="stat-value">14,2</span>
-                        </div>
-                    </div>
-                    <div class="player-actions">
-                        <button class="action-btn">📊 Details</button>
-                        <button class="action-btn">📋 Vertrag</button>
-                    </div>
-                </div>
-
-                <div class="player-card" data-position="RV" data-status="ok">
-                    <div class="player-header">
-                        <div class="player-info">
-                            <a href="/spieler/joao-cancelo" class="player-name">João Cancelo</a>
-                            <div class="player-meta">
-                                <span>Alter: 29</span>
-                                <span>Vertrag: 2026</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <div class="position-badge position-RV">RV</div>
                             <span class="status-icon">✅</span>
                         </div>
                     </div>
@@ -774,9 +709,119 @@
                             <span class="stat-label">Frische</span>
                             <span class="stat-value">84</span>
                         </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">95</span>
+                        </div>
                         <div class="stat-item einsatzwert">
                             <span class="stat-label">Einsatzwert</span>
                             <span class="stat-value">14,2</span>
+                        </div>
+                        <div class="stat-item games-played">
+                            <span class="stat-label">Spiele absolviert</span>
+                            <span class="stat-value">12</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <div class="player-card" data-position="LV" data-status="injured">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/alphonso-davies" class="player-name">Alphonso Davies</a>
+                            <div class="player-meta">
+                                <span>Alter: 23</span>
+                                <span>Vertrag: 3 Saisons</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-LV">LV</div>
+                            <span class="status-icon">🏥</span>
+                            <span class="lineup-status not-selected">Verletzt</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">30</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">78</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
+                        </div>
+                        <div class="stat-item games-played">
+                            <span class="stat-label">Spiele absolviert</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <div class="player-card" data-position="RV" data-status="ok">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/joao-cancelo" class="player-name">João Cancelo</a>
+                            <div class="player-meta">
+                                <span>Alter: 29</span>
+                                <span>Vertrag: 2026</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-RV">RV</div>
+                            <span class="status-icon">✅</span>
+                            <span class="lineup-status bench">Bank</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">30</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">88</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
+                        </div>
+                        <div class="stat-item games-played">
+                            <span class="stat-label">Spiele absolviert</span>
+                            <span class="stat-value">15</span>
                         </div>
                     </div>
                     <div class="player-actions">
@@ -798,9 +843,10 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div class="position-badge position-IV">IV</div>
                             <span class="status-icon">✅</span>
+                            <span class="lineup-status starting">Startelf</span>
                         </div>
                     </div>
-                  <div class="player-stats">
+                    <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
                             <span class="stat-value">8</span>
@@ -817,9 +863,17 @@
                             <span class="stat-label">Frische</span>
                             <span class="stat-value">84</span>
                         </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">92</span>
+                        </div>
                         <div class="stat-item einsatzwert">
                             <span class="stat-label">Einsatzwert</span>
                             <span class="stat-value">14,2</span>
+                        </div>
+                        <div class="stat-item games-played">
+                            <span class="stat-label">Spiele absolviert</span>
+                            <span class="stat-value">14</span>
                         </div>
                     </div>
                     <div class="player-actions">
@@ -840,9 +894,10 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div class="position-badge position-LV">LV</div>
                             <span class="status-icon">✅</span>
+                            <span class="lineup-status starting">Startelf</span>
                         </div>
                     </div>
-            <div class="player-stats">
+                    <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
                             <span class="stat-value">8</span>
@@ -859,9 +914,17 @@
                             <span class="stat-label">Frische</span>
                             <span class="stat-value">84</span>
                         </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">86</span>
+                        </div>
                         <div class="stat-item einsatzwert">
                             <span class="stat-label">Einsatzwert</span>
                             <span class="stat-value">14,2</span>
+                        </div>
+                        <div class="stat-item games-played">
+                            <span class="stat-label">Spiele absolviert</span>
+                            <span class="stat-value">13</span>
                         </div>
                     </div>
                     <div class="player-actions">
@@ -883,9 +946,10 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div class="position-badge position-ZDM">ZDM</div>
                             <span class="status-icon">✅</span>
+                            <span class="lineup-status starting">Startelf</span>
                         </div>
                     </div>
-          <div class="player-stats">
+                    <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
                             <span class="stat-value">8</span>
@@ -902,9 +966,17 @@
                             <span class="stat-label">Frische</span>
                             <span class="stat-value">84</span>
                         </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">94</span>
+                        </div>
                         <div class="stat-item einsatzwert">
                             <span class="stat-label">Einsatzwert</span>
                             <span class="stat-value">14,2</span>
+                        </div>
+                        <div class="stat-item games-played">
+                            <span class="stat-label">Spiele absolviert</span>
+                            <span class="stat-value">16</span>
                         </div>
                     </div>
                     <div class="player-actions">
@@ -925,9 +997,10 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div class="position-badge position-OFM">OFM</div>
                             <span class="status-icon">🏥</span>
+                            <span class="lineup-status not-selected">Verletzt</span>
                         </div>
                     </div>
-             <div class="player-stats">
+                    <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
                             <span class="stat-value">8</span>
@@ -944,9 +1017,17 @@
                             <span class="stat-label">Frische</span>
                             <span class="stat-value">84</span>
                         </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">72</span>
+                        </div>
                         <div class="stat-item einsatzwert">
                             <span class="stat-label">Einsatzwert</span>
                             <span class="stat-value">14,2</span>
+                        </div>
+                        <div class="stat-item games-played">
+                            <span class="stat-label">Spiele absolviert</span>
+                            <span class="stat-value">9</span>
                         </div>
                     </div>
                     <div class="player-actions">
@@ -968,9 +1049,10 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div class="position-badge position-MS">MS</div>
                             <span class="status-icon">✅</span>
+                            <span class="lineup-status starting">Startelf</span>
                         </div>
                     </div>
-                   <div class="player-stats">
+                    <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
                             <span class="stat-value">8</span>
@@ -987,9 +1069,17 @@
                             <span class="stat-label">Frische</span>
                             <span class="stat-value">84</span>
                         </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">98</span>
+                        </div>
                         <div class="stat-item einsatzwert">
                             <span class="stat-label">Einsatzwert</span>
                             <span class="stat-value">14,2</span>
+                        </div>
+                        <div class="stat-item games-played">
+                            <span class="stat-label">Spiele absolviert</span>
+                            <span class="stat-value">17</span>
                         </div>
                     </div>
                     <div class="player-actions">
@@ -1010,9 +1100,10 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div class="position-badge position-LS">LS</div>
                             <span class="status-icon">✅</span>
+                            <span class="lineup-status not-selected">Nicht aufgestellt</span>
                         </div>
                     </div>
-     <div class="player-stats">
+                    <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
                             <span class="stat-value">8</span>
@@ -1029,9 +1120,17 @@
                             <span class="stat-label">Frische</span>
                             <span class="stat-value">84</span>
                         </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Motivation</span>
+                            <span class="stat-value">81</span>
+                        </div>
                         <div class="stat-item einsatzwert">
                             <span class="stat-label">Einsatzwert</span>
                             <span class="stat-value">14,2</span>
+                        </div>
+                        <div class="stat-item games-played">
+                            <span class="stat-label">Spiele absolviert</span>
+                            <span class="stat-value">11</span>
                         </div>
                     </div>
                     <div class="player-actions">
@@ -1092,4 +1191,3 @@
     </script>
 </body>
 </html>
-            
