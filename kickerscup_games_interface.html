@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Spiele Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff8c00;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #cccccc;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-all-btn {
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid #ff8c00;
+            color: #ff8c00;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .view-all-btn:hover {
+            background: #ff8c00;
+            color: #ffffff;
+        }
+
+        /* Quick Overview Cards */
+        .quick-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 1.2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 140, 0, 0.3);
+        }
+
+        .quick-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .quick-match {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quick-team {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .quick-vs {
+            color: #ff8c00;
+            font-weight: bold;
+            margin: 0 1rem;
+        }
+
+        .quick-info {
+            font-size: 0.85rem;
+            color: #cccccc;
+            margin-top: 0.5rem;
+        }
+
+        /* Search & Filter Bar */
+        .search-filter-bar {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .search-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .search-group label {
+            color: #ff8c00;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .search-input {
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff8c00;
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: #888;
+        }
+
+        /* Games Table */
+        .table-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-title {
+            color: #ff8c00;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .pagination-info {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .games-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .games-table th {
+            background: rgba(255, 140, 0, 0.1);
+            padding: 1rem;
+            text-align: left;
+            color: #ff8c00;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .games-table th:hover {
+            background: rgba(255, 140, 0, 0.2);
+        }
+
+        .games-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .games-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .team-cell {
+            font-weight: 500;
+        }
+
+        .vs-cell {
+            text-align: center;
+            color: #ff8c00;
+            font-weight: bold;
+        }
+
+        .tournament-badge {
+            display: inline-block;
+            background: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .tournament-badge.tournament {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-live {
+            background: #e74c3c;
+            color: #ffffff;
+            animation: pulse 2s infinite;
+        }
+
+        .status-upcoming {
+            background: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+
+        .status-completed {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .actions-cell {
+            white-space: nowrap;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.3rem;
+        }
+
+        .btn-primary {
+            background: #ff8c00;
+            color: #ffffff;
+        }
+
+        .btn-secondary {
+            background: rgba(52, 152, 219, 0.8);
+            color: #ffffff;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: #ffffff;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover, .page-btn.active {
+            background: #ff8c00;
+            border-color: #ff8c00;
+        }
+
+        /* Grouped View */
+        .grouped-container {
+            display: none;
+        }
+
+        .grouped-container.active {
+            display: block;
+        }
+
+        .tournament-group {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .group-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .group-title {
+            color: #ff8c00;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .game-count {
+            background: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .collapse-icon {
+            color: #ff8c00;
+            transition: transform 0.3s ease;
+        }
+
+        .tournament-group.collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .group-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .tournament-group.collapsed .group-content {
+            max-height: 0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            color: #ff8c00;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #cccccc;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ff8c00;
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 0.3rem;
+        }
+
+        .toggle-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            color: #cccccc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .toggle-btn.active {
+            background: #ff8c00;
+            color: #ffffff;
+        }
+
+        /* Team highlighting styles */
+        .our-team-highlight {
+            border: 2px solid #2ecc71 !important;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .our-team-row {
+            background: rgba(46, 204, 113, 0.05) !important;
+            border-left: 3px solid #2ecc71;
+        }
+
+        .our-team-row:hover {
+            background: rgba(46, 204, 113, 0.1) !important;
+        }
+
+        .our-main-team {
+            color: #2ecc71 !important;
+            font-weight: bold;
+        }
+
+        .our-partner-team {
+            color: #3498db !important;
+            font-weight: 600;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #cccccc;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #ff8c00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .search-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .header-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .games-table th:nth-child(4),
+            .games-table td:nth-child(4),
+            .games-table th:nth-child(5),
+            .games-table td:nth-child(5) {
+                display: none;
+            }
+
+            .quick-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>⚽ Kickerscup</h1>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <span class="nav-icon">⚽</span>
+                            Spiele
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">👥</span>
+                            Teams
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">🏆</span>
+                            Turniere
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Finanzen
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">🏟️</span>
+                            Stadion
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2>⚽ Spiele Management</h2>
+                    <p class="header-subtitle">Heute, 27. Juli 2025 • 22:15 Uhr Anstoß</p>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalGames">487</div>
+                        <div class="stat-label">Spiele heute</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="liveGames">23</div>
+                        <div class="stat-label">Live</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="tournamentsActive">8</div>
+                        <div class="stat-label">Aktive Turniere</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Quick Overview -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3 class="section-title">🔥 Top-Spiele heute</h3>
+                    <button class="view-all-btn" onclick="openCreateModal()">➕ Neues Spiel</button>
+                </div>
+                <div class="quick-cards" id="topGames">
+                    <!-- Top games will be populated here -->
+                </div>
+            </div>
+
+            <!-- Search & Filter -->
+            <div class="search-filter-bar">
+                <div class="search-grid">
+                    <div class="search-group">
+                        <label>🔍 Team oder Turnier suchen</label>
+                        <input type="text" class="search-input" id="searchInput" placeholder="z.B. 'FC Bayern' oder 'Champions Cup'..." onkeyup="performSearch()">
+                    </div>
+                    <div class="search-group">
+                        <label>🏆 Turnier</label>
+                        <select class="search-input" id="tournamentFilter" onchange="applyFilters()">
+                            <option value="">Alle Turniere</option>
+                            <option value="champions-cup">Champions Cup</option>
+                            <option value="bundesliga">Bundesliga</option>
+                            <option value="europa-league">Europa League</option>
+                            <option value="friendly">Freundschaftsspiele</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <label>📊 Status</label>
+                        <select class="search-input" id="statusFilter" onchange="applyFilters()">
+                            <option value="">Alle Status</option>
+                            <option value="live">🔴 Live</option>
+                            <option value="upcoming">🟡 Geplant</option>
+                            <option value="completed">🟢 Beendet</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <label>👥 Meine Teams</label>
+                        <select class="search-input" id="myTeamsFilter" onchange="applyFilters()">
+                            <option value="">Alle Teams</option>
+                            <option value="my-teams">Nur unsere Teams</option>
+                            <option value="my-clubs">Nur unser Verein</option>
+                            <option value="favorites">Favoriten</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" onclick="switchView('table')">📋 Tabelle</button>
+                            <button class="toggle-btn" onclick="switchView('grouped')">📁 Gruppiert</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table View -->
+            <div class="table-container" id="tableView">
+                <div class="table-header">
+                    <h3 class="table-title">🗂️ Alle Spiele</h3>
+                    <div class="table-controls">
+                        <span class="pagination-info">Zeige 1-50 von <span id="totalCount">487</span> Spielen</span>
+                    </div>
+                </div>
+
+                <div id="loadingSpinner" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Lade Spiele...</p>
+                </div>
+
+                <table class="games-table" id="gamesTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('time')">⏰ Zeit</th>
+                            <th onclick="sortTable('home')">🏠 Heim</th>
+                            <th></th>
+                            <th onclick="sortTable('away')">✈️ Gast</th>
+                            <th onclick="sortTable('tournament')">🏆 Turnier/Liga</th>
+                            <th onclick="sortTable('status')">📊 Status</th>
+                            <th>🎮 Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gamesTableBody">
+                        <!-- Games will be populated here -->
+                    </tbody>
+                </table>
+
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be populated here -->
+                </div>
+            </div>
+
+            <!-- Grouped View -->
+            <div class="grouped-container" id="groupedView">
+                <!-- Tournament groups will be populated here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Game Modal -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">⚽ Neues Spiel erstellen</h3>
+                <button class="close-btn" onclick="closeCreateModal()">&times;</button>
+            </div>
+            
+            <form id="createGameForm">
+                <div class="search-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 2rem;">
+                    <div class="search-group">
+                        <label>🏠 Heimteam</label>
+                        <input type="text" class="search-input" id="homeTeam" placeholder="Team eingeben..." list="teamsList">
+                    </div>
+                    <div class="search-group">
+                        <label>✈️ Auswärtsteam</label>
+                        <input type="text" class="search-input" id="awayTeam" placeholder="Team eingeben..." list="teamsList">
+                    </div>
+                </div>
+
+                <div class="search-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 2rem;">
+                    <div class="search-group">
+                        <label>📅 Datum</label>
+                        <input type="date" class="search-input" id="gameDate" min="2025-07-28" max="2025-08-27">
+                    </div>
+                    <div class="search-group">
+                        <label>🏆 Turnier/Liga</label>
+                        <select class="search-input" id="gameTournament">
+                            <option value="friendly">🤝 Freundschaftsspiel</option>
+                            <option value="champions-cup">🏆 Champions Cup</option>
+                            <option value="bundesliga">⚽ Bundesliga</option>
+                            <option value="europa-league">🌟 Europa League</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <label>🔒 Passwort (optional)</label>
+                        <input type="password" class="search-input" id="gamePassword" placeholder="Für Turniere...">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" class="btn-secondary btn-small" onclick="closeCreateModal()" style="padding: 0.8rem 1.5rem;">
+                        ❌ Abbrechen
+                    </button>
+                    <button type="submit" class="btn-primary btn-small" style="padding: 0.8rem 1.5rem;">
+                        ✅ Spiel erstellen
+                    </button>
+                </div>
+            </form>
+
+            <datalist id="teamsList">
+                <option value="FC Kickerscup 1. Mannschaft">
+                <option value="FC Kickerscup 2. Mannschaft">
+                <option value="FC Kickerscup U21">
+                <option value="FC Kickerscup U19">
+                <option value="FC Kickerscup U17">
+                <option value="FC Kickerscup Frauen">
+                <option value="FC Kickerscup Alte Herren">
+                <option value="TSV Kickerscup Reserve">
+                <option value="Kickerscup Jugendförderung e.V.">
+                <option value="FC Bayern München">
+                <option value="Borussia Dortmund">
+                <option value="RB Leipzig">
+                <option value="Bayer Leverkusen">
+                <option value="Eintracht Frankfurt">
+                <option value="FC Schalke 04">
+                <option value="VfB Stuttgart">
+                <option value="Werder Bremen">
+                <option value="1. FC Köln">
+                <option value="Hamburger SV">
+            </datalist>
+        </div>
+    </div>
+
+    <script>
+        // Sample data generation
+        const tournaments = [
+            { id: 'champions-cup', name: 'Champions Cup', color: '#e74c3c', games: 156 },
+            { id: 'bundesliga', name: 'Bundesliga', color: '#ff8c00', games: 132 },
+            { id: 'europa-league', name: 'Europa League', color: '#3498db', games: 89 },
+            { id: 'regional-liga', name: 'Regional Liga', color: '#2ecc71', games: 67 },
+            { id: 'friendly', name: 'Freundschaftsspiele', color: '#9b59b6', games: 43 }
+        ];
+
+        const teams = [
+            'FC Bayern München', 'Borussia Dortmund', 'RB Leipzig', 'Bayer Leverkusen',
+            'Eintracht Frankfurt', 'FC Schalke 04', 'VfB Stuttgart', 'Werder Bremen',
+            '1. FC Köln', 'Hamburger SV', 'Borussia Mönchengladbach', 'TSG Hoffenheim',
+            'VfL Wolfsburg', 'SC Freiburg', 'FC Augsburg', 'VfL Bochum', 'FSV Mainz 05',
+            'Hertha BSC', '1. FC Union Berlin', 'Arminia Bielefeld'
+        ];
+
+        let allGames = [];
+        let filteredGames = [];
+        let currentPage = 1;
+        const itemsPerPage = 50;
+        let currentView = 'table';
+
+        // Define our teams/club structure
+        const ourClub = {
+            name: "FC Kickerscup",
+            teams: [
+                "FC Kickerscup 1. Mannschaft",
+                "FC Kickerscup 2. Mannschaft", 
+                "FC Kickerscup U21",
+                "FC Kickerscup U19",
+                "FC Kickerscup U17",
+                "FC Kickerscup Frauen",
+                "FC Kickerscup Alte Herren"
+            ]
+        };
+
+        // Our partner/sister clubs
+        const partnerTeams = [
+            "TSV Kickerscup Reserve",
+            "Kickerscup Jugendförderung e.V."
+        ];
+
+        // All teams that belong to us (own club + partners)
+        const allOurTeams = [...ourClub.teams, ...partnerTeams];
+
+        // Sample data generation with more of our teams
+        function generateSampleGames() {
+            allGames = [];
+            const statuses = ['live', 'upcoming', 'completed'];
+            
+            for (let i = 0; i < 487; i++) {
+                let homeTeam, awayTeam;
+                
+                // 30% chance that one of our teams is playing
+                if (Math.random() < 0.3) {
+                    if (Math.random() < 0.5) {
+                        homeTeam = allOurTeams[Math.floor(Math.random() * allOurTeams.length)];
+                        awayTeam = teams[Math.floor(Math.random() * teams.length)];
+                    } else {
+                        homeTeam = teams[Math.floor(Math.random() * teams.length)];
+                        awayTeam = allOurTeams[Math.floor(Math.random() * allOurTeams.length)];
+                    }
+                } else {
+                    homeTeam = teams[Math.floor(Math.random() * teams.length)];
+                    awayTeam = teams[Math.floor(Math.random() * teams.length)];
+                    while (awayTeam === homeTeam) {
+                        awayTeam = teams[Math.floor(Math.random() * teams.length)];
+                    }
+                }
+                
+                const tournament = tournaments[Math.floor(Math.random() * tournaments.length)];
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                
+                const game = {
+                    id: i + 1,
+                    homeTeam: homeTeam,
+                    awayTeam: awayTeam,
+                    tournament: tournament.name,
+                    tournamentId: tournament.id,
+                    tournamentColor: tournament.color,
+                    status: status,
+                    time: '22:15',
+                    hasPassword: tournament.id !== 'friendly' && Math.random() > 0.7,
+                    priority: Math.random() > 0.9 ? 'high' : 'normal',
+                    isOurTeam: allOurTeams.includes(homeTeam) || allOurTeams.includes(awayTeam),
+                    isOurClub: ourClub.teams.includes(homeTeam) || ourClub.teams.includes(awayTeam)
+                };
+                
+                if (status === 'completed') {
+                    game.result = `${Math.floor(Math.random() * 5)}-${Math.floor(Math.random() * 5)}`;
+                }
+                
+                allGames.push(game);
+            }
+            
+            filteredGames = [...allGames];
+            updateTeamStats();
+        }
+
+        // Update team statistics in header
+        function updateTeamStats() {
+            const ourGames = allGames.filter(game => game.isOurTeam);
+            const ourLiveGames = ourGames.filter(game => game.status === 'live');
+            
+            // Update the live games counter to show our games
+            document.getElementById('liveGames').textContent = ourLiveGames.length;
+            document.querySelector('#liveGames').parentElement.querySelector('.stat-label').textContent = 'Unsere Live-Spiele';
+            
+            // Update total games to show percentage of our games
+            const ourGamesPercentage = Math.round((ourGames.length / allGames.length) * 100);
+            document.getElementById('totalGames').textContent = ourGames.length;
+            document.querySelector('#totalGames').parentElement.querySelector('.stat-label').textContent = `Unsere Spiele (${ourGamesPercentage}%)`;
+        }
+
+        // Render top games with priority for our teams
+        function renderTopGames() {
+            // Prioritize our teams in top games
+            const ourTopGames = allGames.filter(game => game.isOurTeam && (game.priority === 'high' || game.status === 'live'));
+            const otherTopGames = allGames.filter(game => !game.isOurTeam && (game.priority === 'high' || game.status === 'live'));
+            const topGames = [...ourTopGames, ...otherTopGames].slice(0, 6);
+            
+            const container = document.getElementById('topGames');
+            
+            container.innerHTML = topGames.map(game => `
+                <div class="quick-card ${game.isOurTeam ? 'our-team-highlight' : ''}">
+                    <div class="quick-card-header">
+                        <span class="tournament-badge ${game.tournamentId === 'friendly' ? '' : 'tournament'}">${game.tournament}</span>
+                        <span class="status-badge status-${game.status}">${getStatusText(game.status)}</span>
+                        ${game.isOurTeam ? '<span style="color: #2ecc71; font-weight: bold;">⭐ UNSER TEAM</span>' : ''}
+                    </div>
+                    <div class="quick-match">
+                        <span class="quick-team ${ourClub.teams.includes(game.homeTeam) ? 'our-main-team' : allOurTeams.includes(game.homeTeam) ? 'our-partner-team' : ''}">${game.homeTeam}</span>
+                        <span class="quick-vs">VS</span>
+                        <span class="quick-team ${ourClub.teams.includes(game.awayTeam) ? 'our-main-team' : allOurTeams.includes(game.awayTeam) ? 'our-partner-team' : ''}">${game.awayTeam}</span>
+                    </div>
+                    <div class="quick-info">
+                        ${game.time} • ${game.hasPassword ? '🔒 Passwort erforderlich' : '🔓 Offen'}
+                        ${game.result ? ` • Ergebnis: ${game.result}` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render games table with team highlighting
+        function renderGamesTable() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedGames = filteredGames.slice(startIndex, endIndex);
+            
+            const tbody = document.getElementById('gamesTableBody');
+            tbody.innerHTML = paginatedGames.map(game => `
+                <tr onclick="viewGameDetails(${game.id})" class="${game.isOurTeam ? 'our-team-row' : ''}">
+                    <td>${game.time}</td>
+                    <td class="team-cell">
+                        ${ourClub.teams.includes(game.homeTeam) ? '⭐ ' : allOurTeams.includes(game.homeTeam) ? '🔸 ' : ''}
+                        <span class="${ourClub.teams.includes(game.homeTeam) ? 'our-main-team' : allOurTeams.includes(game.homeTeam) ? 'our-partner-team' : ''}">${game.homeTeam}</span>
+                    </td>
+                    <td class="vs-cell">VS</td>
+                    <td class="team-cell">
+                        ${ourClub.teams.includes(game.awayTeam) ? '⭐ ' : allOurTeams.includes(game.awayTeam) ? '🔸 ' : ''}
+                        <span class="${ourClub.teams.includes(game.awayTeam) ? 'our-main-team' : allOurTeams.includes(game.awayTeam) ? 'our-partner-team' : ''}">${game.awayTeam}</span>
+                    </td>
+                    <td>
+                        <span class="tournament-badge ${game.tournamentId === 'friendly' ? '' : 'tournament'}" 
+                              style="background-color: ${game.tournamentColor}20; color: ${game.tournamentColor};">
+                            ${game.tournament}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${game.status}">${getStatusText(game.status)}</span>
+                        ${game.hasPassword ? ' 🔒' : ''}
+                        ${game.isOurTeam ? ' <span style="color: #2ecc71; font-weight: bold;">⭐</span>' : ''}
+                    </td>
+                    <td class="actions-cell">
+                        <button class="btn-small btn-primary" onclick="event.stopPropagation(); viewGameDetails(${game.id})">👁️</button>
+                        <button class="btn-small btn-secondary" onclick="event.stopPropagation(); editGame(${game.id})">✏️</button>
+                        ${game.status === 'upcoming' ? `<button class="btn-small btn-success" onclick="event.stopPropagation(); startGame(${game.id})">▶️</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+            
+            updatePagination();
+            document.getElementById('totalCount').textContent = filteredGames.length;
+        }
+
+        // Render grouped view
+        function renderGroupedView() {
+            const groupedGames = {};
+            
+            filteredGames.forEach(game => {
+                if (!groupedGames[game.tournament]) {
+                    groupedGames[game.tournament] = [];
+                }
+                groupedGames[game.tournament].push(game);
+            });
+            
+            const container = document.getElementById('groupedView');
+            container.innerHTML = Object.entries(groupedGames).map(([tournament, games]) => {
+                const tournamentData = tournaments.find(t => t.name === tournament);
+                return `
+                    <div class="tournament-group" id="group-${tournamentData.id}">
+                        <div class="group-header" onclick="toggleGroup('${tournamentData.id}')">
+                            <div class="group-title">
+                                <span style="color: ${tournamentData.color};">🏆</span>
+                                ${tournament}
+                                <span class="game-count">${games.length} Spiele</span>
+                            </div>
+                            <span class="collapse-icon">▼</span>
+                        </div>
+                        <div class="group-content">
+                            <table class="games-table">
+                                <tbody>
+                                    ${games.slice(0, 20).map(game => `
+                                        <tr onclick="viewGameDetails(${game.id})">
+                                            <td>${game.time}</td>
+                                            <td class="team-cell">${game.homeTeam}</td>
+                                            <td class="vs-cell">VS</td>
+                                            <td class="team-cell">${game.awayTeam}</td>
+                                            <td>
+                                                <span class="status-badge status-${game.status}">${getStatusText(game.status)}</span>
+                                                ${game.hasPassword ? ' 🔒' : ''}
+                                            </td>
+                                            <td class="actions-cell">
+                                                <button class="btn-small btn-primary" onclick="event.stopPropagation(); viewGameDetails(${game.id})">👁️</button>
+                                                <button class="btn-small btn-secondary" onclick="event.stopPropagation(); editGame(${game.id})">✏️</button>
+                                                ${game.status === 'upcoming' ? `<button class="btn-small btn-success" onclick="event.stopPropagation(); startGame(${game.id})">▶️</button>` : ''}
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                            ${games.length > 20 ? `
+                                <div style="padding: 1rem; text-align: center; color: #cccccc;">
+                                    ... und ${games.length - 20} weitere Spiele
+                                    <button class="view-all-btn" onclick="showAllGamesInTournament('${tournamentData.id}')" style="margin-left: 1rem;">Alle anzeigen</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Helper functions
+        function getStatusText(status) {
+            switch(status) {
+                case 'live': return '🔴 LIVE';
+                case 'upcoming': return '🟡 Geplant';
+                case 'completed': return '🟢 Beendet';
+                default: return '⚪ Unbekannt';
+            }
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredGames.length / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            let paginationHTML = '';
+            
+            // Previous button
+            if (currentPage > 1) {
+                paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">‹ Zurück</button>`;
+            }
+            
+            // Page numbers
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                paginationHTML += `<button class="page-btn" onclick="changePage(1)">1</button>`;
+                if (startPage > 2) {
+                    paginationHTML += `<span style="color: #cccccc; padding: 0.5rem;">...</span>`;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += `<span style="color: #cccccc; padding: 0.5rem;">...</span>`;
+                }
+                paginationHTML += `<button class="page-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">Weiter ›</button>`;
+            }
+            
+            pagination.innerHTML = paginationHTML;
+        }
+
+        // Event handlers
+        function changePage(page) {
+            currentPage = page;
+            renderGamesTable();
+        }
+
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            applyFilters();
+            
+            // Simulate "my teams" filter (for favorites)
+            const myTeams = ['FC Bayern München', 'Borussia Dortmund'];
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const tournamentFilter = document.getElementById('tournamentFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const myTeamsFilter = document.getElementById('myTeamsFilter').value;
+            
+            filteredGames = allGames.filter(game => {
+                const matchesSearch = !searchTerm || 
+                    game.homeTeam.toLowerCase().includes(searchTerm) ||
+                    game.awayTeam.toLowerCase().includes(searchTerm) ||
+                    game.tournament.toLowerCase().includes(searchTerm);
+                
+                const matchesTournament = !tournamentFilter || game.tournamentId === tournamentFilter;
+                const matchesStatus = !statusFilter || game.status === statusFilter;
+                
+                const matchesMyTeams = myTeamsFilter === '' || 
+                    (myTeamsFilter === 'my-teams' && game.isOurTeam) ||
+                    (myTeamsFilter === 'my-clubs' && game.isOurClub) ||
+                    (myTeamsFilter === 'favorites' && (myTeams.includes(game.homeTeam) || myTeams.includes(game.awayTeam)));
+                
+                return matchesSearch && matchesTournament && matchesStatus && matchesMyTeams;
+            });
+            
+            currentPage = 1;
+            
+            if (currentView === 'table') {
+                renderGamesTable();
+            } else {
+                renderGroupedView();
+            }
+        }
+
+        function switchView(view) {
+            currentView = view;
+            
+            // Update toggle buttons
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide views
+            if (view === 'table') {
+                document.getElementById('tableView').style.display = 'block';
+                document.getElementById('groupedView').style.display = 'none';
+                renderGamesTable();
+            } else {
+                document.getElementById('tableView').style.display = 'none';
+                document.getElementById('groupedView').style.display = 'block';
+                renderGroupedView();
+            }
+        }
+
+        function toggleGroup(groupId) {
+            const group = document.getElementById(`group-${groupId}`);
+            group.classList.toggle('collapsed');
+        }
+
+        function showAllGamesInTournament(tournamentId) {
+            document.getElementById('tournamentFilter').value = tournamentId;
+            switchView('table');
+            applyFilters();
+        }
+
+        function sortTable(column) {
+            // Implement sorting logic here
+            alert(`Sortierung nach ${column} würde hier implementiert`);
+        }
+
+        // Game actions
+        function viewGameDetails(gameId) {
+            const game = allGames.find(g => g.id === gameId);
+            alert(`📋 Spiel-Details:\n\n🏠 ${game.homeTeam} vs ✈️ ${game.awayTeam}\n🏆 ${game.tournament}\n📊 Status: ${getStatusText(game.status)}\n⏰ ${game.time}`);
+        }
+
+        function editGame(gameId) {
+            alert(`✏️ Bearbeiten von Spiel #${gameId} würde hier implementiert`);
+        }
+
+        function startGame(gameId) {
+            const game = allGames.find(g => g.id === gameId);
+            if (game.hasPassword) {
+                const password = prompt('🔒 Bitte Passwort eingeben:');
+                if (!password) return;
+            }
+            alert(`▶️ Spiel #${gameId} gestartet! Weiterleitung zur Live-Ansicht...`);
+        }
+
+        // Modal functions
+        function openCreateModal() {
+            document.getElementById('createModal').classList.add('active');
+            
+            // Set today's date
+            const today = new Date();
+            document.getElementById('gameDate').value = today.toISOString().split('T')[0];
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createModal').classList.remove('active');
+            document.getElementById('createGameForm').reset();
+        }
+
+        // Form submission
+        document.getElementById('createGameForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                homeTeam: document.getElementById('homeTeam').value,
+                awayTeam: document.getElementById('awayTeam').value,
+                date: document.getElementById('gameDate').value,
+                tournament: document.getElementById('gameTournament').value,
+                password: document.getElementById('gamePassword').value
+            };
+
+            // Validation
+            if (!formData.homeTeam || !formData.awayTeam) {
+                alert('❌ Bitte beide Teams eingeben!');
+                return;
+            }
+
+            if (formData.homeTeam === formData.awayTeam) {
+                alert('❌ Ein Team kann nicht gegen sich selbst spielen!');
+                return;
+            }
+
+            if (!formData.date) {
+                alert('❌ Bitte Datum eingeben!');
+                return;
+            }
+
+            // Success
+            alert(`✅ Spiel erfolgreich erstellt!\n\n🏠 ${formData.homeTeam} vs ✈️ ${formData.awayTeam}\n📅 ${formData.date} um 22:15\n🏆 ${document.querySelector('#gameTournament option:checked').textContent}`);
+            
+            closeCreateModal();
+            
+            // Add to games list (simulation)
+            const newGame = {
+                id: allGames.length + 1,
+                homeTeam: formData.homeTeam,
+                awayTeam: formData.awayTeam,
+                tournament: document.querySelector('#gameTournament option:checked').textContent,
+                tournamentId: formData.tournament,
+                tournamentColor: tournaments.find(t => t.id === formData.tournament)?.color || '#ff8c00',
+                status: 'upcoming',
+                time: '22:15',
+                hasPassword: !!formData.password
+            };
+            
+            allGames.unshift(newGame);
+            applyFilters();
+            renderTopGames();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('createModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCreateModal();
+            }
+        });
+
+        // Real-time updates simulation
+        function simulateRealTimeUpdates() {
+            setInterval(() => {
+                // Update live games count
+                const liveCount = allGames.filter(g => g.status === 'live').length;
+                document.getElementById('liveGames').textContent = liveCount;
+                
+                // Randomly change some game statuses
+                const randomGame = allGames[Math.floor(Math.random() * allGames.length)];
+                if (randomGame.status === 'upcoming' && Math.random() > 0.99) {
+                    randomGame.status = 'live';
+                    if (currentView === 'table') {
+                        renderGamesTable();
+                    } else {
+                        renderGroupedView();
+                    }
+                    renderTopGames();
+                }
+            }, 5000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateSampleGames();
+            renderTopGames();
+            renderGamesTable();
+            simulateRealTimeUpdates();
+            
+            // Set default filter to show our teams
+            document.getElementById('myTeamsFilter').value = 'my-teams';
+            applyFilters();
+        });
+    </script>
+</body>
+</html>
