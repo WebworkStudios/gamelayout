@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Spielerinfo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .breadcrumb {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: #ff8c00;
+            text-decoration: none;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Player Header Card */
+        .player-header-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-header-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+        }
+
+        .player-basic-info {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .player-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ff8c00, #ffd700);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .player-details {
+            flex: 1;
+        }
+
+        .player-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .player-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .meta-label {
+            color: #888;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .meta-value {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .position-badge {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .position-TW { background: #e74c3c; color: white; }
+        .position-IV, .position-LV, .position-RV { background: #3498db; color: white; }
+        .position-LM, .position-RM, .position-ZDM, .position-OFM { background: #2ecc71; color: white; }
+        .position-LS, .position-RS, .position-MS { background: #f39c12; color: white; }
+
+        .player-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: rgba(255, 140, 0, 0.2);
+            border: 1px solid #ff8c00;
+            color: #ff8c00;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .action-btn:hover {
+            background: #ff8c00;
+            color: #ffffff;
+        }
+
+        /* Main Grid Layout */
+        .player-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Statistics Cards */
+        .stats-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stats-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .stats-column h4 {
+            color: #fff;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ff8c00;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .stat-value.highlight {
+            color: #ff8c00;
+        }
+
+        /* History Timeline */
+        .history-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .history-timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #ff8c00, transparent);
+        }
+
+        .history-item {
+            position: relative;
+            padding: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .history-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 1.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff8c00;
+            border: 3px solid #1a1a1a;
+        }
+
+        .history-date {
+            color: #ff8c00;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .history-event {
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .history-description {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .achievement-item {
+            background: rgba(255, 140, 0, 0.1);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-title {
+            color: #ff8c00;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .achievement-desc {
+            color: #ccc;
+            font-size: 0.85rem;
+        }
+
+        /* Formation Display */
+        .formation-display {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .field {
+            background: linear-gradient(to bottom, 
+                #2d5a3d 0%, 
+                #1e4029 20%,
+                #2d5a3d 40%,
+                #1e4029 60%,
+                #2d5a3d 80%,
+                #1e4029 100%);
+            border-radius: 10px;
+            position: relative;
+            height: 300px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .field-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .center-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-50%);
+        }
+
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .player-position {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 140, 0, 0.9);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .player-position:hover {
+            transform: scale(1.2);
+            background: #ffd700;
+        }
+
+        .player-position.highlighted {
+            background: #ffd700;
+            transform: scale(1.3);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        /* Position based on typical 4-3-3 formation */
+        .pos-TW { top: 85%; left: 47%; }
+        .pos-LV { top: 65%; left: 15%; }
+        .pos-IV1 { top: 65%; left: 35%; }
+        .pos-IV2 { top: 65%; left: 60%; }
+        .pos-RV { top: 65%; left: 80%; }
+        .pos-ZDM { top: 45%; left: 47%; }
+        .pos-LM { top: 35%; left: 25%; }
+        .pos-RM { top: 35%; left: 70%; }
+        .pos-LS { top: 15%; left: 25%; }
+        .pos-MS { top: 15%; left: 47%; }
+        .pos-RS { top: 15%; left: 70%; }
+
+        /* Sidebar Info */
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff8c00;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-label {
+            color: #ccc;
+            font-size: 0.8rem;
+        }
+
+        .status-indicators {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .status-ok { border-left: 4px solid #2ecc71; }
+        .status-warning { border-left: 4px solid #f39c12; }
+        .status-danger { border-left: 4px solid #e74c3c; }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .player-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .player-basic-info {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .player-meta {
+                justify-content: center;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>⚽ KickersCup</h1>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">👥</span>
+                        Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Liga
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🔄</span>
+                        Transfer
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        Einstellungen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2>Spieler Details</h2>
+                    <div class="breadcrumb">
+                        <a href="#">Team</a> > <a href="#">Kader</a> > Manuel Neuer
+                    </div>
+                </div>
+                <div class="header-controls">
+                    <button class="action-btn">📋 Vertrag bearbeiten</button>
+                    <button class="action-btn">🔄 Transfer</button>
+                </div>
+            </header>
+
+            <!-- Player Header Card -->
+            <div class="player-header-card">
+                <div class="player-basic-info">
+                    <div class="player-avatar">MN</div>
+                    <div class="player-details">
+                        <h1 class="player-name">Manuel Neuer</h1>
+                        <div class="position-badge position-TW">Torwart</div>
+                        <div class="player-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Alter</span>
+                                <span class="meta-value">37 Jahre</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Nationalität</span>
+                                <span class="meta-value">🇩🇪 Deutschland</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Vertrag bis</span>
+                                <span class="meta-value">2025</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Marktwert</span>
+                                <span class="meta-value">12.5M T</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Statistiken</button>
+                        <button class="action-btn">📋 Aufstellung</button>
+                        <button class="action-btn">💼 Vertragsdetails</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="player-content">
+                <!-- Left Column: Statistics and History -->
+                <div class="stats-section">
+                    <!-- Current Stats vs Career -->
+                    <div class="stats-card">
+                        <h3 class="card-title">📊 Statistiken Vergleich</h3>
+                        <div class="stats-comparison">
+                            <div class="stats-column">
+                                <h4>Aktuelle Saison (2024/25)</h4>
+                                <div class="stat-item">
+                                    <span class="stat-label">Stärke</span>
+                                    <span class="stat-value highlight">8</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Kondition</span>
+                                    <span class="stat-value">100</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Form</span>
+                                    <span class="stat-value">30</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Frische</span>
+                                    <span class="stat-value">84</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Motivation</span>
+                                    <span class="stat-value">88</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Einsatzwert</span>
+                                    <span class="stat-value highlight">14.2</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Spiele</span>
+                                    <span class="stat-value">15</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Zu Null</span>
+                                    <span class="stat-value">8</span>
+                                </div>
+                            </div>
+                            <div class="stats-column">
+                                <h4>Karriere Gesamt</h4>
+                                <div class="stat-item">
+                                    <span class="stat-label">Beste Stärke</span>
+                                    <span class="stat-value">9</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Ø Kondition</span>
+                                    <span class="stat-value">95</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Beste Form</span>
+                                    <span class="stat-value">85</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Ø Frische</span>
+                                    <span class="stat-value">82</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Ø Motivation</span>
+                                    <span class="stat-value">85</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Höchster Einsatzwert</span>
+                                    <span class="stat-value">16.8</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Gesamtspiele</span>
+                                    <span class="stat-value">387</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Zu Null Gesamt</span>
+                                    <span class="stat-value">156</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Player History -->
+                    <div class="stats-card">
+                        <h3 class="card-title">📜 Spieler Historie</h3>
+                        <div class="history-timeline">
+                            <div class="history-item">
+                                <div class="history-date">15. Juli 2024</div>
+                                <div class="history-event">🔄 Vertragsverlängerung</div>
+                                <div class="history-description">Vertrag um 2 Jahre bis 2026 verlängert</div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-date">03. März 2024</div>
+                                <div class="history-event">🚑 Verletzung</div>
+                                <div class="history-description">Muskelverletzung - 3 Wochen Ausfall</div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-date">12. Januar 2024</div>
+                                <div class="history-event">⭐ Leistungssteigerung</div>
+                                <div class="history-description">Stärke von 7 auf 8 gestiegen</div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-date">28. August 2023</div>
+                                <div class="history-event">💰 Transferziel</div>
+                                <div class="history-description">Kaufangebot von Real Madrid abgelehnt</div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-date">15. Juni 2023</div>
+                                <div class="history-event">🟨 Sperre</div>
+                                <div class="history-description">Gelb-Rote Karte - 1 Spiel gesperrt</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="stats-card">
+                        <h3 class="card-title">🏆 Erfolge & Auszeichnungen</h3>
+                        <div class="achievements-grid">
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🥅</div>
+                                <div class="achievement-title">Goldener Handschuh</div>
+                                <div class="achievement-desc">15 Zu-Null-Spiele</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">⭐</div>
+                                <div class="achievement-title">Spieler des Monats</div>
+                                <div class="achievement-desc">März 2024</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🥇</div>
+                                <div class="achievement-title">Meisterschaft</div>
+                                <div class="achievement-desc">2023/24 Saison</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🎯</div>
+                                <div class="achievement-title">100 Spiele</div>
+                                <div class="achievement-desc">Meilenstein erreicht</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🛡️</div>
+                                <div class="achievement-title">Defensive Wand</div>
+                                <div class="achievement-desc">5 Spiele ohne Gegentor</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🔥</div>
+                                <div class="achievement-title">Heißer Streak</div>
+                                <div class="achievement-desc">10 Siege in Folge</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">💎</div>
+                                <div class="achievement-title">Diamant Status</div>
+                                <div class="achievement-desc">Stärke Level 8+ erreicht</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">⚡</div>
+                                <div class="achievement-title">Blitzreaktion</div>
+                                <div class="achievement-desc">Elfmeter gehalten</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🏅</div>
+                                <div class="achievement-title">Veteranen-Status</div>
+                                <div class="achievement-desc">300+ Spiele absolviert</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🌟</div>
+                                <div class="achievement-title">Stammkraft</div>
+                                <div class="achievement-desc">20 Spiele Startelf</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🎖️</div>
+                                <div class="achievement-title">Kapitän der Saison</div>
+                                <div class="achievement-desc">Als Kapitän geführt</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🏆</div>
+                                <div class="achievement-title">Pokalsieger</div>
+                                <div class="achievement-desc">Champions Cup 2023</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Formation and Info -->
+                <div class="sidebar-section">
+                    <!-- Current Form -->
+                    <div class="info-card">
+                        <h3 class="card-title">📈 Aktuelle Form</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-value">8</div>
+                                <div class="info-label">Stärke</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-value">100</div>
+                                <div class="info-label">Kondition</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-value">30</div>
+                                <div class="info-label">Form</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-value">84</div>
+                                <div class="info-label">Frische</div>
+                            </div>
+                        </div>
+                        
+                        <div class="status-indicators" style="margin-top: 1.5rem;">
+                            <div class="status-item status-ok">
+                                <span>Status</span>
+                                <span>✅ Einsatzbereit</span>
+                            </div>
+                            <div class="status-item status-ok">
+                                <span>Motivation</span>
+                                <span>88 / 100</span>
+                            </div>
+                            <div class="status-item status-warning">
+                                <span>Alter</span>
+                                <span>⚠️ 37 Jahre</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Position Display -->
+                    <div class="formation-display">
+                        <h3 class="card-title">⚽ Position im Spiel</h3>
+                        <div class="field">
+                            <div class="field-lines">
+                                <div class="center-line"></div>
+                                <div class="center-circle"></div>
+                            </div>
+                            
+                            <!-- Players on field (4-3-3 formation) -->
+                            <div class="player-position pos-TW highlighted" title="Manuel Neuer - Torwart">TW</div>
+                            <div class="player-position pos-LV" title="Linksverteidiger">LV</div>
+                            <div class="player-position pos-IV1" title="Innenverteidiger">IV</div>
+                            <div class="player-position pos-IV2" title="Innenverteidiger">IV</div>
+                            <div class="player-position pos-RV" title="Rechtsverteidiger">RV</div>
+                            <div class="player-position pos-ZDM" title="Zentraler Mittelfeldspieler">ZM</div>
+                            <div class="player-position pos-LM" title="Linker Mittelfeldspieler">LM</div>
+                            <div class="player-position pos-RM" title="Rechter Mittelfeldspieler">RM</div>
+                            <div class="player-position pos-LS" title="Linker Stürmer">LS</div>
+                            <div class="player-position pos-MS" title="Mittelstürmer">MS</div>
+                            <div class="player-position pos-RS" title="Rechter Stürmer">RS</div>
+                        </div>
+                        <p style="text-align: center; margin-top: 1rem; color: #888; font-size: 0.9rem;">
+                            🟡 Hervorgehobene Position: Torwart
+                        </p>
+                    </div>
+
+                    <!-- Contract Info -->
+                    <div class="info-card">
+                        <h3 class="card-title">💼 Vertragsdetails</h3>
+                        <div class="status-indicators">
+                            <div class="status-item">
+                                <span>Gehalt</span>
+                                <span>250k T/Monat</span>
+                            </div>
+                            <div class="status-item">
+                                <span>Vertragslaufzeit</span>
+                                <span>bis 2025</span>
+                            </div>
+                            <div class="status-item status-warning">
+                                <span>Verbleibend</span>
+                                <span>⚠️ 6 Monate</span>
+                            </div>
+                            <div class="status-item">
+                                <span>Ausstiegsklausel</span>
+                                <span>15M T</span>
+                            </div>
+                            <div class="status-item">
+                                <span>Bonuszahlungen</span>
+                                <span>50k T/Sieg</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Formation position hover effects
+        document.querySelectorAll('.player-position').forEach(pos => {
+            pos.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('highlighted')) {
+                    this.style.transform = 'scale(1.2)';
+                    this.style.background = 'rgba(255, 140, 0, 0.7)';
+                }
+            });
+            
+            pos.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('highlighted')) {
+                    this.style.transform = 'scale(1)';
+                    this.style.background = 'rgba(255, 140, 0, 0.9)';
+                }
+            });
+        });
+
+        // Action buttons
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.textContent.trim();
+                console.log(`Aktion ausgeführt: ${action}`);
+                
+                // Hier könnte die jeweilige Aktion implementiert werden
+                if (action.includes('Statistiken')) {
+                    // Scroll zu Statistiken
+                    document.querySelector('.stats-comparison').scrollIntoView({ behavior: 'smooth' });
+                } else if (action.includes('Aufstellung')) {
+                    // Highlight Formation
+                    document.querySelector('.formation-display').scrollIntoView({ behavior: 'smooth' });
+                } else if (action.includes('Vertrag')) {
+                    // Scroll zu Vertragsdetails
+                    document.querySelector('.info-card:has(.card-title:contains("Vertragsdetails"))').scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Mobile responsiveness
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleButton = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 1200 && 
+                !sidebar.contains(event.target) && 
+                (!toggleButton || !toggleButton.contains(event.target))) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+
+        // Add mobile toggle button if needed
+        if (window.innerWidth <= 1200) {
+            const header = document.querySelector('.header');
+            const mobileToggle = document.createElement('button');
+            mobileToggle.innerHTML = '☰';
+            mobileToggle.className = 'mobile-toggle action-btn';
+            mobileToggle.onclick = toggleSidebar;
+            header.querySelector('.header-controls').prepend(mobileToggle);
+        }
+
+        // Smooth scrolling for achievement items
+        document.querySelectorAll('.achievement-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+
+        // History timeline animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateX(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.history-item').forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-20px)';
+            item.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>
