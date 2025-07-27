@@ -23,7 +23,7 @@
             min-height: 100vh;
         }
 
-        /* Sidebar - Same as before */
+        /* Sidebar */
         .sidebar {
             width: 280px;
             background: rgba(0, 0, 0, 0.4);
@@ -648,15 +648,15 @@
 
             <!-- Position Filter -->
             <div class="position-filter">
-                <div class="filter-tab active">Alle (22)</div>
-                <div class="filter-tab">🥅 Torwart (2)</div>
-                <div class="filter-tab">🛡️ Abwehr (8)</div>
-                <div class="filter-tab">⚙️ Mittelfeld (7)</div>
-                <div class="filter-tab">⚡ Sturm (5)</div>
-                <div class="filter-tab">🚑 Verletzt (2)</div>
+                <div class="filter-tab active" onclick="filterPlayers('all')">Alle (22)</div>
+                <div class="filter-tab" onclick="filterPlayers('TW')">🥅 Torwart (2)</div>
+                <div class="filter-tab" onclick="filterPlayers('defender')">🛡️ Abwehr (8)</div>
+                <div class="filter-tab" onclick="filterPlayers('midfielder')">⚙️ Mittelfeld (7)</div>
+                <div class="filter-tab" onclick="filterPlayers('forward')">⚡ Sturm (5)</div>
+                <div class="filter-tab" onclick="filterPlayers('injured')">🚑 Verletzt (2)</div>
             </div>
 
-            <!-- Players Grid - Sortiert nach Position -->
+            <!-- Players Grid -->
             <div class="players-grid">
                 <!-- Torhüter -->
                 <div class="player-card" data-position="TW" data-status="ok">
@@ -665,7 +665,7 @@
                             <a href="/spieler/manuel-neuer" class="player-name">Manuel Neuer</a>
                             <div class="player-meta">
                                 <span>Alter: 37</span>
-                                <span>Vertrag: 2025</span>
+                                <span>Vertrag: 2 Saisons</span>
                             </div>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -673,111 +673,26 @@
                             <span class="status-icon">✅</span>
                         </div>
                     </div>
-                    <div class="player-stats">
+  <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
-                            <span class="stat-value">88</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Form</span>
-                            <span class="stat-value">92%</span>
+                            <span class="stat-value">30</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Erfahrung</span>
-                            <span class="stat-value">95</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Gehaltene Tore</span>
-                            <span class="stat-value">18</span>
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
                         </div>
                         <div class="stat-item einsatzwert">
-                            <span class="stat-label">💰 Einsatzwert</span>
-                            <span class="stat-value">12.5M T</span>
-                        </div>
-                    </div>
-                    <div class="player-actions">
-                        <button class="action-btn">📊 Details</button>
-                        <button class="action-btn">📋 Vertrag</button>
-                    </div>
-                </div>
-
-                <div class="player-card" data-position="TW" data-status="ok">
-                    <div class="player-header">
-                        <div class="player-info">
-                            <a href="/spieler/alexander-nuebel" class="player-name">Alexander Nübel</a>
-                            <div class="player-meta">
-                                <span>Alter: 27</span>
-                                <span>Vertrag: 2026</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <div class="position-badge position-TW">TW</div>
-                            <span class="status-icon">✅</span>
-                        </div>
-                    </div>
-                    <div class="player-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Stärke</span>
-                            <span class="stat-value">76</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Form</span>
-                            <span class="stat-value">88%</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Erfahrung</span>
-                            <span class="stat-value">62</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Gehaltene Tore</span>
-                            <span class="stat-value">5</span>
-                        </div>
-                        <div class="stat-item einsatzwert">
-                            <span class="stat-label">💰 Einsatzwert</span>
-                            <span class="stat-value">4.2M T</span>
-                        </div>
-                    </div>
-                    <div class="player-actions">
-                        <button class="action-btn">📊 Details</button>
-                        <button class="action-btn">📋 Vertrag</button>
-                    </div>
-                </div>
-
-                <!-- Abwehr -->
-                <div class="player-card" data-position="IV" data-status="suspended">
-                    <div class="player-header">
-                        <div class="player-info">
-                            <a href="/spieler/virgil-van-dijk" class="player-name">Virgil van Dijk</a>
-                            <div class="player-meta">
-                                <span>Alter: 32</span>
-                                <span>Vertrag: 2025</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <div class="position-badge position-IV">IV</div>
-                            <span class="status-icon">🟥</span>
-                        </div>
-                    </div>
-                    <div class="player-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Stärke</span>
-                            <span class="stat-value">91</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Form</span>
-                            <span class="stat-value">85%</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Erfahrung</span>
-                            <span class="stat-value">89</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Tore</span>
-                            <span class="stat-value">3</span>
-                        </div>
-                        <div class="stat-item einsatzwert">
-                            <span class="stat-label">💰 Einsatzwert</span>
-                            <span class="stat-value">18.7M T</span>
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
                         </div>
                     </div>
                     <div class="player-actions">
@@ -792,7 +707,7 @@
                             <a href="/spieler/alphonso-davies" class="player-name">Alphonso Davies</a>
                             <div class="player-meta">
                                 <span>Alter: 23</span>
-                                <span>Vertrag: 2025</span>
+                                <span>Vertrag: 3 Saisons</span>
                             </div>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -800,26 +715,26 @@
                             <span class="status-icon">🏥</span>
                         </div>
                     </div>
-                    <div class="player-stats">
+               <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
-                            <span class="stat-value">86</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Form</span>
-                            <span class="stat-value">93%</span>
+                            <span class="stat-value">30</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Erfahrung</span>
-                            <span class="stat-value">72</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Assists</span>
-                            <span class="stat-value">7</span>
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
                         </div>
                         <div class="stat-item einsatzwert">
-                            <span class="stat-label">💰 Einsatzwert</span>
-                            <span class="stat-value">15.2M T</span>
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
                         </div>
                     </div>
                     <div class="player-actions">
@@ -845,20 +760,336 @@
                     <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
-                            <span class="stat-value">84</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Form</span>
-                            <span class="stat-value">91%</span>
+                            <span class="stat-value">30</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Erfahrung</span>
-                            <span class="stat-value">81</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Assists</span>
-                            <span class="stat-value">6</span>
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
                         </div>
                         <div class="stat-item einsatzwert">
-                            <span class="stat-label">💰 Einsatzwert</span>
-                
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <!-- Weitere Abwehrspieler -->
+                <div class="player-card" data-position="IV" data-status="ok">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/antonio-ruediger" class="player-name">Antonio Rüdiger</a>
+                            <div class="player-meta">
+                                <span>Alter: 30</span>
+                                <span>Vertrag: 2026</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-IV">IV</div>
+                            <span class="status-icon">✅</span>
+                        </div>
+                    </div>
+                  <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">30</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <div class="player-card" data-position="LV" data-status="ok">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/andrew-robertson" class="player-name">Andrew Robertson</a>
+                            <div class="player-meta">
+                                <span>Alter: 29</span>
+                                <span>Vertrag: 2025</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-LV">LV</div>
+                            <span class="status-icon">✅</span>
+                        </div>
+                    </div>
+            <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">30</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <!-- Mittelfeldspieler -->
+                <div class="player-card" data-position="ZDM" data-status="ok">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/joshua-kimmich" class="player-name">Joshua Kimmich</a>
+                            <div class="player-meta">
+                                <span>Alter: 28</span>
+                                <span>Vertrag: 2025</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-ZDM">ZDM</div>
+                            <span class="status-icon">✅</span>
+                        </div>
+                    </div>
+          <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">30</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <div class="player-card" data-position="OFM" data-status="injured">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/kevin-de-bruyne" class="player-name">Kevin De Bruyne</a>
+                            <div class="player-meta">
+                                <span>Alter: 32</span>
+                                <span>Vertrag: 2025</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-OFM">OFM</div>
+                            <span class="status-icon">🏥</span>
+                        </div>
+                    </div>
+             <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">30</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <!-- Stürmer -->
+                <div class="player-card" data-position="MS" data-status="ok">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/erling-haaland" class="player-name">Erling Haaland</a>
+                            <div class="player-meta">
+                                <span>Alter: 23</span>
+                                <span>Vertrag: 2027</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-MS">MS</div>
+                            <span class="status-icon">✅</span>
+                        </div>
+                    </div>
+                   <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">30</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <div class="player-card" data-position="LS" data-status="ok">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/kylian-mbappe" class="player-name">Kylian Mbappé</a>
+                            <div class="player-meta">
+                                <span>Alter: 25</span>
+                                <span>Vertrag: 2026</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-LS">LS</div>
+                            <span class="status-icon">✅</span>
+                        </div>
+                    </div>
+     <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Kondition</span>
+                            <span class="stat-value">100</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">30</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Frische</span>
+                            <span class="stat-value">84</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">Einsatzwert</span>
+                            <span class="stat-value">14,2</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        function filterPlayers(position) {
+            const cards = document.querySelectorAll('.player-card');
+            const tabs = document.querySelectorAll('.filter-tab');
+            
+            // Remove active class from all tabs
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            cards.forEach(card => {
+                if (position === 'all') {
+                    card.style.display = 'block';
+                } else if (position === 'defender') {
+                    const pos = card.getAttribute('data-position');
+                    card.style.display = ['IV', 'LV', 'RV'].includes(pos) ? 'block' : 'none';
+                } else if (position === 'midfielder') {
+                    const pos = card.getAttribute('data-position');
+                    card.style.display = ['ZDM', 'OFM', 'LM', 'RM'].includes(pos) ? 'block' : 'none';
+                } else if (position === 'forward') {
+                    const pos = card.getAttribute('data-position');
+                    card.style.display = ['MS', 'LS', 'RS'].includes(pos) ? 'block' : 'none';
+                } else if (position === 'injured') {
+                    const status = card.getAttribute('data-status');
+                    card.style.display = status === 'injured' ? 'block' : 'none';
+                } else {
+                    const pos = card.getAttribute('data-position');
+                    card.style.display = pos === position ? 'block' : 'none';
+                }
+            });
+        }
+
+        // View toggle functionality
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
+            
