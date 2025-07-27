@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Sponsoring Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h2 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .total-income {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2ecc71;
+            margin-bottom: 0.5rem;
+        }
+
+        .income-period {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        /* Main Sponsor Overview */
+        .sponsorship-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .sponsor-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sponsor-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff8c00;
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.2);
+        }
+
+        .sponsor-card.main-sponsor::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff8c00, #ffb74d);
+        }
+
+        .sponsor-card.empty-slot {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .sponsor-card.empty-slot:hover {
+            border-color: #ff8c00;
+            opacity: 1;
+        }
+
+        .find-sponsor-btn {
+            background: rgba(255, 140, 0, 0.8);
+            color: #ffffff;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .find-sponsor-btn:hover {
+            background: #ff8c00;
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .sponsor-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+            padding: 1rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 140, 0, 0.1);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+        }
+
+        .sponsor-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+        }
+
+        .sponsor-type {
+            color: #ff8c00;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .sponsor-amount {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2ecc71;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .sponsor-details {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Negotiation Panel */
+        .negotiation-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: #ff8c00;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            margin-right: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .negotiation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .negotiation-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .negotiation-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #ff8c00;
+        }
+
+        .potential-sponsor {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .offer-details {
+            display: grid;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .offer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .offer-label {
+            color: #cccccc;
+        }
+
+        .offer-value {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .negotiate-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn-accept {
+            background: #2ecc71;
+            color: #ffffff;
+        }
+
+        .btn-accept:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .btn-counter {
+            background: #ff8c00;
+            color: #ffffff;
+        }
+
+        .btn-counter:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn-reject {
+            background: #e74c3c;
+            color: #ffffff;
+        }
+
+        .btn-reject:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        /* Performance Tracker */
+        .performance-tracker {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .performance-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .performance-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .performance-title {
+            color: #cccccc;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .performance-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .performance-bonus {
+            color: #2ecc71;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Contract Actions */
+        .contract-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(255, 140, 0, 0.8);
+            color: #ffffff;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-btn:hover {
+            background: #ff8c00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #cccccc;
+        }
+
+        .action-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: rgba(26, 26, 26, 0.95);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            color: #ff8c00;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #cccccc;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #ff8c00;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: #cccccc;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ff8c00;
+            box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sponsorship-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .negotiation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="logo">
+            <h1>🤝 KICKERSCUP</h1>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🏠</span>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <span class="nav-icon">🤝</span>
+                    Sponsoring
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">💰</span>
+                    Finanzen
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🏆</span>
+                    Liga
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">⚽</span>
+                    Mannschaft
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🏟️</span>
+                    Stadion
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="nav-icon">🎯</span>
+                    Training
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h2>Sponsoring Management</h2>
+                <p>Verwalte deine Sponsorenverträge und verhandle neue Deals</p>
+            </div>
+            <div class="header-right">
+                <div class="total-income">€1.200.000</div>
+                <div class="income-period">Aktueller Hauptsponsor (Jahreswert)</div>
+            </div>
+        </header>
+
+        <!-- Current Main Sponsor -->
+        <div class="sponsorship-overview">
+            <div class="sponsor-card main-sponsor">
+                <div class="card-header">
+                    <div class="sponsor-icon">🏢</div>
+                    <div>
+                        <div class="sponsor-name">TechCorp Industries</div>
+                        <div class="sponsor-type">Hauptsponsor</div>
+                    </div>
+                </div>
+                <div class="sponsor-amount">€1.200.000</div>
+                <div class="sponsor-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Einmalbetrag:</span>
+                        <span class="detail-value">€800.000</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Torprämie Liga:</span>
+                        <span class="detail-value">€15.000 / Tor</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Siegprämie Liga:</span>
+                        <span class="detail-value">€25.000 / Sieg</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Pokalprämie:</span>
+                        <span class="detail-value">€50.000 / Spieltag</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Vertragslaufzeit:</span>
+                        <span class="detail-value">2 Jahre verbleibend</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Sponsor Available Slots -->
+            <div class="sponsor-card empty-slot">
+                <div class="card-header">
+                    <div class="sponsor-icon">❓</div>
+                    <div>
+                        <div class="sponsor-name">Kein Sponsor</div>
+                        <div class="sponsor-type">Hauptsponsor-Slot verfügbar</div>
+                    </div>
+                </div>
+                <div class="sponsor-amount">€0</div>
+                <div class="sponsor-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value">Frei</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Potenzial:</span>
+                        <span class="detail-value">€500.000 - €2.000.000</span>
+                    </div>
+                </div>
+                <button class="find-sponsor-btn" onclick="searchNewSponsors()">
+                    🔍 Sponsor suchen
+                </button>
+            </div>
+        </div>
+
+        <!-- Performance Tracker -->
+        <div class="performance-tracker">
+            <div class="section-title">
+                <span class="section-icon">📊</span>
+                Leistungsboni diesen Monat (Hauptsponsor)
+            </div>
+            <div class="performance-grid">
+                <div class="performance-card">
+                    <div class="performance-icon">⚽</div>
+                    <div class="performance-title">Tore Liga</div>
+                    <div class="performance-value">18</div>
+                    <div class="performance-bonus">+€270.000 Bonus</div>
+                </div>
+                <div class="performance-card">
+                    <div class="performance-icon">🏆</div>
+                    <div class="performance-title">Siege Liga</div>
+                    <div class="performance-value">7</div>
+                    <div class="performance-bonus">+€175.000 Bonus</div>
+                </div>
+                <div class="performance-card">
+                    <div class="performance-icon">🥇</div>
+                    <div class="performance-title">Pokalspieltage</div>
+                    <div class="performance-value">3</div>
+                    <div class="performance-bonus">+€150.000 Bonus</div>
+                </div>
+                <div class="performance-card">
+                    <div class="performance-icon">💰</div>
+                    <div class="performance-title">Gesamt Bonus</div>
+                    <div class="performance-value">€595.000</div>
+                    <div class="performance-bonus">Diesen Monat</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Negotiation Panel -->
+        <div class="negotiation-panel">
+            <div class="section-title">
+                <span class="section-icon">🤝</span>
+                Aktuelle Verhandlungen
+            </div>
+            <div class="negotiation-grid">
+                <div class="negotiation-card">
+                    <div class="potential-sponsor">🏪 MegaMart Retail</div>
+                    <div class="offer-details">
+                        <div class="offer-item">
+                            <span class="offer-label">Einmalbetrag:</span>
+                            <span class="offer-value">€950.000</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Torprämie Liga:</span>
+                            <span class="offer-value">€12.000 / Tor</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Siegprämie Liga:</span>
+                            <span class="offer-value">€18.000 / Sieg</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Pokalprämie:</span>
+                            <span class="offer-value">€35.000 / Spieltag</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Laufzeit:</span>
+                            <span class="offer-value">3 Jahre</span>
+                        </div>
+                    </div>
+                    <div class="negotiate-buttons">
+                        <button class="btn btn-accept" onclick="acceptOffer('MegaMart')">✓ Annehmen</button>
+                        <button class="btn btn-counter" onclick="openCounterOffer('MegaMart')">💬 Nachverhandeln</button>
+                        <button class="btn btn-reject" onclick="rejectOffer('MegaMart')">✗ Ablehnen</button>
+                    </div>
+                </div>
+
+                <div class="negotiation-card">
+                    <div class="potential-sponsor">🚗 AutoDrive Motors</div>
+                    <div class="offer-details">
+                        <div class="offer-item">
+                            <span class="offer-label">Einmalbetrag:</span>
+                            <span class="offer-value">€720.000</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Torprämie Liga:</span>
+                            <span class="offer-value">€10.000 / Tor</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Siegprämie Liga:</span>
+                            <span class="offer-value">€15.000 / Sieg</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Pokalprämie:</span>
+                            <span class="offer-value">€25.000 / Spieltag</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Laufzeit:</span>
+                            <span class="offer-value">2 Jahre</span>
+                        </div>
+                    </div>
+                    <div class="negotiate-buttons">
+                        <button class="btn btn-accept" onclick="acceptOffer('AutoDrive')">✓ Annehmen</button>
+                        <button class="btn btn-counter" onclick="openCounterOffer('AutoDrive')">💬 Nachverhandeln</button>
+                        <button class="btn btn-reject" onclick="rejectOffer('AutoDrive')">✗ Ablehnen</button>
+                    </div>
+                </div>
+
+                <div class="negotiation-card">
+                    <div class="potential-sponsor">🏦 FinanceFirst Bank</div>
+                    <div class="offer-details">
+                        <div class="offer-item">
+                            <span class="offer-label">Einmalbetrag:</span>
+                            <span class="offer-value">€1.100.000</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Torprämie Liga:</span>
+                            <span class="offer-value">€16.000 / Tor</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Siegprämie Liga:</span>
+                            <span class="offer-value">€22.000 / Sieg</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Pokalprämie:</span>
+                            <span class="offer-value">€45.000 / Spieltag</span>
+                        </div>
+                        <div class="offer-item">
+                            <span class="offer-label">Laufzeit:</span>
+                            <span class="offer-value">4 Jahre</span>
+                        </div>
+                    </div>
+                    <div class="negotiate-buttons">
+                        <button class="btn btn-accept" onclick="acceptOffer('FinanceFirst')">✓ Annehmen</button>
+                        <button class="btn btn-counter" onclick="openCounterOffer('FinanceFirst')">💬 Nachverhandeln</button>
+                        <button class="btn btn-reject" onclick="rejectOffer('FinanceFirst')">✗ Ablehnen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contract Actions -->
+        <div class="contract-actions">
+            <button class="action-btn" onclick="searchNewSponsors()">
+                🔍 Neue Sponsoren suchen
+            </button>
+            <button class="action-btn secondary" onclick="showContractHistory()">
+                📋 Vertragshistorie
+            </button>
+            <button class="action-btn secondary" onclick="exportReport()">
+                📊 Sponsoring-Report exportieren
+            </button>
+            <button class="action-btn secondary" onclick="showMarketAnalysis()">
+                📈 Marktanalyse anzeigen
+            </button>
+        </div>
+    </div>
+
+    <!-- Counter Offer Modal -->
+    <div id="counterOfferModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Gegenangebot erstellen</h3>
+                <button class="close-btn" onclick="closeModal('counterOfferModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Sponsor:</label>
+                    <input type="text" id="sponsorName" class="form-input" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Einmalbetrag (€):</label>
+                    <input type="number" id="lumpSum" class="form-input" placeholder="z.B. 1000000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Torprämie Liga (€ pro Tor):</label>
+                    <input type="number" id="goalBonus" class="form-input" placeholder="z.B. 15000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Siegprämie Liga (€ pro Sieg):</label>
+                    <input type="number" id="winBonus" class="form-input" placeholder="z.B. 25000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pokalprämie (€ pro Pokalspieltag):</label>
+                    <input type="number" id="cupBonus" class="form-input" placeholder="z.B. 40000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Vertragslaufzeit (Jahre):</label>
+                    <input type="number" id="contractLength" class="form-input" min="1" max="5" placeholder="z.B. 3">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Zusätzliche Bedingungen:</label>
+                    <textarea class="form-input" id="additionalTerms" rows="3" placeholder="Weitere Vertragsdetails oder Sonderbedingungen..."></textarea>
+                </div>
+                <div class="negotiate-buttons">
+                    <button class="btn btn-accept" onclick="submitCounterOffer()">📝 Gegenangebot senden</button>
+                    <button class="btn btn-reject" onclick="closeModal('counterOfferModal')">❌ Abbrechen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Sponsor Search Modal -->
+    <div id="newSponsorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Neue Sponsoren suchen</h3>
+                <button class="close-btn" onclick="closeModal('newSponsorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="search-filters">
+                    <div class="form-group">
+                        <label class="form-label">Sponsoring-Kategorie:</label>
+                        <select class="form-input" id="sponsorCategory">
+                            <option value="main">Hauptsponsor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mindest-Einmalbetrag (€):</label>
+                        <input type="number" class="form-input" id="minLumpSum" placeholder="z.B. 500000">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bevorzugte Vertragslaufzeit:</label>
+                        <select class="form-input" id="preferredLength">
+                            <option value="">Keine Präferenz</option>
+                            <option value="1">1 Jahr</option>
+                            <option value="2">2 Jahre</option>
+                            <option value="3">3 Jahre</option>
+                            <option value="4">4 Jahre</option>
+                            <option value="5">5 Jahre</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="search-results" id="searchResults">
+                    <div class="negotiation-card">
+                        <div class="potential-sponsor">🎮 GameTech Solutions</div>
+                        <div class="offer-details">
+                            <div class="offer-item">
+                                <span class="offer-label">Kategorie:</span>
+                                <span class="offer-value">Hauptsponsor</span>
+                            </div>
+                            <div class="offer-item">
+                                <span class="offer-label">Geschätzter Wert:</span>
+                                <span class="offer-value">€1.350.000 / Jahr</span>
+                            </div>
+                            <div class="offer-item">
+                                <span class="offer-label">Interesse:</span>
+                                <span class="offer-value">Hoch</span>
+                            </div>
+                        </div>
+                        <div class="negotiate-buttons">
+                            <button class="btn btn-accept" onclick="contactSponsor('GameTech')">📞 Kontaktieren</button>
+                        </div>
+                    </div>
+                    <div class="negotiation-card">
+                        <div class="potential-sponsor">🍕 PizzaPalace Chain</div>
+                        <div class="offer-details">
+                            <div class="offer-item">
+                                <span class="offer-label">Kategorie:</span>
+                                <span class="offer-value">Hauptsponsor</span>
+                            </div>
+                            <div class="offer-item">
+                                <span class="offer-label">Geschätzter Wert:</span>
+                                <span class="offer-value">€900.000 / Jahr</span>
+                            </div>
+                            <div class="offer-item">
+                                <span class="offer-label">Interesse:</span>
+                                <span class="offer-value">Mittel</span>
+                            </div>
+                        </div>
+                        <div class="negotiate-buttons">
+                            <button class="btn btn-accept" onclick="contactSponsor('PizzaPalace')">📞 Kontaktieren</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="negotiate-buttons" style="margin-top: 1.5rem;">
+                    <button class="btn btn-counter" onclick="searchSponsors()">🔍 Suche starten</button>
+                    <button class="btn btn-reject" onclick="closeModal('newSponsorModal')">❌ Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentNegotiation = null;
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const toggleButton = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                sidebar && !sidebar.contains(event.target) && 
+                (!toggleButton || !toggleButton.contains(event.target))) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Sponsorship functions
+        function acceptOffer(sponsor) {
+            if (confirm(`Möchten Sie das Angebot von ${sponsor} wirklich annehmen?`)) {
+                showNotification(`✅ Angebot von ${sponsor} erfolgreich angenommen!`, 'success');
+                // Remove the negotiation card
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('.negotiation-card');
+                    cards.forEach(card => {
+                        if (card.querySelector('.potential-sponsor').textContent.includes(sponsor)) {
+                            card.style.animation = 'slideUp 0.5s ease reverse';
+                            setTimeout(() => card.remove(), 500);
+                        }
+                    });
+                }, 1000);
+            }
+        }
+
+        function rejectOffer(sponsor) {
+            if (confirm(`Möchten Sie das Angebot von ${sponsor} wirklich ablehnen?`)) {
+                showNotification(`❌ Angebot von ${sponsor} abgelehnt.`, 'info');
+                // Remove the negotiation card
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('.negotiation-card');
+                    cards.forEach(card => {
+                        if (card.querySelector('.potential-sponsor').textContent.includes(sponsor)) {
+                            card.style.animation = 'slideUp 0.5s ease reverse';
+                            setTimeout(() => card.remove(), 500);
+                        }
+                    });
+                }, 1000);
+            }
+        }
+
+        function openCounterOffer(sponsor) {
+            currentNegotiation = sponsor;
+            document.getElementById('sponsorName').value = sponsor;
+            
+            // Pre-fill with current offer values (example)
+            const offers = {
+                'MegaMart': { lump: 950000, goal: 12000, win: 18000, cup: 35000, length: 3 },
+                'AutoDrive': { lump: 720000, goal: 10000, win: 15000, cup: 25000, length: 2 },
+                'FinanceFirst': { lump: 1100000, goal: 16000, win: 22000, cup: 45000, length: 4 }
+            };
+            
+            const offer = offers[sponsor];
+            if (offer) {
+                document.getElementById('lumpSum').value = offer.lump;
+                document.getElementById('goalBonus').value = offer.goal;
+                document.getElementById('winBonus').value = offer.win;
+                document.getElementById('cupBonus').value = offer.cup;
+                document.getElementById('contractLength').value = offer.length;
+            }
+            
+            openModal('counterOfferModal');
+        }
+
+        function submitCounterOffer() {
+            const lumpSum = document.getElementById('lumpSum').value;
+            const goalBonus = document.getElementById('goalBonus').value;
+            const winBonus = document.getElementById('winBonus').value;
+            const cupBonus = document.getElementById('cupBonus').value;
+            const contractLength = document.getElementById('contractLength').value;
+            
+            if (!lumpSum || !goalBonus || !winBonus || !cupBonus || !contractLength) {
+                alert('Bitte füllen Sie alle Pflichtfelder aus.');
+                return;
+            }
+            
+            showNotification(`💬 Gegenangebot an ${currentNegotiation} gesendet! Antwort erwartet in 24-48h.`, 'info');
+            closeModal('counterOfferModal');
+            
+            // Clear form
+            document.getElementById('lumpSum').value = '';
+            document.getElementById('goalBonus').value = '';
+            document.getElementById('winBonus').value = '';
+            document.getElementById('cupBonus').value = '';
+            document.getElementById('contractLength').value = '';
+            document.getElementById('additionalTerms').value = '';
+        }
+
+        function searchNewSponsors() {
+            openModal('newSponsorModal');
+        }
+
+        function searchSponsors() {
+            const category = document.getElementById('sponsorCategory').value;
+            const minLumpSum = document.getElementById('minLumpSum').value;
+            const preferredLength = document.getElementById('preferredLength').value;
+            
+            showNotification('🔍 Suche nach passenden Sponsoren...', 'info');
+            
+            // Simulate search delay
+            setTimeout(() => {
+                showNotification('✨ 3 neue potenzielle Sponsoren gefunden!', 'success');
+            }, 2000);
+        }
+
+        function contactSponsor(sponsor) {
+            showNotification(`📞 Kontakt zu ${sponsor} hergestellt. Verhandlungen werden eingeleitet.`, 'info');
+            closeModal('newSponsorModal');
+        }
+
+        function showContractHistory() {
+            showNotification('📋 Vertragshistorie wird geladen...', 'info');
+        }
+
+        function exportReport() {
+            showNotification('📊 Sponsoring-Report wird erstellt und heruntergeladen...', 'info');
+        }
+
+        function showMarketAnalysis() {
+            showNotification('📈 Marktanalyse wird geöffnet...', 'info');
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                background: ${type === 'success' ? '#2ecc71' : type === 'info' ? '#3498db' : '#e74c3c'};
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                z-index: 3000;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 400px;
+                word-wrap: break-word;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+
+        // Add some animation to cards on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.sponsor-card, .negotiation-card, .performance-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Add pulse effect to high-value offers
+        setTimeout(() => {
+            const highValueCards = document.querySelectorAll('.negotiation-card');
+            highValueCards.forEach(card => {
+                const offerValue = card.querySelector('.offer-value').textContent;
+                if (offerValue.includes('1.100.000')) {
+                    card.classList.add('pulse');
+                    card.style.border = '2px solid #2ecc71';
+                }
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
+                
