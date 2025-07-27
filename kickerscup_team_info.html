@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickerscup - Team Info</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            color: #ff8c00;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            border-left-color: #ff8c00;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left h1 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .header-left .subtitle {
+            color: #cccccc;
+            font-size: 1rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .team-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff8c00, #ff6b00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 140, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: #ff8c00;
+            margin-right: 1rem;
+        }
+
+        .card-title {
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Team Info */
+        .team-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-label {
+            color: #cccccc;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .info-value.highlight {
+            color: #ff8c00;
+        }
+
+        /* Statistics */
+        .stats-comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stats-column {
+            text-align: center;
+        }
+
+        .stats-column h3 {
+            color: #ff8c00;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-label {
+            color: #cccccc;
+        }
+
+        .stat-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .vs-divider {
+            width: 3px;
+            height: 200px;
+            background: linear-gradient(to bottom, transparent, #ff8c00, transparent);
+            border-radius: 2px;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .achievement-item {
+            background: rgba(255, 140, 0, 0.1);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-item:hover {
+            background: rgba(255, 140, 0, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .achievement-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-title {
+            color: #ff8c00;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-count {
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* Best Placements */
+        .placements-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .placement-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .placement-item:hover {
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        .placement-position {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff8c00;
+            min-width: 60px;
+        }
+
+        .placement-details {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .placement-league {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .placement-season {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        /* Stadium Info */
+        .stadium-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .stadium-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stadium-image:hover {
+            border-color: #ff8c00;
+            box-shadow: 0 10px 25px rgba(255, 140, 0, 0.2);
+        }
+
+        /* Stadium Layout */
+        .stadium-field {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(45deg, #4a7c59, #5a8c69);
+            border-radius: 8px;
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .stadium-field::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            background: transparent;
+        }
+
+        /* Stadium Sections */
+        .stadium-section {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .stadium-section:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        /* VIP Logen (oben) */
+        .vip-section {
+            top: 10px;
+            left: 20%;
+            right: 20%;
+            height: 25px;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            border: 1px solid #b8860b;
+        }
+
+        /* Haupttribüne (unten) */
+        .main-stand {
+            bottom: 10px;
+            left: 15%;
+            right: 15%;
+            height: 40px;
+            background: linear-gradient(135deg, #ff8c00, #ff6b00);
+            color: white;
+        }
+
+        /* Seitentribünen */
+        .side-stand-left {
+            left: 10px;
+            top: 20%;
+            bottom: 20%;
+            width: 30px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            writing-mode: vertical-rl;
+        }
+
+        .side-stand-right {
+            right: 10px;
+            top: 20%;
+            bottom: 20%;
+            width: 30px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            writing-mode: vertical-rl;
+        }
+
+        /* Stehplätze */
+        .standing-section {
+            top: 45px;
+            left: 12%;
+            right: 12%;
+            height: 20px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        /* Stadium Labels */
+        .stadium-labels {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .label {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ff8c00;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            border: 1px solid rgba(255, 140, 0, 0.5);
+        }
+
+        .label-vip {
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .label-main {
+            bottom: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .label-standing {
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .label-side-left {
+            left: 45px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+        }
+
+        .label-side-right {
+            right: 45px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+        }
+
+        /* Stadium Info Overlay */
+        .stadium-overlay {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #ff8c00;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 1px solid rgba(255, 140, 0, 0.5);
+        }
+
+        /* Stadium Capacity Breakdown */
+        .capacity-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .capacity-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            border-left: 3px solid;
+        }
+
+        .capacity-item.vip {
+            border-left-color: #ffd700;
+        }
+
+        .capacity-item.main {
+            border-left-color: #ff8c00;
+        }
+
+        .capacity-item.side {
+            border-left-color: #3498db;
+        }
+
+        .capacity-item.standing {
+            border-left-color: #e74c3c;
+        }
+
+        .capacity-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .capacity-icon.vip { background: #ffd700; }
+        .capacity-icon.main { background: #ff8c00; }
+        .capacity-icon.side { background: #3498db; }
+        .capacity-icon.standing { background: #e74c3c; }
+
+        .stadium-specs {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #ff8c00;
+        }
+
+        .spec-label {
+            color: #cccccc;
+            font-weight: 500;
+        }
+
+        .spec-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-comparison {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .vs-divider {
+                width: 100%;
+                height: 3px;
+            }
+            
+            .stadium-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .team-info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .card:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>Kickerscup</h1>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">🏠</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">⚽</span>
+                            Spiele
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">🏆</span>
+                            Liga
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">🏅</span>
+                            Pokale
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <span class="nav-icon">👥</span>
+                            Team Info
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Finanzen
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon">🔄</span>
+                            Transfer
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <h1>FC Thunderbolts</h1>
+                    <p class="subtitle">Gegründet 2018 • Liga 1 • Platz 3</p>
+                </div>
+                <div class="header-right">
+                    <div class="team-logo">⚡</div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Team Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">ℹ️</span>
+                        <h2 class="card-title">Team Information</h2>
+                    </div>
+                    <div class="team-info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Team Name:</span>
+                            <span class="info-value highlight">FC Thunderbolts</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Gründungsjahr:</span>
+                            <span class="info-value">2018</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Trainer:</span>
+                            <span class="info-value">Max Mustermann</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Kapitän:</span>
+                            <span class="info-value">John Smith</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Aktuelle Liga:</span>
+                            <span class="info-value highlight">Liga 1</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Aktueller Platz:</span>
+                            <span class="info-value highlight">3.</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Kader Größe:</span>
+                            <span class="info-value">23 Spieler</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Durchschnittsalter:</span>
+                            <span class="info-value">26.4 Jahre</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stadium Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🏟️</span>
+                        <h2 class="card-title">Stadion Daten</h2>
+                    </div>
+                    <div class="stadium-details">
+                        <div class="stadium-image">
+                            <!-- Spielfeld -->
+                            <div class="stadium-field">⚽</div>
+                            
+                            <!-- VIP Logen -->
+                            <div class="stadium-section vip-section" data-section="vip">VIP</div>
+                            
+                            <!-- Haupttribüne -->
+                            <div class="stadium-section main-stand" data-section="main">Haupttribüne</div>
+                            
+                            <!-- Seitentribünen -->
+                            <div class="stadium-section side-stand-left" data-section="side">Seite A</div>
+                            <div class="stadium-section side-stand-right" data-section="side">Seite B</div>
+                            
+                            <!-- Stehplätze -->
+                            <div class="stadium-section standing-section" data-section="standing">Stehplätze</div>
+                            
+                            <!-- Labels -->
+                            <div class="stadium-labels">
+                                <div class="label label-vip">VIP-Logen</div>
+                                <div class="label label-standing">Stehplätze</div>
+                                <div class="label label-main">Haupttribüne</div>
+                                <div class="label label-side-left">Seite A</div>
+                                <div class="label label-side-right">Seite B</div>
+                            </div>
+                            
+                            <!-- Stadium Info -->
+                            <div class="stadium-overlay">Thunder Arena</div>
+                        </div>
+                        
+                        <div class="stadium-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Name:</span>
+                                <span class="spec-value">Thunder Arena</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Gesamtkapazität:</span>
+                                <span class="spec-value">45.000</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Eröffnet:</span>
+                                <span class="spec-value">2019</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Untergrund:</span>
+                                <span class="spec-value">Naturrasen</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Auslastung:</span>
+                                <span class="spec-value">87%</span>
+                            </div>
+                            
+                            <!-- Kapazitäts-Aufschlüsselung -->
+                            <div style="grid-column: 1 / -1; margin-top: 1rem;">
+                                <h4 style="color: #ff8c00; margin-bottom: 0.5rem; font-size: 1rem;">Kapazitäts-Aufteilung:</h4>
+                                <div class="capacity-breakdown">
+                                    <div class="capacity-item vip">
+                                        <div class="capacity-icon vip"></div>
+                                        <span>VIP-Logen: 2.500</span>
+                                    </div>
+                                    <div class="capacity-item main">
+                                        <div class="capacity-icon main"></div>
+                                        <span>Haupttribüne: 18.000</span>
+                                    </div>
+                                    <div class="capacity-item side">
+                                        <div class="capacity-icon side"></div>
+                                        <span>Seitentribünen: 9.500</span>
+                                    </div>
+                                    <div class="capacity-item standing">
+                                        <div class="capacity-icon standing"></div>
+                                        <span>Stehplätze: 15.000</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Comparison -->
+                <div class="card full-width">
+                    <div class="card-header">
+                        <span class="card-icon">📊</span>
+                        <h2 class="card-title">Statistiken Vergleich</h2>
+                    </div>
+                    <div class="stats-comparison">
+                        <div class="stats-column">
+                            <h3>Aktuelle Saison (2024/25)</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Spiele:</span>
+                                <span class="stat-value">28</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Siege:</span>
+                                <span class="stat-value">18</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Unentschieden:</span>
+                                <span class="stat-value">6</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Niederlagen:</span>
+                                <span class="stat-value">4</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Tore:</span>
+                                <span class="stat-value">67:23</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Punkte:</span>
+                                <span class="stat-value">60</span>
+                            </div>
+                        </div>
+                        
+                        <div class="vs-divider"></div>
+                        
+                        <div class="stats-column">
+                            <h3>Gesamt seit Gründung</h3>
+                            <div class="stat-item">
+                                <span class="stat-label">Spiele:</span>
+                                <span class="stat-value">186</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Siege:</span>
+                                <span class="stat-value">98</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Unentschieden:</span>
+                                <span class="stat-value">42</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Niederlagen:</span>
+                                <span class="stat-value">46</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Tore:</span>
+                                <span class="stat-value">312:189</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Siegquote:</span>
+                                <span class="stat-value">52.7%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🏆</span>
+                        <h2 class="card-title">Erfolge & Titel</h2>
+                    </div>
+                    <div class="achievements-grid">
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🏆</div>
+                            <div class="achievement-title">Meisterschaften</div>
+                            <div class="achievement-count">2x</div>
+                        </div>
+                        <div class="achievement-item">
+                            <div class="achievement-icon">🏅</div>
+                            <div class="achievement-title">CC-Sieger</div>
+                            <div class="achievement-count">1x</div>
+                        </div>
+                        <div class="achievement-item">
+                            <div class="achievement-icon">⭐</div>
+                            <div class="achievement-title">EC Sieger</div>
+                            <div class="achievement-count">0x</div>
+                        </div>
+                        <div class="achievement-item">
+                            <div class="achievement-icon">👑</div>
+                            <div class="achievement-title">Liga 1 Meister</div>
+                            <div class="achievement-count">2x</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Best League Placements -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📈</span>
+                        <h2 class="card-title">Beste Liga-Platzierungen</h2>
+                    </div>
+                    <div class="placements-list">
+                        <div class="placement-item">
+                            <div class="placement-position">1.</div>
+                            <div class="placement-details">
+                                <div class="placement-league">Liga 1</div>
+                                <div class="placement-season">Saison 2022/23</div>
+                            </div>
+                        </div>
+                        <div class="placement-item">
+                            <div class="placement-position">1.</div>
+                            <div class="placement-details">
+                                <div class="placement-league">Liga 1</div>
+                                <div class="placement-season">Saison 2021/22</div>
+                            </div>
+                        </div>
+                        <div class="placement-item">
+                            <div class="placement-position">2.</div>
+                            <div class="placement-details">
+                                <div class="placement-league">Liga 1</div>
+                                <div class="placement-season">Saison 2023/24</div>
+                            </div>
+                        </div>
+                        <div class="placement-item">
+                            <div class="placement-position">3.</div>
+                            <div class="placement-details">
+                                <div class="placement-league">Liga 2</div>
+                                <div class="placement-season">Saison 2019/20</div>
+                            </div>
+                        </div>
+                        <div class="placement-item">
+                            <div class="placement-position">5.</div>
+                            <div class="placement-details">
+                                <div class="placement-league">Liga 2</div>
+                                <div class="placement-season">Saison 2018/19</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive features
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation highlighting
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Card hover effects with enhanced interaction
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                    this.style.boxShadow = '0 15px 40px rgba(255, 140, 0, 0.15)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+
+            // Achievement items click interaction
+            const achievementItems = document.querySelectorAll('.achievement-item');
+            achievementItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const title = this.querySelector('.achievement-title').textContent;
+                    const count = this.querySelector('.achievement-count').textContent;
+                    
+                    if (count !== '0x') {
+                        alert(`🏆 ${title}\n\nAnzahl: ${count}\n\nDetails:\n• Erfolgreiche Saisons anzeigen?\n• Matchhighlights ansehen?\n• Trophäengalerie öffnen?`);
+                    } else {
+                        alert(`${title}\n\nBisher noch nicht erreicht.\n\nZiel für die nächsten Saisons! 💪`);
+                    }
+                });
+            });
+
+            // Placement items click interaction
+            const placementItems = document.querySelectorAll('.placement-item');
+            placementItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const position = this.querySelector('.placement-position').textContent;
+                    const league = this.querySelector('.placement-league').textContent;
+                    const season = this.querySelector('.placement-season').textContent;
+                    
+                    alert(`📊 Platzierung Details\n\nPlatz ${position} in ${league}\n${season}\n\nOptionen:\n• Saisonstatistiken anzeigen\n• Tabellenverlauf ansehen\n• Schlüsselspiele der Saison`);
+                });
+            });
+
+            // Stadium image click interaction
+            const stadiumImage = document.querySelector('.stadium-image');
+            if (stadiumImage) {
+                stadiumImage.addEventListener('click', function() {
+                    alert('🏟️ Thunder Arena\n\nStadion-Features:\n• 360° Virtuelle Tour\n• Stadionplan anzeigen\n• Ausbau-Historie\n• Zukünftige Renovierungen\n\nKlicken Sie auf "Tour starten" für die virtuelle Besichtigung!');
+                });
+                
+                stadiumImage.style.cursor = 'pointer';
+                stadiumImage.title = 'Klicken für Stadion-Tour';
+            }
+
+            // Stats animation on scroll
+            const observerOptions = {
+                threshold: 0.3,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const statValues = entry.target.querySelectorAll('.stat-value, .info-value, .spec-value');
+                        statValues.forEach((value, index) => {
+                            setTimeout(() => {
+                                value.style.animation = 'countUp 0.8s ease-out';
+                                value.style.color = '#ff8c00';
+                                setTimeout(() => {
+                                    value.style.color = '#ffffff';
+                                }, 800);
+                            }, index * 100);
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+
+            // Add count-up animation CSS
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes countUp {
+                    0% { 
+                        transform: scale(0.8);
+                        opacity: 0.5;
+                    }
+                    50% { 
+                        transform: scale(1.1);
+                        opacity: 0.8;
+                    }
+                    100% { 
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                }
+                
+                .achievement-item {
+                    cursor: pointer;
+                }
+                
+                .placement-item {
+                    cursor: pointer;
+                }
+                
+                .achievement-item:active {
+                    transform: translateY(-1px) scale(0.98);
+                }
+                
+                .placement-item:active {
+                    transform: scale(0.98);
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Team logo animation
+            const teamLogo = document.querySelector('.team-logo');
+            if (teamLogo) {
+                teamLogo.addEventListener('click', function() {
+                    this.style.animation = 'spin 1s ease-in-out';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 1000);
+                });
+                
+                teamLogo.style.cursor = 'pointer';
+                teamLogo.title = 'Team Logo - Klicken für Animation';
+            }
+
+            // Mobile menu toggle (for responsive design)
+            function createMobileMenuToggle() {
+                const mobileToggle = document.createElement('button');
+                mobileToggle.innerHTML = '☰';
+                mobileToggle.style.cssText = `
+                    position: fixed;
+                    top: 1rem;
+                    left: 1rem;
+                    z-index: 2000;
+                    background: rgba(255, 140, 0, 0.9);
+                    border: none;
+                    color: white;
+                    font-size: 1.5rem;
+                    padding: 0.5rem;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    display: none;
+                `;
+                
+                mobileToggle.addEventListener('click', function() {
+                    const sidebar = document.querySelector('.sidebar');
+                    const isVisible = sidebar.style.transform === 'translateX(0px)';
+                    sidebar.style.transform = isVisible ? 'translateX(-100%)' : 'translateX(0px)';
+                });
+                
+                document.body.appendChild(mobileToggle);
+                
+                // Show/hide mobile toggle based on screen size
+                function checkMobile() {
+                    if (window.innerWidth <= 768) {
+                        mobileToggle.style.display = 'block';
+                    } else {
+                        mobileToggle.style.display = 'none';
+                        document.querySelector('.sidebar').style.transform = '';
+                    }
+                }
+                
+                window.addEventListener('resize', checkMobile);
+                checkMobile();
+            }
+            
+            createMobileMenuToggle();
+
+            // Auto-update team statistics (simulation)
+            function simulateStatUpdates() {
+                const currentSeasonStats = {
+                    spiele: 28,
+                    siege: 18,
+                    unentschieden: 6,
+                    niederlagen: 4,
+                    tore: '67:23',
+                    punkte: 60
+                };
+
+                setInterval(() => {
+                    // Simulate a new game result
+                    if (Math.random() < 0.1) { // 10% chance every interval
+                        currentSeasonStats.spiele++;
+                        
+                        const result = Math.random();
+                        if (result < 0.6) {
+                            currentSeasonStats.siege++;
+                            currentSeasonStats.punkte += 3;
+                        } else if (result < 0.8) {
+                            currentSeasonStats.unentschieden++;
+                            currentSeasonStats.punkte += 1;
+                        } else {
+                            currentSeasonStats.niederlagen++;
+                        }
+
+                        // Update display
+                        const statElements = document.querySelectorAll('.stats-column:first-child .stat-value');
+                        if (statElements.length >= 6) {
+                            statElements[0].textContent = currentSeasonStats.spiele;
+                            statElements[1].textContent = currentSeasonStats.siege;
+                            statElements[2].textContent = currentSeasonStats.unentschieden;
+                            statElements[3].textContent = currentSeasonStats.niederlagen;
+                            statElements[5].textContent = currentSeasonStats.punkte;
+                            
+                            // Flash animation for updated values
+                            statElements.forEach(el => {
+                                el.style.animation = 'pulse 0.8s ease-in-out';
+                            });
+                        }
+                    }
+                }, 30000); // Check every 30 seconds
+            }
+
+            simulateStatUpdates();
+
+            // Enhanced info tooltips
+            const infoItems = document.querySelectorAll('.info-item, .stat-item, .spec-item');
+            infoItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.background = 'rgba(255, 140, 0, 0.1)';
+                    this.style.borderRadius = '5px';
+                    this.style.transition = 'all 0.3s ease';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.background = '';
+                });
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey) {
+                    switch(e.key) {
+                        case '1':
+                            e.preventDefault();
+                            alert('🏠 Navigation zu Dashboard');
+                            break;
+                        case '2':
+                            e.preventDefault();
+                            alert('⚽ Navigation zu Spiele');
+                            break;
+                        case '3':
+                            e.preventDefault();
+                            alert('🏆 Navigation zu Liga');
+                            break;
+                        case '4':
+                            e.preventDefault();
+                            alert('🏅 Navigation zu Pokale');
+                            break;
+                        case '5':
+                            e.preventDefault();
+                            alert('👥 Aktuelle Seite: Team Info');
+                            break;
+                        case 'h':
+                            e.preventDefault();
+                            showKeyboardHelp();
+                            break;
+                    }
+                }
+            });
+
+            function showKeyboardHelp() {
+                alert('⌨️ Keyboard Shortcuts:\n\n' +
+                      'Ctrl + 1-5: Navigation zwischen Bereichen\n' +
+                      'Ctrl + H: Diese Hilfe anzeigen\n' +
+                      'ESC: Menü schließen (mobil)\n\n' +
+                      'Klick-Interaktionen:\n' +
+                      '• Team Logo: Animation\n' +
+                      '• Erfolge: Details anzeigen\n' +
+                      '• Platzierungen: Saisondetails\n' +
+                      '• Stadion: Virtuelle Tour');
+            }
+
+            // ESC key for mobile menu
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const sidebar = document.querySelector('.sidebar');
+                    if (window.innerWidth <= 768) {
+                        sidebar.style.transform = 'translateX(-100%)';
+                    }
+                }
+            });
+
+            // Stadium section interactions
+            const stadiumSections = document.querySelectorAll('.stadium-section');
+            stadiumSections.forEach(section => {
+                section.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const sectionType = this.dataset.section;
+                    const sectionName = this.textContent;
+                    
+                    let details = '';
+                    switch(sectionType) {
+                        case 'vip':
+                            details = `💎 VIP-Logen\n\nKapazität: 2.500 Plätze\n• 50 Premium-Logen\n• Exklusive Gastronomie\n• Klimatisierte Räume\n• Direkter Spielfeldblick\n• VIP-Parkplätze\n\nPreis: ab 450€ pro Spiel`;
+                            break;
+                        case 'main':
+                            details = `🏟️ Haupttribüne\n\nKapazität: 18.000 Plätze\n• Überdachte Sitzplätze\n• Perfekte Sicht aufs Spielfeld\n• Fanshop & Gastronomie\n• Barrierefreier Zugang\n• Family-Zone\n\nPreis: 25-85€ pro Spiel`;
+                            break;
+                        case 'side':
+                            details = `🔄 Seitentribünen\n\nKapazität: 9.500 Plätze (gesamt)\n• Seite A: 4.750 Plätze\n• Seite B: 4.750 Plätze\n• Nähe zur Seitenlinie\n• Überdacht\n• Gute Sicht auf Taktik\n\nPreis: 20-60€ pro Spiel`;
+                            break;
+                        case 'standing':
+                            details = `🎵 Stehplätze\n\nKapazität: 15.000 Plätze\n• Heimat der Ultras\n• Beste Atmosphäre\n• Preisgünstige Tickets\n• Direkter Kontakt zu Spielern\n• Choreografien & Gesänge\n\nPreis: 12-25€ pro Spiel`;
+                            break;
+                    }
+                    
+                    alert(details);
+                });
+                
+                section.style.cursor = 'pointer';
+                section.title = `Klicken für Details zu ${section.textContent}`;
+            });
+
+            // Enhanced stadium image interaction
+            const stadiumImage = document.querySelector('.stadium-image');
+            if (stadiumImage) {
+                stadiumImage.addEventListener('click', function(e) {
+                    // Only trigger if clicking on the stadium itself, not sections
+                    if (e.target === this || e.target.classList.contains('stadium-field') || e.target.classList.contains('stadium-labels')) {
+                        alert('🏟️ Thunder Arena - Virtuelle Tour\n\n' +
+                              '360° Stadion-Tour verfügbar!\n\n' +
+                              'Features:\n' +
+                              '• Interaktive Stadion-Karte\n' +
+                              '• VR-Spielfeld-Erlebnis\n' +
+                              '• Historische Momente\n' +
+                              '• Akustik-Simulation\n' +
+                              '• Architektur-Details\n\n' +
+                              'Tipp: Klicken Sie auf einzelne Bereiche für spezifische Informationen!');
+                    }
+                });
+                
+                stadiumImage.title = 'Klicken für virtuelle Stadion-Tour oder auf Bereiche für Details';
+            }
+
+            // Capacity breakdown hover effects
+            const capacityItems = document.querySelectorAll('.capacity-item');
+            capacityItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    const sectionClass = this.classList[1]; // vip, main, side, standing
+                    const correspondingSection = document.querySelector(`[data-section="${sectionClass}"]`);
+                    
+                    if (correspondingSection) {
+                        correspondingSection.style.transform = 'scale(1.1)';
+                        correspondingSection.style.zIndex = '15';
+                        correspondingSection.style.boxShadow = '0 0 15px rgba(255, 255, 255, 0.5)';
+                    }
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    const sectionClass = this.classList[1];
+                    const correspondingSection = document.querySelector(`[data-section="${sectionClass}"]`);
+                    
+                    if (correspondingSection) {
+                        correspondingSection.style.transform = '';
+                        correspondingSection.style.zIndex = '';
+                        correspondingSection.style.boxShadow = '';
+                    }
+                });
+                
+                item.addEventListener('click', function() {
+                    const sectionClass = this.classList[1];
+                    const correspondingSection = document.querySelector(`[data-section="${sectionClass}"]`);
+                    if (correspondingSection) {
+                        correspondingSection.click();
+                    }
+                });
+                
+                item.style.cursor = 'pointer';
+            });
+
+            console.log('🎮 Team Info Interface geladen!');
+            console.log('💡 Tipp: Ctrl + H für Keyboard Shortcuts');
+        });
+
+        // Add additional CSS animations
+        const additionalStyles = document.createElement('style');
+        additionalStyles.textContent = `
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            
+            @keyframes pulse {
+                0% { 
+                    transform: scale(1);
+                    color: #ffffff;
+                }
+                50% { 
+                    transform: scale(1.05);
+                    color: #ff8c00;
+                }
+                100% { 
+                    transform: scale(1);
+                    color: #ffffff;
+                }
+            }
+            
+            .spec-item:hover {
+                transform: translateX(5px);
+                border-left-width: 5px;
+            }
+            
+            /* Loading animation for dynamic content */
+            .loading-shimmer {
+                background: linear-gradient(90deg, 
+                    transparent, 
+                    rgba(255, 140, 0, 0.1), 
+                    transparent
+                );
+                background-size: 200% 100%;
+                animation: shimmer 2s infinite;
+            }
+            
+            @keyframes shimmer {
+                0% { background-position: -200% 0; }
+                100% { background-position: 200% 0; }
+            }
+            
+            /* Enhanced focus states for accessibility */
+            .nav-link:focus,
+            .achievement-item:focus,
+            .placement-item:focus,
+            .spec-item:focus {
+                outline: 2px solid #ff8c00;
+                outline-offset: 2px;
+            }
+            
+            /* Smooth scroll behavior */
+            html {
+                scroll-behavior: smooth;
+            }
+            
+            /* Print styles */
+            @media print {
+                .sidebar {
+                    display: none;
+                }
+                
+                .main-content {
+                    margin-left: 0;
+                }
+                
+                .card {
+                    break-inside: avoid;
+                    box-shadow: none;
+                    border: 1px solid #333;
+                }
+            }
+        `;
+        document.head.appendChild(additionalStyles);
+    </script>
+</body>
+</html>
