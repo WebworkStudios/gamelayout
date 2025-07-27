@@ -130,19 +130,6 @@
             color: #000;
         }
 
-        .search-box {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 140, 0, 0.3);
-            color: #ffffff;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            width: 250px;
-        }
-
-        .search-box::placeholder {
-            color: #888;
-        }
-
         /* Team Overview Stats */
         .team-overview {
             display: grid;
@@ -360,6 +347,14 @@
             font-weight: bold;
             color: #ffffff;
             margin-bottom: 0.3rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .player-name:hover {
+            color: #ff8c00;
+            text-decoration: underline;
         }
 
         .player-meta {
@@ -384,16 +379,9 @@
         .position-LM, .position-RM, .position-ZDM, .position-OFM { background: #2ecc71; color: white; }
         .position-LS, .position-RS, .position-MS { background: #f39c12; color: white; }
 
-        .status-badge {
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
+        .status-icon {
+            font-size: 1.2rem;
         }
-
-        .status-ok { background: #2ecc71; color: white; }
-        .status-injured { background: #e74c3c; color: white; }
-        .status-suspended { background: #f39c12; color: white; }
 
         .player-stats {
             display: grid;
@@ -499,10 +487,6 @@
                 width: 100%;
             }
 
-            .search-box {
-                width: 100%;
-            }
-
             .team-overview {
                 grid-template-columns: 1fr;
             }
@@ -527,15 +511,15 @@
     </style>
 </head>
 <body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+    
     <div class="container">
-        <!-- Mobile Toggle Button -->
-        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
-
         <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
             <div class="logo">
-                <h1>KICKERSCUP</h1>
+                <h1>⚽ KickersCup</h1>
             </div>
+            
             <ul class="nav-menu">
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -551,38 +535,14 @@
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <span class="nav-icon">🏋️</span>
-                        Training
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span class="nav-icon">🏟️</span>
-                        Stadion
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span class="nav-icon">⚽</span>
-                        Live Spiele
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span class="nav-icon">💰</span>
-                        Transfermarkt
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span class="nav-icon">🏆</span>
-                        Pokale
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
                         <span class="nav-icon">📊</span>
-                        Statistiken
+                        Liga
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🔄</span>
+                        Transfer
                     </a>
                 </li>
                 <li class="nav-item">
@@ -608,7 +568,6 @@
                         <button class="view-btn active">🎴 Cards</button>
                         <button class="view-btn">📊 Formation</button>
                     </div>
-                    <input type="text" class="search-box" placeholder="Spieler suchen...">
                 </div>
             </header>
 
@@ -697,386 +656,209 @@
                 <div class="filter-tab">🚑 Verletzt (2)</div>
             </div>
 
-            <!-- Players Grid -->
+            <!-- Players Grid - Sortiert nach Position -->
             <div class="players-grid">
-                <!-- Player Card 1 -->
-                <div class="player-card">
+                <!-- Torhüter -->
+                <div class="player-card" data-position="TW" data-status="ok">
                     <div class="player-header">
                         <div class="player-info">
-                            <div class="player-name">Manuel Neuer</div>
+                            <a href="/spieler/manuel-neuer" class="player-name">Manuel Neuer</a>
                             <div class="player-meta">
-                                <span>28 Jahre</span>
-                                <span>15 Einsätze</span>
-                                <span>3 Saisons</span>
+                                <span>Alter: 37</span>
+                                <span>Vertrag: 2025</span>
                             </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                            <span class="position-badge position-TW">TW</span>
-                            <span class="status-badge status-ok">OK</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-TW">TW</div>
+                            <span class="status-icon">✅</span>
                         </div>
                     </div>
                     <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
-                            <span class="stat-value">9.0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Kondition</span>
-                            <span class="stat-value">85</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Form</span>
-                            <span class="stat-value">24</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Frische</span>
-                            <span class="stat-value">92</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Motivation</span>
-                            <span class="stat-value">11</span>
-                        </div>
-                        <div class="stat-item einsatzwert">
-                            <span class="stat-label">Einsatzwert</span>
-                            <span class="stat-value">8.7</span>
-                        </div>
-                    </div>
-                    <div class="player-actions">
-                        <button class="action-btn">✏️ Bearbeiten</button>
-                        <button class="action-btn">💰 Verkaufen</button>
-                        <button class="action-btn">📊 Details</button>
-                    </div>
-                </div>
-
-                <!-- Player Card 2 -->
-                <div class="player-card">
-                    <div class="player-header">
-                        <div class="player-info">
-                            <div class="player-name">Kevin De Bruyne</div>
-                            <div class="player-meta">
-                                <span>30 Jahre</span>
-                                <span>19 Einsätze</span>
-                                <span>4 Saisons</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                            <span class="position-badge position-OFM">OFM</span>
-                            <span class="status-badge status-ok">OK</span>
-                        </div>
-                    </div>
-                    <div class="player-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Stärke</span>
-                            <span class="stat-value">9.2</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Kondition</span>
-                            <span class="stat-value">89</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Form</span>
-                            <span class="stat-value">28</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Frische</span>
-                            <span class="stat-value">91</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Motivation</span>
-                            <span class="stat-value">12</span>
-                        </div>
-                        <div class="stat-item einsatzwert">
-                            <span class="stat-label">Einsatzwert</span>
-                            <span class="stat-value">9.0</span>
-                        </div>
-                    </div>
-                    <div class="player-actions">
-                        <button class="action-btn">✏️ Bearbeiten</button>
-                        <button class="action-btn">💰 Verkaufen</button>
-                        <button class="action-btn">📊 Details</button>
-                    </div>
-                </div>
-
-                <!-- Player Card 3 - Injured -->
-                <div class="player-card">
-                    <div class="player-header">
-                        <div class="player-info">
-                            <div class="player-name">Virgil van Dijk</div>
-                            <div class="player-meta">
-                                <span>31 Jahre</span>
-                                <span>12 Einsätze</span>
-                                <span>1 Saison</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                            <span class="position-badge position-IV">IV</span>
-                            <span class="status-badge status-injured">Verletzt</span>
-                        </div>
-                    </div>
-                    <div class="player-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Stärke</span>
-                            <span class="stat-value">8.8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Kondition</span>
-                            <span class="stat-value">75</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Form</span>
-                            <span class="stat-value">22</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Frische</span>
-                            <span class="stat-value">78</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Motivation</span>
-                            <span class="stat-value">10</span>
-                        </div>
-                        <div class="stat-item einsatzwert">
-                            <span class="stat-label">Einsatzwert</span>
-                            <span class="stat-value">7.9</span>
-                        </div>
-                    </div>
-                    <div class="player-actions">
-                        <button class="action-btn">✏️ Bearbeiten</button>
-                        <button class="action-btn">💰 Verkaufen</button>
-                        <button class="action-btn">📊 Details</button>
-                    </div>
-                </div>
-
-                <!-- Player Card 4 - Suspended -->
-                <div class="player-card">
-                    <div class="player-header">
-                        <div class="player-info">
-                            <div class="player-name">Erling Haaland</div>
-                            <div class="player-meta">
-                                <span>23 Jahre</span>
-                                <span>16 Einsätze</span>
-                                <span>3 Saisons</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                            <span class="position-badge position-MS">MS</span>
-                            <span class="status-badge status-suspended">Gesperrt</span>
-                        </div>
-                    </div>
-                    <div class="player-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Stärke</span>
-                            <span class="stat-value">9.5</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Kondition</span>
-                            <span class="stat-value">95</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Form</span>
-                            <span class="stat-value">29</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Frische</span>
-                            <span class="stat-value">96</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Motivation</span>
-                            <span class="stat-value">12</span>
-                        </div>
-                        <div class="stat-item einsatzwert">
-                            <span class="stat-label">Einsatzwert</span>
-                            <span class="stat-value">9.3</span>
-                        </div>
-                    </div>
-                    <div class="player-actions">
-                        <button class="action-btn">✏️ Bearbeiten</button>
-                        <button class="action-btn">💰 Verkaufen</button>
-                        <button class="action-btn">📊 Details</button>
-                    </div>
-                </div>
-
-                <!-- Player Card 5 -->
-                <div class="player-card">
-                    <div class="player-header">
-                        <div class="player-info">
-                            <div class="player-name">Joshua Kimmich</div>
-                            <div class="player-meta">
-                                <span>26 Jahre</span>
-                                <span>18 Einsätze</span>
-                                <span>2 Saisons</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                            <span class="position-badge position-RV">RV</span>
-                            <span class="status-badge status-ok">OK</span>
-                        </div>
-                    </div>
-                    <div class="player-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Stärke</span>
-                            <span class="stat-value">8.5</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Kondition</span>
                             <span class="stat-value">88</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Form</span>
-                            <span class="stat-value">26</span>
+                            <span class="stat-value">92%</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Frische</span>
-                            <span class="stat-value">94</span>
+                            <span class="stat-label">Erfahrung</span>
+                            <span class="stat-value">95</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Motivation</span>
-                            <span class="stat-value">12</span>
+                            <span class="stat-label">Gehaltene Tore</span>
+                            <span class="stat-value">18</span>
                         </div>
                         <div class="stat-item einsatzwert">
-                            <span class="stat-label">Einsatzwert</span>
-                            <span class="stat-value">8.3</span>
+                            <span class="stat-label">💰 Einsatzwert</span>
+                            <span class="stat-value">12.5M T</span>
                         </div>
                     </div>
                     <div class="player-actions">
-                        <button class="action-btn">✏️ Bearbeiten</button>
-                        <button class="action-btn">💰 Verkaufen</button>
                         <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
                     </div>
                 </div>
 
-                <!-- Player Card 6 -->
-                <div class="player-card">
+                <div class="player-card" data-position="TW" data-status="ok">
                     <div class="player-header">
                         <div class="player-info">
-                            <div class="player-name">Marcus Rashford</div>
+                            <a href="/spieler/alexander-nuebel" class="player-name">Alexander Nübel</a>
                             <div class="player-meta">
-                                <span>25 Jahre</span>
-                                <span>14 Einsätze</span>
-                                <span>2 Saisons</span>
+                                <span>Alter: 27</span>
+                                <span>Vertrag: 2026</span>
                             </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                            <span class="position-badge position-LS">LS</span>
-                            <span class="status-badge status-ok">OK</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-TW">TW</div>
+                            <span class="status-icon">✅</span>
                         </div>
                     </div>
                     <div class="player-stats">
                         <div class="stat-item">
                             <span class="stat-label">Stärke</span>
-                            <span class="stat-value">7.8</span>
+                            <span class="stat-value">76</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Kondition</span>
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">88%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Erfahrung</span>
+                            <span class="stat-value">62</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Gehaltene Tore</span>
+                            <span class="stat-value">5</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">💰 Einsatzwert</span>
+                            <span class="stat-value">4.2M T</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <!-- Abwehr -->
+                <div class="player-card" data-position="IV" data-status="suspended">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/virgil-van-dijk" class="player-name">Virgil van Dijk</a>
+                            <div class="player-meta">
+                                <span>Alter: 32</span>
+                                <span>Vertrag: 2025</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-IV">IV</div>
+                            <span class="status-icon">🟥</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">91</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">85%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Erfahrung</span>
+                            <span class="stat-value">89</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Tore</span>
+                            <span class="stat-value">3</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">💰 Einsatzwert</span>
+                            <span class="stat-value">18.7M T</span>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
+                    </div>
+                </div>
+
+                <div class="player-card" data-position="LV" data-status="injured">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/alphonso-davies" class="player-name">Alphonso Davies</a>
+                            <div class="player-meta">
+                                <span>Alter: 23</span>
+                                <span>Vertrag: 2025</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-LV">LV</div>
+                            <span class="status-icon">🏥</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
                             <span class="stat-value">86</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Form</span>
-                            <span class="stat-value">25</span>
+                            <span class="stat-value">93%</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Frische</span>
-                            <span class="stat-value">89</span>
+                            <span class="stat-label">Erfahrung</span>
+                            <span class="stat-value">72</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Motivation</span>
-                            <span class="stat-value">11</span>
+                            <span class="stat-label">Assists</span>
+                            <span class="stat-value">7</span>
                         </div>
                         <div class="stat-item einsatzwert">
-                            <span class="stat-label">Einsatzwert</span>
-                            <span class="stat-value">7.6</span>
+                            <span class="stat-label">💰 Einsatzwert</span>
+                            <span class="stat-value">15.2M T</span>
                         </div>
                     </div>
                     <div class="player-actions">
-                        <button class="action-btn">✏️ Bearbeiten</button>
-                        <button class="action-btn">💰 Verkaufen</button>
                         <button class="action-btn">📊 Details</button>
+                        <button class="action-btn">📋 Vertrag</button>
                     </div>
                 </div>
-            </div>
-        </main>
-    </div>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('mobile-visible');
-        }
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const toggleButton = document.querySelector('.mobile-toggle');
-            
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(event.target) && 
-                !toggleButton.contains(event.target)) {
-                sidebar.classList.remove('mobile-visible');
-            }
-        });
-
-        // Navigation handling
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // View toggle handling
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // Position filter handling
-        document.querySelectorAll('.filter-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+                <div class="player-card" data-position="RV" data-status="ok">
+                    <div class="player-header">
+                        <div class="player-info">
+                            <a href="/spieler/joao-cancelo" class="player-name">João Cancelo</a>
+                            <div class="player-meta">
+                                <span>Alter: 29</span>
+                                <span>Vertrag: 2026</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="position-badge position-RV">RV</div>
+                            <span class="status-icon">✅</span>
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Stärke</span>
+                            <span class="stat-value">84</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Form</span>
+                            <span class="stat-value">91%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Erfahrung</span>
+                            <span class="stat-value">81</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Assists</span>
+                            <span class="stat-value">6</span>
+                        </div>
+                        <div class="stat-item einsatzwert">
+                            <span class="stat-label">💰 Einsatzwert</span>
                 
-                // Filter logic would go here
-                console.log('Filter activated:', this.textContent);
-            });
-        });
-
-        // Search functionality
-        document.querySelector('.search-box').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const playerCards = document.querySelectorAll('.player-card');
-            
-            playerCards.forEach(card => {
-                const playerName = card.querySelector('.player-name').textContent.toLowerCase();
-                if (playerName.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-
-        // Action button handlers
-        document.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const action = this.textContent.trim();
-                const playerName = this.closest('.player-card').querySelector('.player-name').textContent;
-                console.log(`${action} clicked for ${playerName}`);
-            });
-        });
-
-        // Card hover effects
-        document.querySelectorAll('.player-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.borderColor = 'rgba(255, 140, 0, 0.5)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            });
-        });
-    </script>
-</body>
-</html>
